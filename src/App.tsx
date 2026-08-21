@@ -1,7 +1,8 @@
+import axios from "axios";
 import { useState, useEffect } from "react";
 import CanchaList from "./components/CanchaList";
 import CanchaForm from "./components/CanchaForm";
-import { getCanchas, createCancha, updateCancha, deleteCancha } from "./api/canchas";
+import { getAllCanchas,createCancha, updateCancha, deleteCancha } from "./api/canchas";
 import type { Cancha, CanchaInput } from "./types/cancha";
 
 function App() {
@@ -13,7 +14,7 @@ function App() {
   async function cargarCanchas() {
     try {
       setCargando(true);
-      const data = await getCanchas();
+      const data = await getAllCanchas();
       setCanchas(data);
       setError(null);
     } catch (err) {
@@ -28,7 +29,7 @@ function App() {
     cargarCanchas();
   }, []);
 
-    async function handleSubmit(data: CanchaInput) {
+  async function handleSubmit(data: CanchaInput) {
     try {
       if (canchaEditando) {
         await updateCancha(canchaEditando.id, data);
@@ -37,17 +38,21 @@ function App() {
       }
       setCanchaEditando(null);
       await cargarCanchas();
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
-      const errores = err.response?.data?.errores;
-      if (errores && Array.isArray(errores)) {
-        const mensajes = errores.map((e: any) => e.message).join("\n");
-        alert(mensajes);
-      } else {
-        alert("Ocurrió un error al guardar la cancha.");
+      if (axios.isAxiosError(err)) {
+        const errores = err.response?.data?.errores;
+        if (errores && Array.isArray(errores)) {
+          const mensajes = errores
+            .map((e: { message: string }) => e.message)
+            .join("\n");
+          alert(mensajes);
+          return;
+        }
       }
+      alert("Ocurrió un error al guardar la cancha.");
     }
-  }
+  } 
 
   async function handleDelete(id: number) {
     if (!confirm("¿Seguro que querés borrar esta cancha?")) return;
@@ -65,6 +70,7 @@ function App() {
       <h1 className="mb-4 text-2xl font-bold">Canchas</h1>
 
       <CanchaForm
+        key={canchaEditando?.id ?? "nuevo"}
         canchaEditando={canchaEditando}
         onSubmit={handleSubmit}
         onCancel={() => setCanchaEditando(null)}

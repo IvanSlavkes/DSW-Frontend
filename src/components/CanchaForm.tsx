@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import type { Cancha, CanchaInput } from "../types/cancha";
 
 interface Props {
@@ -16,16 +16,13 @@ const vacio: CanchaInput = {
 };
 
 export default function CanchaForm({ canchaEditando, onSubmit, onCancel }: Props) {
-  const [form, setForm] = useState<CanchaInput>(vacio);
-
-  useEffect(() => {
+  const [form, setForm] = useState<CanchaInput>(() => {
     if (canchaEditando) {
-      const { id, ...resto } = canchaEditando;
-      setForm(resto);
-    } else {
-      setForm(vacio);
+      const { ...resto } = canchaEditando;
+      return resto;
     }
-  }, [canchaEditando]);
+    return vacio;
+  });
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     setForm({ ...form, [e.target.name]: e.target.value });
