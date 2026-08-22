@@ -1,88 +1,86 @@
-import axios from "axios";
 import { useState, useEffect } from "react";
-import CanchaList from "./components/CanchaList";
-import CanchaForm from "./components/CanchaForm";
-import { getAllCanchas,createCancha, updateCancha, deleteCancha } from "./api/canchas";
-import type { Cancha, CanchaInput } from "./types/cancha";
+import axios from "axios";
+import FieldList from "./components/FieldList";
+import FieldForm from "./components/FieldForm";
+import { getFields, createField, updateField, deleteField } from "./api/field";
+import type { Field, FieldInput } from "./types/field";
 
 function App() {
-  const [canchas, setCanchas] = useState<Cancha[]>([]);
-  const [canchaEditando, setCanchaEditando] = useState<Cancha | null>(null);
-  const [cargando, setCargando] = useState(true);
+  const [fields, setFields] = useState<Field[]>([]);
+  const [fieldEditing, setFieldEditing] = useState<Field | null>(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  async function cargarCanchas() {
+  async function loadFields() {
     try {
-      setCargando(true);
-      const data = await getAllCanchas();
-      setCanchas(data);
+      setLoading(true);
+      const data = await getFields();
+      setFields(data);
       setError(null);
     } catch (err) {
       console.error(err);
-      setError("No se pudo conectar con el servidor. ¿Está corriendo el backend?");
+      setError("Could not connect to the server. Is the backend running?");
     } finally {
-      setCargando(false);
+      setLoading(false);
     }
   }
 
   useEffect(() => {
-    cargarCanchas();
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- valid initial fetch, rule false positive
+    loadFields();
   }, []);
 
-  async function handleSubmit(data: CanchaInput) {
+  async function handleSubmit(data: FieldInput) {
     try {
-      if (canchaEditando) {
-        await updateCancha(canchaEditando.id, data);
+      if (fieldEditing) {
+        await updateField(fieldEditing.id, data);
       } else {
-        await createCancha(data);
+        await createField(data);
       }
-      setCanchaEditando(null);
-      await cargarCanchas();
+      setFieldEditing(null);
+      await loadFields();
     } catch (err) {
       console.error(err);
       if (axios.isAxiosError(err)) {
-        const errores = err.response?.data?.errores;
-        if (errores && Array.isArray(errores)) {
-          const mensajes = errores
+        const errors = err.response?.data?.errors;
+        if (errors && Array.isArray(errors)) {
+          const messages = errors
             .map((e: { message: string }) => e.message)
             .join("\n");
-          alert(mensajes);
+          alert(messages);
           return;
         }
       }
-      alert("Ocurrió un error al guardar la cancha.");
+      alert("An error occurred while saving the field.");
     }
-  } 
+  }
 
   async function handleDelete(id: number) {
-    if (!confirm("¿Seguro que querés borrar esta cancha?")) return;
+    if (!confirm("Are you sure you want to delete this field?")) return;
     try {
-      await deleteCancha(id);
-      await cargarCanchas();
+      await deleteField(id);
+      await loadFields();
     } catch (err) {
       console.error(err);
-      alert("Ocurrió un error al borrar la cancha.");
+      alert("An error occurred while deleting the field.");
     }
   }
 
   return (
     <div className="mx-auto max-w-2xl p-4">
       <h1 className="mb-4 text-2xl font-bold">Canchas</h1>
-
-      <CanchaForm
-        key={canchaEditando?.id ?? "nuevo"}
-        canchaEditando={canchaEditando}
+      <FieldForm
+        key={fieldEditing?.id ?? "new"}
+        fieldEditing={fieldEditing}
         onSubmit={handleSubmit}
-        onCancel={() => setCanchaEditando(null)}
+        onCancel={() => setFieldEditing(null)}
       />
-
-      {cargando && <p className="text-gray-500">Cargando canchas...</p>}
+      {loading && <p className="text-gray-500">Cargando canchas...</p>}
       {error && <p className="text-red-600">{error}</p>}
-
-      {!cargando && !error && (
-        <CanchaList
-          canchas={canchas}
-          onEdit={setCanchaEditando}
+      {!loading && !error && (
+        <FieldList
+          fields={fields}
+          onEdit={setFieldEditing}
           onDelete={handleDelete}
         />
       )}

@@ -1,27 +1,27 @@
 import { useState } from "react";
-import type { Cancha, CanchaInput } from "../types/cancha";
+import type { Field, FieldInput } from "../types/field";
 
 interface Props {
-  canchaEditando: Cancha | null;
-  onSubmit: (data: CanchaInput) => void;
+  fieldEditing: Field | null;
+  onSubmit: (data: FieldInput) => void;
   onCancel: () => void;
 }
 
-const vacio: CanchaInput = {
-  nombre: "",
-  direccion: "",
-  tipo: "",
-  localidadId: "",
-  localidadNombre: "",
+const empty: FieldInput = {
+  name: "",
+  address: "",
+  type: "",
+  locationId: "",
+  locationName: "",
 };
 
-export default function CanchaForm({ canchaEditando, onSubmit, onCancel }: Props) {
-  const [form, setForm] = useState<CanchaInput>(() => {
-    if (canchaEditando) {
-      const { ...resto } = canchaEditando;
-      return resto;
+export default function FieldForm({ fieldEditing, onSubmit, onCancel }: Props) {
+  const [form, setForm] = useState<FieldInput>(() => {
+    if (fieldEditing) {
+      const { ...rest } = fieldEditing;
+      return rest;
     }
-    return vacio;
+    return empty;
   });
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -31,7 +31,7 @@ export default function CanchaForm({ canchaEditando, onSubmit, onCancel }: Props
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     onSubmit(form);
-    setForm(vacio);
+    setForm(empty);
   }
 
   return (
@@ -40,46 +40,46 @@ export default function CanchaForm({ canchaEditando, onSubmit, onCancel }: Props
       className="mb-6 flex flex-col gap-3 rounded-lg border border-gray-200 p-4"
     >
       <h2 className="text-lg font-semibold">
-        {canchaEditando ? "Editar cancha" : "Nueva cancha"}
+        {fieldEditing ? "Editar cancha" : "Nueva cancha"}
       </h2>
 
       <input
-        name="nombre"
-        value={form.nombre}
+        name="name"
+        value={form.name}
         onChange={handleChange}
         placeholder="Nombre"
         className="rounded border border-gray-300 px-3 py-2"
         required
       />
       <input
-        name="direccion"
-        value={form.direccion}
+        name="address"
+        value={form.address}
         onChange={handleChange}
-        placeholder="Dirección"
+        placeholder="Direccion"
         className="rounded border border-gray-300 px-3 py-2"
         required
       />
       <input
-        name="tipo"
-        value={form.tipo}
+        name="type"
+        value={form.type}
         onChange={handleChange}
-        placeholder="Tipo (ej: Fútbol 5)"
+        placeholder="Tipo (ej. Futbol 5)"
         className="rounded border border-gray-300 px-3 py-2"
         required
       />
       <input
-        name="localidadId"
-        value={form.localidadId}
+        name="locationId"
+        value={form.locationId}
         onChange={handleChange}
-        placeholder="ID de localidad"
+        placeholder="ID Localidad"
         className="rounded border border-gray-300 px-3 py-2"
         required
       />
       <input
-        name="localidadNombre"
-        value={form.localidadNombre}
+        name="locationName"
+        value={form.locationName}
         onChange={handleChange}
-        placeholder="Nombre de localidad"
+        placeholder="Nombre Localidad"
         className="rounded border border-gray-300 px-3 py-2"
         required
       />
@@ -89,9 +89,9 @@ export default function CanchaForm({ canchaEditando, onSubmit, onCancel }: Props
           type="submit"
           className="rounded bg-green-600 px-4 py-2 text-white hover:bg-green-700"
         >
-          {canchaEditando ? "Guardar cambios" : "Crear cancha"}
+          {fieldEditing ? "Guardar Cambios" : "Crear Cancha"}
         </button>
-        {canchaEditando && (
+        {fieldEditing && (
           <button
             type="button"
             onClick={onCancel}
