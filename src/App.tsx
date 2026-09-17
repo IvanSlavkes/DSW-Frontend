@@ -4,19 +4,32 @@ import FieldList from './components/FieldList';
 import FieldForm from './components/FieldForm';
 import MatchList from './components/MatchList';
 import MatchForm from './components/MatchForm';
+import NotificationList from './components/NotificationList';
+import NotificationForm from './components/NotificationForm';
 import { getFields, createField, updateField, deleteField } from './api/field';
 import { getMatches, createMatch, updateMatch, deleteMatch } from './api/match';
+import {
+  getNotifications,
+  createNotification,
+  markAsRead,
+  deleteNotification,
+} from './api/notification';
 import type { Field, FieldInput } from './types/field';
 import type { Match, MatchInput } from './types/match';
+import type { Notification, NotificationInput } from './types/notification';
 
 function App() {
-  const [tab, setTab] = useState<'fields' | 'matches'>('fields');
+  const [tab, setTab] = useState<'fields' | 'matches' | 'notifications'>(
+    'fields',
+  );
 
   const [fields, setFields] = useState<Field[]>([]);
   const [fieldEditing, setFieldEditing] = useState<Field | null>(null);
 
   const [matches, setMatches] = useState<Match[]>([]);
   const [matchEditing, setMatchEditing] = useState<Match | null>(null);
+
+  const [notifications, setNotifications] = useState<Notification[]>([]);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -49,12 +62,28 @@ function App() {
     }
   }
 
+  async function loadNotifications() {
+    try {
+      setLoading(true);
+      const data = await getNotifications();
+      setNotifications(data);
+      setError(null);
+    } catch (err) {
+      console.error(err);
+      setError('Could not connect to the server. Is the backend running?');
+    } finally {
+      setLoading(false);
+    }
+  }
+
   useEffect(() => {
     if (tab === 'fields') {
       // eslint-disable-next-line react-hooks/set-state-in-effect -- valid initial fetch, rule false positive
       loadFields();
-    } else {
+    } else if (tab === 'matches') {
       loadMatches();
+    } else {
+      loadNotifications();
     }
   }, [tab]);
 
@@ -127,6 +156,44 @@ function App() {
     }
   }
 
+  async function handleNotificationSubmit(data: NotificationInput) {
+    try {
+      await createNotification(data);
+      await loadNotifications();
+    } catch (err) {
+      console.error(err);
+      if (axios.isAxiosError(err)) {
+        const mensaje = err.response?.data?.mensaje;
+        if (mensaje) {
+          alert(mensaje);
+          return;
+        }
+      }
+      alert('An error occurred while creating the notification.');
+    }
+  }
+
+  async function handleMarkAsRead(id: number) {
+    try {
+      await markAsRead(id);
+      await loadNotifications();
+    } catch (err) {
+      console.error(err);
+      alert('An error occurred while marking as read.');
+    }
+  }
+
+  async function handleNotificationDelete(id: number) {
+    if (!confirm('Are you sure you want to delete this notification?')) return;
+    try {
+      await deleteNotification(id);
+      await loadNotifications();
+    } catch (err) {
+      console.error(err);
+      alert('An error occurred while deleting the notification.');
+    }
+  }
+
   return (
     <div className="mx-auto max-w-2xl p-4">
       <div className="mb-4 flex gap-2">
@@ -141,6 +208,12 @@ function App() {
           className={`rounded px-3 py-1 ${tab === 'matches' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
         >
           Partidos
+        </button>
+        <button
+          onClick={() => setTab('notifications')}
+          className={`rounded px-3 py-1 ${tab === 'notifications' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+        >
+          Notificaciones
         </button>
       </div>
 
@@ -181,6 +254,24 @@ function App() {
               matches={matches}
               onEdit={setMatchEditing}
               onDelete={handleMatchDelete}
+            />
+          )}
+        </>
+      )}
+
+      {tab === 'notifications' && (
+        <>
+          <h1 className="mb-4 text-2xl font-bold">Notificaciones</h1>
+          <NotificationForm onSubmit={handleNotificationSubmit} />
+          {loading && (
+            <p className="text-gray-500">Cargando notificaciones...</p>
+          )}
+          {error && <p className="text-red-600">{error}</p>}
+          {!loading && !error && (
+            <NotificationList
+              notifications={notifications}
+              onMarkAsRead={handleMarkAsRead}
+              onDelete={handleNotificationDelete}
             />
           )}
         </>
