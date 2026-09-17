@@ -1,5 +1,5 @@
-import { useState } from "react";
-import type { Field, FieldInput } from "../types/field";
+import { useState } from 'react';
+import type { Field, FieldInput } from '../types/field';
 
 interface Props {
   fieldEditing: Field | null;
@@ -8,11 +8,11 @@ interface Props {
 }
 
 const empty: FieldInput = {
-  name: "",
-  address: "",
-  type: "",
-  locationId: "",
-  locationName: "",
+  name: '',
+  address: '',
+  type: '',
+  locationId: '',
+  localityId: '',
 };
 
 export default function FieldForm({ fieldEditing, onSubmit, onCancel }: Props) {
@@ -24,7 +24,9 @@ export default function FieldForm({ fieldEditing, onSubmit, onCancel }: Props) {
     return empty;
   });
 
-  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+  function handleChange(
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
 
@@ -40,7 +42,7 @@ export default function FieldForm({ fieldEditing, onSubmit, onCancel }: Props) {
       className="mb-6 flex flex-col gap-3 rounded-lg border border-gray-200 p-4"
     >
       <h2 className="text-lg font-semibold">
-        {fieldEditing ? "Editar cancha" : "Nueva cancha"}
+        {fieldEditing ? 'Editar cancha' : 'Nueva cancha'}
       </h2>
 
       <input
@@ -59,14 +61,18 @@ export default function FieldForm({ fieldEditing, onSubmit, onCancel }: Props) {
         className="rounded border border-gray-300 px-3 py-2"
         required
       />
-      <input
+      <select
         name="type"
         value={form.type}
         onChange={handleChange}
-        placeholder="Tipo (ej. Futbol 5)"
         className="rounded border border-gray-300 px-3 py-2"
         required
-      />
+      >
+        <option value="">Seleccionar tipo</option>
+        <option value="5">5</option>
+        <option value="7">7</option>
+        <option value="11">11</option>
+      </select>
       <input
         name="locationId"
         value={form.locationId}
@@ -76,10 +82,10 @@ export default function FieldForm({ fieldEditing, onSubmit, onCancel }: Props) {
         required
       />
       <input
-        name="locationName"
-        value={form.locationName}
+        name="localityId"
+        value={form.localityId}
         onChange={handleChange}
-        placeholder="Nombre Localidad"
+        placeholder="ID Ubicación (legado)" //DEBERIAMOS SACARLO DEL BACK, YA QUE ES OBLIGATORIO
         className="rounded border border-gray-300 px-3 py-2"
         required
       />
@@ -89,7 +95,7 @@ export default function FieldForm({ fieldEditing, onSubmit, onCancel }: Props) {
           type="submit"
           className="rounded bg-green-600 px-4 py-2 text-white hover:bg-green-700"
         >
-          {fieldEditing ? "Guardar Cambios" : "Crear Cancha"}
+          {fieldEditing ? 'Guardar Cambios' : 'Crear Cancha'}
         </button>
         {fieldEditing && (
           <button

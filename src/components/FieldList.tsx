@@ -1,4 +1,4 @@
-import type { Field } from "../types/field";
+import type { Field } from '../types/field';
 
 interface Props {
   fields: Field[];
@@ -22,7 +22,7 @@ export default function FieldList({ fields, onEdit, onDelete }: Props) {
           <p className="text-sm text-gray-600">{field.address}</p>
           <p className="text-sm text-gray-600">Type: {field.type}</p>
           <p className="text-sm text-gray-600">
-            Localidad: {field.locationName}
+            Localidad ID: {field.localityId}
           </p>
           <div className="mt-3 flex gap-2">
             <button

@@ -4,7 +4,7 @@ export interface Field {
   address: string;
   type: string;
   locationId: string;
-  locationName: string;
+  localityId: string;
 }
 
-export type FieldInput = Omit<Field, "id">;
+export type FieldInput = Omit<Field, 'id'>;
