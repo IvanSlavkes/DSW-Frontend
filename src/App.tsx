@@ -8,6 +8,8 @@ import NotificationList from './components/NotificationList';
 import NotificationForm from './components/NotificationForm';
 import RatingList from './components/RatingList';
 import RatingForm from './components/RatingForm';
+import UserList from './components/UserList';
+import UserForm from './components/UserForm';
 import { getFields, createField, updateField, deleteField } from './api/field';
 import { getMatches, createMatch, updateMatch, deleteMatch } from './api/match';
 import {
@@ -22,15 +24,17 @@ import {
   updateRating,
   deleteRating,
 } from './api/rating';
+import { getUsers, createUser, updateUser, deleteUser } from './api/user';
 import type { Field, FieldInput } from './types/field';
 import type { Match, MatchInput } from './types/match';
 import type { Notification, NotificationInput } from './types/notification';
 import type { Rating, RatingInput } from './types/rating';
+import type { User, UserInput } from './types/user';
+
+type Tab = 'fields' | 'matches' | 'notifications' | 'ratings' | 'users';
 
 function App() {
-  const [tab, setTab] = useState<
-    'fields' | 'matches' | 'notifications' | 'ratings'
-  >('fields');
+  const [tab, setTab] = useState<Tab>('fields');
 
   const [fields, setFields] = useState<Field[]>([]);
   const [fieldEditing, setFieldEditing] = useState<Field | null>(null);
@@ -42,6 +46,9 @@ function App() {
 
   const [ratings, setRatings] = useState<Rating[]>([]);
   const [ratingEditing, setRatingEditing] = useState<Rating | null>(null);
+
+  const [users, setUsers] = useState<User[]>([]);
+  const [userEditing, setUserEditing] = useState<User | null>(null);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -102,6 +109,20 @@ function App() {
     }
   }
 
+  async function loadUsers() {
+    try {
+      setLoading(true);
+      const data = await getUsers();
+      setUsers(data);
+      setError(null);
+    } catch (err) {
+      console.error(err);
+      setError('Could not connect to the server. Is the backend running?');
+    } finally {
+      setLoading(false);
+    }
+  }
+
   useEffect(() => {
     if (tab === 'fields') {
       // eslint-disable-next-line react-hooks/set-state-in-effect -- valid initial fetch, rule false positive
@@ -110,8 +131,10 @@ function App() {
       loadMatches();
     } else if (tab === 'notifications') {
       loadNotifications();
-    } else {
+    } else if (tab === 'ratings') {
       loadRatings();
+    } else {
+      loadUsers();
     }
   }, [tab]);
 
@@ -258,6 +281,49 @@ function App() {
     }
   }
 
+  async function handleUserSubmit(data: UserInput) {
+    try {
+      if (userEditing) {
+        const { password, ...rest } = data;
+        const payload = password ? { ...rest, password } : rest;
+        await updateUser(userEditing.id, payload);
+      } else {
+        await createUser(data);
+      }
+      setUserEditing(null);
+      await loadUsers();
+    } catch (err) {
+      console.error(err);
+      if (axios.isAxiosError(err)) {
+        const errores = err.response?.data?.errores;
+        if (errores && Array.isArray(errores)) {
+          const messages = errores
+            .map((e: { message: string }) => e.message)
+            .join('\n');
+          alert(messages);
+          return;
+        }
+        const mensaje = err.response?.data?.mensaje;
+        if (mensaje) {
+          alert(mensaje);
+          return;
+        }
+      }
+      alert('An error occurred while saving the user.');
+    }
+  }
+
+  async function handleUserDelete(id: number) {
+    if (!confirm('Are you sure you want to delete this user?')) return;
+    try {
+      await deleteUser(id);
+      await loadUsers();
+    } catch (err) {
+      console.error(err);
+      alert('An error occurred while deleting the user.');
+    }
+  }
+
   return (
     <div className="mx-auto max-w-2xl p-4">
       <div className="mb-4 flex flex-wrap gap-2">
@@ -284,6 +350,12 @@ function App() {
           className={`rounded px-3 py-1 ${tab === 'ratings' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
         >
           Calificaciones
+        </button>
+        <button
+          onClick={() => setTab('users')}
+          className={`rounded px-3 py-1 ${tab === 'users' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+        >
+          Usuarios
         </button>
       </div>
 
@@ -365,6 +437,27 @@ function App() {
               ratings={ratings}
               onEdit={setRatingEditing}
               onDelete={handleRatingDelete}
+            />
+          )}
+        </>
+      )}
+
+      {tab === 'users' && (
+        <>
+          <h1 className="mb-4 text-2xl font-bold">Usuarios</h1>
+          <UserForm
+            key={userEditing?.id ?? 'new'}
+            userEditing={userEditing}
+            onSubmit={handleUserSubmit}
+            onCancel={() => setUserEditing(null)}
+          />
+          {loading && <p className="text-gray-500">Cargando usuarios...</p>}
+          {error && <p className="text-red-600">{error}</p>}
+          {!loading && !error && (
+            <UserList
+              users={users}
+              onEdit={setUserEditing}
+              onDelete={handleUserDelete}
             />
           )}
         </>
