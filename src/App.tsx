@@ -6,6 +6,8 @@ import MatchList from './components/MatchList';
 import MatchForm from './components/MatchForm';
 import NotificationList from './components/NotificationList';
 import NotificationForm from './components/NotificationForm';
+import RatingList from './components/RatingList';
+import RatingForm from './components/RatingForm';
 import { getFields, createField, updateField, deleteField } from './api/field';
 import { getMatches, createMatch, updateMatch, deleteMatch } from './api/match';
 import {
@@ -14,14 +16,21 @@ import {
   markAsRead,
   deleteNotification,
 } from './api/notification';
+import {
+  getRatings,
+  createRating,
+  updateRating,
+  deleteRating,
+} from './api/rating';
 import type { Field, FieldInput } from './types/field';
 import type { Match, MatchInput } from './types/match';
 import type { Notification, NotificationInput } from './types/notification';
+import type { Rating, RatingInput } from './types/rating';
 
 function App() {
-  const [tab, setTab] = useState<'fields' | 'matches' | 'notifications'>(
-    'fields',
-  );
+  const [tab, setTab] = useState<
+    'fields' | 'matches' | 'notifications' | 'ratings'
+  >('fields');
 
   const [fields, setFields] = useState<Field[]>([]);
   const [fieldEditing, setFieldEditing] = useState<Field | null>(null);
@@ -30,6 +39,9 @@ function App() {
   const [matchEditing, setMatchEditing] = useState<Match | null>(null);
 
   const [notifications, setNotifications] = useState<Notification[]>([]);
+
+  const [ratings, setRatings] = useState<Rating[]>([]);
+  const [ratingEditing, setRatingEditing] = useState<Rating | null>(null);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -76,14 +88,30 @@ function App() {
     }
   }
 
+  async function loadRatings() {
+    try {
+      setLoading(true);
+      const data = await getRatings();
+      setRatings(data);
+      setError(null);
+    } catch (err) {
+      console.error(err);
+      setError('Could not connect to the server. Is the backend running?');
+    } finally {
+      setLoading(false);
+    }
+  }
+
   useEffect(() => {
     if (tab === 'fields') {
       // eslint-disable-next-line react-hooks/set-state-in-effect -- valid initial fetch, rule false positive
       loadFields();
     } else if (tab === 'matches') {
       loadMatches();
-    } else {
+    } else if (tab === 'notifications') {
       loadNotifications();
+    } else {
+      loadRatings();
     }
   }, [tab]);
 
@@ -194,9 +222,45 @@ function App() {
     }
   }
 
+  async function handleRatingSubmit(data: RatingInput) {
+    try {
+      if (ratingEditing) {
+        await updateRating(ratingEditing.id, {
+          stars: data.stars,
+          comment: data.comment,
+        });
+      } else {
+        await createRating(data);
+      }
+      setRatingEditing(null);
+      await loadRatings();
+    } catch (err) {
+      console.error(err);
+      if (axios.isAxiosError(err)) {
+        const mensaje = err.response?.data?.mensaje;
+        if (mensaje) {
+          alert(mensaje);
+          return;
+        }
+      }
+      alert('An error occurred while saving the rating.');
+    }
+  }
+
+  async function handleRatingDelete(id: number) {
+    if (!confirm('Are you sure you want to delete this rating?')) return;
+    try {
+      await deleteRating(id);
+      await loadRatings();
+    } catch (err) {
+      console.error(err);
+      alert('An error occurred while deleting the rating.');
+    }
+  }
+
   return (
     <div className="mx-auto max-w-2xl p-4">
-      <div className="mb-4 flex gap-2">
+      <div className="mb-4 flex flex-wrap gap-2">
         <button
           onClick={() => setTab('fields')}
           className={`rounded px-3 py-1 ${tab === 'fields' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
@@ -214,6 +278,12 @@ function App() {
           className={`rounded px-3 py-1 ${tab === 'notifications' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
         >
           Notificaciones
+        </button>
+        <button
+          onClick={() => setTab('ratings')}
+          className={`rounded px-3 py-1 ${tab === 'ratings' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+        >
+          Calificaciones
         </button>
       </div>
 
@@ -272,6 +342,29 @@ function App() {
               notifications={notifications}
               onMarkAsRead={handleMarkAsRead}
               onDelete={handleNotificationDelete}
+            />
+          )}
+        </>
+      )}
+
+      {tab === 'ratings' && (
+        <>
+          <h1 className="mb-4 text-2xl font-bold">Calificaciones</h1>
+          <RatingForm
+            key={ratingEditing?.id ?? 'new'}
+            ratingEditing={ratingEditing}
+            onSubmit={handleRatingSubmit}
+            onCancel={() => setRatingEditing(null)}
+          />
+          {loading && (
+            <p className="text-gray-500">Cargando calificaciones...</p>
+          )}
+          {error && <p className="text-red-600">{error}</p>}
+          {!loading && !error && (
+            <RatingList
+              ratings={ratings}
+              onEdit={setRatingEditing}
+              onDelete={handleRatingDelete}
             />
           )}
         </>
