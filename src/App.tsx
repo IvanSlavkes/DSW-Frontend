@@ -10,6 +10,8 @@ import RatingList from './components/RatingList';
 import RatingForm from './components/RatingForm';
 import UserList from './components/UserList';
 import UserForm from './components/UserForm';
+import LocalityList from './components/LocalityList';
+import LocalityForm from './components/LocalityForm';
 import { getFields, createField, updateField, deleteField } from './api/field';
 import { getMatches, createMatch, updateMatch, deleteMatch } from './api/match';
 import {
@@ -25,13 +27,26 @@ import {
   deleteRating,
 } from './api/rating';
 import { getUsers, createUser, updateUser, deleteUser } from './api/user';
+import {
+  getLocalities,
+  createLocality,
+  updateLocality,
+  deleteLocality,
+} from './api/locality';
 import type { Field, FieldInput } from './types/field';
 import type { Match, MatchInput } from './types/match';
 import type { Notification, NotificationInput } from './types/notification';
 import type { Rating, RatingInput } from './types/rating';
 import type { User, UserInput } from './types/user';
+import type { Locality, LocalityInput } from './types/locality';
 
-type Tab = 'fields' | 'matches' | 'notifications' | 'ratings' | 'users';
+type Tab =
+  | 'fields'
+  | 'matches'
+  | 'notifications'
+  | 'ratings'
+  | 'users'
+  | 'localities';
 
 function App() {
   const [tab, setTab] = useState<Tab>('fields');
@@ -49,6 +64,9 @@ function App() {
 
   const [users, setUsers] = useState<User[]>([]);
   const [userEditing, setUserEditing] = useState<User | null>(null);
+
+  const [localities, setLocalities] = useState<Locality[]>([]);
+  const [localityEditing, setLocalityEditing] = useState<Locality | null>(null);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -123,6 +141,20 @@ function App() {
     }
   }
 
+  async function loadLocalities() {
+    try {
+      setLoading(true);
+      const data = await getLocalities();
+      setLocalities(data);
+      setError(null);
+    } catch (err) {
+      console.error(err);
+      setError('Could not connect to the server. Is the backend running?');
+    } finally {
+      setLoading(false);
+    }
+  }
+
   useEffect(() => {
     if (tab === 'fields') {
       // eslint-disable-next-line react-hooks/set-state-in-effect -- valid initial fetch, rule false positive
@@ -133,8 +165,10 @@ function App() {
       loadNotifications();
     } else if (tab === 'ratings') {
       loadRatings();
-    } else {
+    } else if (tab === 'users') {
       loadUsers();
+    } else {
+      loadLocalities();
     }
   }, [tab]);
 
@@ -324,6 +358,39 @@ function App() {
     }
   }
 
+  async function handleLocalitySubmit(data: LocalityInput) {
+    try {
+      if (localityEditing) {
+        await updateLocality(localityEditing.id, data);
+      } else {
+        await createLocality(data);
+      }
+      setLocalityEditing(null);
+      await loadLocalities();
+    } catch (err) {
+      console.error(err);
+      if (axios.isAxiosError(err)) {
+        const mensaje = err.response?.data?.mensaje;
+        if (mensaje) {
+          alert(mensaje);
+          return;
+        }
+      }
+      alert('An error occurred while saving the locality.');
+    }
+  }
+
+  async function handleLocalityDelete(id: string) {
+    if (!confirm('Are you sure you want to delete this locality?')) return;
+    try {
+      await deleteLocality(id);
+      await loadLocalities();
+    } catch (err) {
+      console.error(err);
+      alert('An error occurred while deleting the locality.');
+    }
+  }
+
   return (
     <div className="mx-auto max-w-2xl p-4">
       <div className="mb-4 flex flex-wrap gap-2">
@@ -356,6 +423,12 @@ function App() {
           className={`rounded px-3 py-1 ${tab === 'users' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
         >
           Usuarios
+        </button>
+        <button
+          onClick={() => setTab('localities')}
+          className={`rounded px-3 py-1 ${tab === 'localities' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+        >
+          Localidades
         </button>
       </div>
 
@@ -458,6 +531,27 @@ function App() {
               users={users}
               onEdit={setUserEditing}
               onDelete={handleUserDelete}
+            />
+          )}
+        </>
+      )}
+
+      {tab === 'localities' && (
+        <>
+          <h1 className="mb-4 text-2xl font-bold">Localidades</h1>
+          <LocalityForm
+            key={localityEditing?.id ?? 'new'}
+            localityEditing={localityEditing}
+            onSubmit={handleLocalitySubmit}
+            onCancel={() => setLocalityEditing(null)}
+          />
+          {loading && <p className="text-gray-500">Cargando localidades...</p>}
+          {error && <p className="text-red-600">{error}</p>}
+          {!loading && !error && (
+            <LocalityList
+              localities={localities}
+              onEdit={setLocalityEditing}
+              onDelete={handleLocalityDelete}
             />
           )}
         </>
