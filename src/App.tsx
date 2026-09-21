@@ -12,6 +12,8 @@ import UserList from './components/UserList';
 import UserForm from './components/UserForm';
 import LocalityList from './components/LocalityList';
 import LocalityForm from './components/LocalityForm';
+import MatchTeamList from './components/MatchTeamList';
+import MatchTeamForm from './components/MatchTeamForm';
 import { getFields, createField, updateField, deleteField } from './api/field';
 import { getMatches, createMatch, updateMatch, deleteMatch } from './api/match';
 import {
@@ -33,12 +35,19 @@ import {
   updateLocality,
   deleteLocality,
 } from './api/locality';
+import {
+  getMatchTeams,
+  createMatchTeam,
+  updateMatchTeam,
+  deleteMatchTeam,
+} from './api/match-team';
 import type { Field, FieldInput } from './types/field';
 import type { Match, MatchInput } from './types/match';
 import type { Notification, NotificationInput } from './types/notification';
 import type { Rating, RatingInput } from './types/rating';
 import type { User, UserInput } from './types/user';
 import type { Locality, LocalityInput } from './types/locality';
+import type { MatchTeam, MatchTeamInput } from './types/match-team';
 
 type Tab =
   | 'fields'
@@ -46,7 +55,8 @@ type Tab =
   | 'notifications'
   | 'ratings'
   | 'users'
-  | 'localities';
+  | 'localities'
+  | 'matchTeams';
 
 function App() {
   const [tab, setTab] = useState<Tab>('fields');
@@ -67,6 +77,11 @@ function App() {
 
   const [localities, setLocalities] = useState<Locality[]>([]);
   const [localityEditing, setLocalityEditing] = useState<Locality | null>(null);
+
+  const [matchTeams, setMatchTeams] = useState<MatchTeam[]>([]);
+  const [matchTeamEditing, setMatchTeamEditing] = useState<MatchTeam | null>(
+    null,
+  );
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -155,6 +170,20 @@ function App() {
     }
   }
 
+  async function loadMatchTeams() {
+    try {
+      setLoading(true);
+      const data = await getMatchTeams();
+      setMatchTeams(data);
+      setError(null);
+    } catch (err) {
+      console.error(err);
+      setError('Could not connect to the server. Is the backend running?');
+    } finally {
+      setLoading(false);
+    }
+  }
+
   useEffect(() => {
     if (tab === 'fields') {
       // eslint-disable-next-line react-hooks/set-state-in-effect -- valid initial fetch, rule false positive
@@ -167,8 +196,10 @@ function App() {
       loadRatings();
     } else if (tab === 'users') {
       loadUsers();
-    } else {
+    } else if (tab === 'localities') {
       loadLocalities();
+    } else {
+      loadMatchTeams();
     }
   }, [tab]);
 
@@ -391,6 +422,42 @@ function App() {
     }
   }
 
+  async function handleMatchTeamSubmit(data: MatchTeamInput) {
+    try {
+      if (matchTeamEditing) {
+        await updateMatchTeam(matchTeamEditing.id, {
+          name: data.name,
+          color: data.color,
+        });
+      } else {
+        await createMatchTeam(data);
+      }
+      setMatchTeamEditing(null);
+      await loadMatchTeams();
+    } catch (err) {
+      console.error(err);
+      if (axios.isAxiosError(err)) {
+        const mensaje = err.response?.data?.mensaje;
+        if (mensaje) {
+          alert(mensaje);
+          return;
+        }
+      }
+      alert('An error occurred while saving the match team.');
+    }
+  }
+
+  async function handleMatchTeamDelete(id: number) {
+    if (!confirm('Are you sure you want to delete this team?')) return;
+    try {
+      await deleteMatchTeam(id);
+      await loadMatchTeams();
+    } catch (err) {
+      console.error(err);
+      alert('An error occurred while deleting the match team.');
+    }
+  }
+
   return (
     <div className="mx-auto max-w-2xl p-4">
       <div className="mb-4 flex flex-wrap gap-2">
@@ -429,6 +496,12 @@ function App() {
           className={`rounded px-3 py-1 ${tab === 'localities' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
         >
           Localidades
+        </button>
+        <button
+          onClick={() => setTab('matchTeams')}
+          className={`rounded px-3 py-1 ${tab === 'matchTeams' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+        >
+          Equipos
         </button>
       </div>
 
@@ -552,6 +625,27 @@ function App() {
               localities={localities}
               onEdit={setLocalityEditing}
               onDelete={handleLocalityDelete}
+            />
+          )}
+        </>
+      )}
+
+      {tab === 'matchTeams' && (
+        <>
+          <h1 className="mb-4 text-2xl font-bold">Equipos</h1>
+          <MatchTeamForm
+            key={matchTeamEditing?.id ?? 'new'}
+            matchTeamEditing={matchTeamEditing}
+            onSubmit={handleMatchTeamSubmit}
+            onCancel={() => setMatchTeamEditing(null)}
+          />
+          {loading && <p className="text-gray-500">Cargando equipos...</p>}
+          {error && <p className="text-red-600">{error}</p>}
+          {!loading && !error && (
+            <MatchTeamList
+              matchTeams={matchTeams}
+              onEdit={setMatchTeamEditing}
+              onDelete={handleMatchTeamDelete}
             />
           )}
         </>
