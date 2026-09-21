@@ -16,6 +16,8 @@ import MatchTeamList from './components/MatchTeamList';
 import MatchTeamForm from './components/MatchTeamForm';
 import TeamPositionList from './components/TeamPositionList';
 import TeamPositionForm from './components/TeamPositionForm';
+import FriendRequestList from './components/FriendRequestList';
+import FriendRequestForm from './components/FriendRequestForm';
 import { getFields, createField, updateField, deleteField } from './api/field';
 import { getMatches, createMatch, updateMatch, deleteMatch } from './api/match';
 import {
@@ -49,6 +51,12 @@ import {
   updateTeamPosition,
   deleteTeamPosition,
 } from './api/team-position';
+import {
+  getFriendRequests,
+  createFriendRequest,
+  updateFriendRequestStatus,
+  deleteFriendRequest,
+} from './api/friend-request';
 import type { Field, FieldInput } from './types/field';
 import type { Match, MatchInput } from './types/match';
 import type { Notification, NotificationInput } from './types/notification';
@@ -57,6 +65,7 @@ import type { User, UserInput } from './types/user';
 import type { Locality, LocalityInput } from './types/locality';
 import type { MatchTeam, MatchTeamInput } from './types/match-team';
 import type { TeamPosition, TeamPositionInput } from './types/team-position';
+import type { FriendRequest, FriendRequestInput } from './types/friend-request';
 
 type Tab =
   | 'fields'
@@ -66,7 +75,8 @@ type Tab =
   | 'users'
   | 'localities'
   | 'matchTeams'
-  | 'teamPositions';
+  | 'teamPositions'
+  | 'friendRequests';
 
 function App() {
   const [tab, setTab] = useState<Tab>('fields');
@@ -96,6 +106,8 @@ function App() {
   const [teamPositions, setTeamPositions] = useState<TeamPosition[]>([]);
   const [teamPositionEditing, setTeamPositionEditing] =
     useState<TeamPosition | null>(null);
+
+  const [friendRequests, setFriendRequests] = useState<FriendRequest[]>([]);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -212,6 +224,20 @@ function App() {
     }
   }
 
+  async function loadFriendRequests() {
+    try {
+      setLoading(true);
+      const data = await getFriendRequests();
+      setFriendRequests(data);
+      setError(null);
+    } catch (err) {
+      console.error(err);
+      setError('Could not connect to the server. Is the backend running?');
+    } finally {
+      setLoading(false);
+    }
+  }
+
   useEffect(() => {
     if (tab === 'fields') {
       // eslint-disable-next-line react-hooks/set-state-in-effect -- valid initial fetch, rule false positive
@@ -228,8 +254,10 @@ function App() {
       loadLocalities();
     } else if (tab === 'matchTeams') {
       loadMatchTeams();
-    } else {
+    } else if (tab === 'teamPositions') {
       loadTeamPositions();
+    } else {
+      loadFriendRequests();
     }
   }, [tab]);
 
@@ -535,6 +563,54 @@ function App() {
     }
   }
 
+  async function handleFriendRequestSubmit(data: FriendRequestInput) {
+    try {
+      await createFriendRequest(data);
+      await loadFriendRequests();
+    } catch (err) {
+      console.error(err);
+      if (axios.isAxiosError(err)) {
+        const mensaje = err.response?.data?.mensaje;
+        if (mensaje) {
+          alert(mensaje);
+          return;
+        }
+      }
+      alert('An error occurred while creating the friend request.');
+    }
+  }
+
+  async function handleFriendRequestAccept(id: number) {
+    try {
+      await updateFriendRequestStatus(id, 'accepted');
+      await loadFriendRequests();
+    } catch (err) {
+      console.error(err);
+      alert('An error occurred while accepting the request.');
+    }
+  }
+
+  async function handleFriendRequestReject(id: number) {
+    try {
+      await updateFriendRequestStatus(id, 'rejected');
+      await loadFriendRequests();
+    } catch (err) {
+      console.error(err);
+      alert('An error occurred while rejecting the request.');
+    }
+  }
+
+  async function handleFriendRequestDelete(id: number) {
+    if (!confirm('Are you sure you want to delete this request?')) return;
+    try {
+      await deleteFriendRequest(id);
+      await loadFriendRequests();
+    } catch (err) {
+      console.error(err);
+      alert('An error occurred while deleting the request.');
+    }
+  }
+
   return (
     <div className="mx-auto max-w-2xl p-4">
       <div className="mb-4 flex flex-wrap gap-2">
@@ -585,6 +661,12 @@ function App() {
           className={`rounded px-3 py-1 ${tab === 'teamPositions' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
         >
           Posiciones
+        </button>
+        <button
+          onClick={() => setTab('friendRequests')}
+          className={`rounded px-3 py-1 ${tab === 'friendRequests' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+        >
+          Amigos
         </button>
       </div>
 
@@ -751,6 +833,23 @@ function App() {
               teamPositions={teamPositions}
               onEdit={setTeamPositionEditing}
               onDelete={handleTeamPositionDelete}
+            />
+          )}
+        </>
+      )}
+
+      {tab === 'friendRequests' && (
+        <>
+          <h1 className="mb-4 text-2xl font-bold">Amigos</h1>
+          <FriendRequestForm onSubmit={handleFriendRequestSubmit} />
+          {loading && <p className="text-gray-500">Cargando solicitudes...</p>}
+          {error && <p className="text-red-600">{error}</p>}
+          {!loading && !error && (
+            <FriendRequestList
+              friendRequests={friendRequests}
+              onAccept={handleFriendRequestAccept}
+              onReject={handleFriendRequestReject}
+              onDelete={handleFriendRequestDelete}
             />
           )}
         </>
