@@ -1,3 +1,4 @@
+import type { TeamPosition } from './team-position';
 export interface MatchTeam {
   id: number;
   name: string;
@@ -7,7 +8,7 @@ export interface MatchTeam {
     id: number;
     name: string;
   };
-  positions?: unknown[];
+  positions?: TeamPosition[];
 }
 
 export type MatchTeamInput = {

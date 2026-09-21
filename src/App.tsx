@@ -14,6 +14,8 @@ import LocalityList from './components/LocalityList';
 import LocalityForm from './components/LocalityForm';
 import MatchTeamList from './components/MatchTeamList';
 import MatchTeamForm from './components/MatchTeamForm';
+import TeamPositionList from './components/TeamPositionList';
+import TeamPositionForm from './components/TeamPositionForm';
 import { getFields, createField, updateField, deleteField } from './api/field';
 import { getMatches, createMatch, updateMatch, deleteMatch } from './api/match';
 import {
@@ -41,6 +43,12 @@ import {
   updateMatchTeam,
   deleteMatchTeam,
 } from './api/match-team';
+import {
+  getTeamPositions,
+  createTeamPosition,
+  updateTeamPosition,
+  deleteTeamPosition,
+} from './api/team-position';
 import type { Field, FieldInput } from './types/field';
 import type { Match, MatchInput } from './types/match';
 import type { Notification, NotificationInput } from './types/notification';
@@ -48,6 +56,7 @@ import type { Rating, RatingInput } from './types/rating';
 import type { User, UserInput } from './types/user';
 import type { Locality, LocalityInput } from './types/locality';
 import type { MatchTeam, MatchTeamInput } from './types/match-team';
+import type { TeamPosition, TeamPositionInput } from './types/team-position';
 
 type Tab =
   | 'fields'
@@ -56,7 +65,8 @@ type Tab =
   | 'ratings'
   | 'users'
   | 'localities'
-  | 'matchTeams';
+  | 'matchTeams'
+  | 'teamPositions';
 
 function App() {
   const [tab, setTab] = useState<Tab>('fields');
@@ -82,6 +92,10 @@ function App() {
   const [matchTeamEditing, setMatchTeamEditing] = useState<MatchTeam | null>(
     null,
   );
+
+  const [teamPositions, setTeamPositions] = useState<TeamPosition[]>([]);
+  const [teamPositionEditing, setTeamPositionEditing] =
+    useState<TeamPosition | null>(null);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -184,6 +198,20 @@ function App() {
     }
   }
 
+  async function loadTeamPositions() {
+    try {
+      setLoading(true);
+      const data = await getTeamPositions();
+      setTeamPositions(data);
+      setError(null);
+    } catch (err) {
+      console.error(err);
+      setError('Could not connect to the server. Is the backend running?');
+    } finally {
+      setLoading(false);
+    }
+  }
+
   useEffect(() => {
     if (tab === 'fields') {
       // eslint-disable-next-line react-hooks/set-state-in-effect -- valid initial fetch, rule false positive
@@ -198,8 +226,10 @@ function App() {
       loadUsers();
     } else if (tab === 'localities') {
       loadLocalities();
-    } else {
+    } else if (tab === 'matchTeams') {
       loadMatchTeams();
+    } else {
+      loadTeamPositions();
     }
   }, [tab]);
 
@@ -458,6 +488,53 @@ function App() {
     }
   }
 
+  async function handleTeamPositionCreate(data: TeamPositionInput) {
+    try {
+      await createTeamPosition(data);
+      await loadTeamPositions();
+    } catch (err) {
+      console.error(err);
+      if (axios.isAxiosError(err)) {
+        const mensaje = err.response?.data?.mensaje;
+        if (mensaje) {
+          alert(mensaje);
+          return;
+        }
+      }
+      alert('An error occurred while creating the position.');
+    }
+  }
+
+  async function handleTeamPositionUpdate(
+    data: Partial<{
+      status: string;
+      role: string;
+      occupantId: number;
+      requesterId: number;
+    }>,
+  ) {
+    if (!teamPositionEditing) return;
+    try {
+      await updateTeamPosition(teamPositionEditing.id, data);
+      setTeamPositionEditing(null);
+      await loadTeamPositions();
+    } catch (err) {
+      console.error(err);
+      alert('An error occurred while updating the position.');
+    }
+  }
+
+  async function handleTeamPositionDelete(id: number) {
+    if (!confirm('Are you sure you want to delete this position?')) return;
+    try {
+      await deleteTeamPosition(id);
+      await loadTeamPositions();
+    } catch (err) {
+      console.error(err);
+      alert('An error occurred while deleting the position.');
+    }
+  }
+
   return (
     <div className="mx-auto max-w-2xl p-4">
       <div className="mb-4 flex flex-wrap gap-2">
@@ -502,6 +579,12 @@ function App() {
           className={`rounded px-3 py-1 ${tab === 'matchTeams' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
         >
           Equipos
+        </button>
+        <button
+          onClick={() => setTab('teamPositions')}
+          className={`rounded px-3 py-1 ${tab === 'teamPositions' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+        >
+          Posiciones
         </button>
       </div>
 
@@ -646,6 +729,28 @@ function App() {
               matchTeams={matchTeams}
               onEdit={setMatchTeamEditing}
               onDelete={handleMatchTeamDelete}
+            />
+          )}
+        </>
+      )}
+
+      {tab === 'teamPositions' && (
+        <>
+          <h1 className="mb-4 text-2xl font-bold">Posiciones</h1>
+          <TeamPositionForm
+            key={teamPositionEditing?.id ?? 'new'}
+            teamPositionEditing={teamPositionEditing}
+            onCreate={handleTeamPositionCreate}
+            onUpdate={handleTeamPositionUpdate}
+            onCancel={() => setTeamPositionEditing(null)}
+          />
+          {loading && <p className="text-gray-500">Cargando posiciones...</p>}
+          {error && <p className="text-red-600">{error}</p>}
+          {!loading && !error && (
+            <TeamPositionList
+              teamPositions={teamPositions}
+              onEdit={setTeamPositionEditing}
+              onDelete={handleTeamPositionDelete}
             />
           )}
         </>
