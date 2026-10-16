@@ -2,59 +2,70 @@ import { Link } from "react-router-dom";
 
 export default function Home() {
   return (
-    <div className="flex h-screen bg-green-700 relative">
+    /* Todo el fondo de la pantalla es únicamente el césped */
+    <div
+      className="min-h-screen w-full bg-cover bg-center flex items-center justify-center p-4 sm:p-6"
+      style={{
+        backgroundImage: "url('/images/Grass.jpg')",
+      }}
+    >
+      {/* Tarjeta blanca flotando directamente sobre el césped */}
+      <main className="w-full max-w-sm bg-white rounded-2xl shadow-2xl p-8 flex flex-col items-center text-center relative overflow-hidden border border-gray-100">
 
-      {/* Franja de césped izquierda */}
-      <div
-        className="w-24 md:w-48 bg-cover bg-center shrink-0"
-        style={{
-          backgroundImage: "url('/images/Grass.jpg')",
-        }}
-      ></div>
+        {/* Imagen de la cancha (Field.png) de fondo dentro de la tarjeta blanca */}
+        <div 
+          className="absolute inset-0 opacity-10 bg-center bg-no-repeat bg-contain pointer-events-none"
+          style={{
+            backgroundImage: "url('/images/Field.png')",
+          }}
+        ></div>
 
-      {/* Contenido central */}
-      <div className="flex-1 flex items-center justify-center">
-        {/* Cuadro blanco central */}
-        <div className="bg-white shadow-lg rounded-lg p-8 flex flex-col items-center gap-6 w-11/12 md:w-1/2 lg:w-1/3">
+        <div className="w-full flex flex-col items-center text-center relative z-10">
 
-          {/* Logo FUTGO */}
-          <h1 className="text-4xl font-bold flex items-center gap-2">
-            FUTG
-            <span className="relative inline-block">
-              {/* Pelota de fútbol */}
-              <span className="w-10 h-10 bg-black rounded-full inline-block"></span>
+          {/* Logo: pelota con fuego */}
+          <img
+            src="/images/Ball.png"
+            alt="Pelota de fútbol con fuego"
+            className="w-44 sm:w-52 h-auto object-contain"
+          />
 
-              {/* Cola de fuego estilo cometa */}
-              <span className="absolute -right-6 top-2 w-12 h-2 bg-linear-to-r from-red-500 via-orange-400 to-yellow-300 rounded-full"></span>
-            </span>
+          {/* Nombre de la aplicación */}
+          <h1 className="text-4xl md:text-5xl font-black italic tracking-tight text-[#1B4D3E] mt-2">
+            FUTGO
           </h1>
 
-          {/* Botones */}
-          <div className="flex flex-col md:flex-row gap-4 w-full justify-center">
-            <Link to="/login" className="flex-1">
-              <button className="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+          {/* Eslogan */}
+          <p className="mt-3 text-sm sm:text-base text-gray-500 font-medium">
+            Encontrá, jugá y disfrutá el fútbol en tu ciudad
+          </p>
+
+          {/* Botones Redondeados */}
+          <div className="mt-8 flex flex-col gap-3.5 w-full">
+
+            <Link to="/login" className="w-full">
+              <button
+                className="w-full bg-[#1B4D3E] text-white font-semibold
+                px-6 py-3.5 rounded-xl hover:bg-[#14382d]
+                transition-colors shadow-sm"
+              >
                 Iniciar sesión
               </button>
             </Link>
 
-            <Link to="/register" className="flex-1">
-              <button className="w-full bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+            <Link to="/register" className="w-full">
+              <button
+                className="w-full bg-transparent border-2 border-[#1B4D3E] text-[#1B4D3E] font-semibold
+                px-6 py-3.5 rounded-xl hover:bg-[#1B4D3E]/5
+                transition-colors shadow-sm"
+              >
                 Registrarse
               </button>
             </Link>
+
           </div>
 
         </div>
-      </div>
-
-      {/* Franja de césped derecha */}
-      <div
-        className="w-24 md:w-48 bg-cover bg-center shrink-0"
-        style={{
-          backgroundImage: "url('/images/Grass.jpg')",
-        }}
-      ></div>
-
+      </main>
     </div>
   );
 }
