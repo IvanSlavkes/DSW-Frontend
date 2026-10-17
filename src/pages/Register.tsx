@@ -1,5 +1,5 @@
-// src/pages/Register.tsx
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import axios, { AxiosError } from "axios";
 
 export default function Register() {
@@ -9,8 +9,10 @@ export default function Register() {
   const [password, setPassword] = useState("");
   const [position, setPosition] = useState("");
   const [birthDate, setBirthDate] = useState("");
+  const navigate = useNavigate();
 
-  const handleRegister = async () => {
+  const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     try {
       const res = await axios.post("http://localhost:3000/auth/register", {
         name,
@@ -18,9 +20,10 @@ export default function Register() {
         email,
         password,
         position,
-        birthDate, // formato YYYY-MM-DD
+        birthDate,
       });
       alert(res.data.message);
+      navigate("/login");
     } catch (error) {
       const err = error as AxiosError<{ error: string }>;
       alert(err.response?.data?.error || "Error al registrarse");
@@ -28,68 +31,120 @@ export default function Register() {
   };
 
   return (
-    <div className="flex flex-col gap-4 p-6 max-w-md mx-auto">
-      <h1 className="text-2xl font-bold text-center">Registro</h1>
+    <div
+      className="min-h-screen w-full bg-cover bg-center flex items-center justify-center p-4 sm:p-6"
+      style={{
+        backgroundImage: "url('/images/Grass.jpg')",
+      }}
+    >
+      <main className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-8 flex flex-col items-center text-center relative overflow-hidden border border-gray-100">
 
-      <input
-        type="text"
-        placeholder="Nombre"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        className="border p-2 rounded"
-      />
+        <div 
+          className="absolute inset-0 opacity-10 bg-center bg-no-repeat bg-contain pointer-events-none"
+          style={{
+            backgroundImage: "url('/images/Field.jpg')",
+          }}
+        ></div>
 
-      <input
-        type="text"
-        placeholder="Apellido"
-        value={lastName}
-        onChange={(e) => setLastName(e.target.value)}
-        className="border p-2 rounded"
-      />
+        <div className="w-full flex flex-col items-center text-center relative z-10">
 
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        className="border p-2 rounded"
-      />
+          <img
+            src="/images/Ball.png"
+            alt="Pelota de fútbol con fuego"
+            className="w-24 sm:w-28 h-auto object-contain mb-1"
+          />
 
-      <input
-        type="password"
-        placeholder="Contraseña"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        className="border p-2 rounded"
-      />
+          <h1 className="text-3xl font-black italic tracking-tight text-[#1B4D3E]">
+            REGISTRO
+          </h1>
 
-      {/* Menú desplegable para posición */}
-      <select
-        value={position}
-        onChange={(e) => setPosition(e.target.value)}
-        className="border p-2 rounded"
-      >
-        <option value="">Seleccionar posición</option>
-        <option value="delantero">Delantero</option>
-        <option value="centrocampista">Centrocampista</option>
-        <option value="defensor">Defensor</option>
-        <option value="arquero">Arquero</option>
-      </select>
+          <p className="mt-1 text-xs sm:text-sm text-gray-500 font-medium mb-6">
+            Creá tu cuenta para unirte a FutGO
+          </p>
 
-      <input
-        type="date"
-        placeholder="Fecha de nacimiento"
-        value={birthDate}
-        onChange={(e) => setBirthDate(e.target.value)}
-        className="border p-2 rounded"
-      />
+          <form onSubmit={handleRegister} className="w-full flex flex-col gap-3">
+            <input
+              type="text"
+              placeholder="Nombre"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+              className="w-full px-4 py-3 text-sm rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#1B4D3E] bg-gray-50/50 text-gray-900 font-medium placeholder-gray-500"
+            />
 
-      <button
-        onClick={handleRegister}
-        className="bg-green-500 text-white p-2 rounded"
-      >
-        Registrarse
-      </button>
+            <input
+              type="text"
+              placeholder="Apellido"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              required
+              className="w-full px-4 py-3 text-sm rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#1B4D3E] bg-gray-50/50 text-gray-900 font-medium placeholder-gray-500"
+            />
+
+            <input
+              type="email"
+              placeholder="Correo electrónico"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="w-full px-4 py-3 text-sm rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#1B4D3E] bg-gray-50/50 text-gray-900 font-medium placeholder-gray-500"
+            />
+
+            <input
+              type="password"
+              placeholder="Contraseña"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="w-full px-4 py-3 text-sm rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#1B4D3E] bg-gray-50/50 text-gray-900 font-medium placeholder-gray-500"
+            />
+
+            {/* Selector de posición estandarizado con el color de texto correcto */}
+            <select
+              value={position}
+              onChange={(e) => setPosition(e.target.value)}
+              required
+              className={`w-full px-4 py-3 text-sm rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#1B4D3E] bg-gray-50/50 font-medium ${
+                position === "" ? "text-gray-500" : "text-gray-900"
+              }`}
+            >
+              <option value="" disabled className="text-gray-400">Seleccionar posición</option>
+              <option value="delantero" className="text-gray-900">Delantero</option>
+              <option value="centrocampista" className="text-gray-900">Centrocampista</option>
+              <option value="defensor" className="text-gray-900">Defensor</option>
+              <option value="arquero" className="text-gray-900">Arquero</option>
+            </select>
+
+            {/* Input de fecha con el texto sincronizado al mismo color oscuro */}
+            <input
+              type="date"
+              value={birthDate}
+              onChange={(e) => setBirthDate(e.target.value)}
+              required
+              className={`w-full px-4 py-3 text-sm rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#1B4D3E] bg-gray-50/50 font-medium ${
+                birthDate === "" ? "text-gray-500" : "text-gray-900"
+              }`}
+            />
+
+            <button
+              type="submit"
+              className="w-full bg-[#1B4D3E] text-white font-semibold
+              px-6 py-3.5 rounded-xl hover:bg-[#14382d]
+              transition-colors shadow-sm mt-2"
+            >
+              Registrarse
+            </button>
+          </form>
+
+          <div className="mt-5 text-sm text-gray-500">
+            ¿Ya tenés cuenta?{" "}
+            <Link to="/login" className="text-[#1B4D3E] font-semibold hover:underline">
+              Iniciar sesión
+            </Link>
+          </div>
+
+        </div>
+      </main>
     </div>
   );
 }

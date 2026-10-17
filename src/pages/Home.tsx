@@ -48,7 +48,7 @@ export default function Home() {
                 px-6 py-3.5 rounded-xl hover:bg-[#14382d]
                 transition-colors shadow-sm"
               >
-                Iniciar sesión
+                Iniciar Sesión
               </button>
             </Link>
 
