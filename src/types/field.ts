@@ -3,7 +3,6 @@ export interface Field {
   name: string;
   address: string;
   type: string;
-  locationId: string;
   localityId: string;
 }
 

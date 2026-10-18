@@ -11,7 +11,6 @@ const empty: FieldInput = {
   name: '',
   address: '',
   type: '',
-  locationId: '',
   localityId: '',
 };
 
@@ -74,21 +73,21 @@ export default function FieldForm({ fieldEditing, onSubmit, onCancel }: Props) {
         <option value="11">11</option>
       </select>
       <input
-        name="locationId"
-        value={form.locationId}
+        name="localityId"
+        value={form.localityId}
         onChange={handleChange}
         placeholder="ID Localidad"
         className="rounded border border-gray-300 px-3 py-2"
         required
       />
-      <input
+      {/* <input
         name="localityId"
         value={form.localityId}
         onChange={handleChange}
         placeholder="ID Ubicación (legado)" //DEBERIAMOS SACARLO DEL BACK, YA QUE ES OBLIGATORIO
         className="rounded border border-gray-300 px-3 py-2"
         required
-      />
+      /> */}
 
       <div className="flex gap-2">
         <button
