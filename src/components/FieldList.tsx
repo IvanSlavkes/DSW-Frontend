@@ -16,13 +16,12 @@ export default function FieldList({ fields, onEdit, onDelete }: Props) {
       {fields.map((field) => (
         <div
           key={field.id}
-          className="rounded-lg border border-gray-200 p-4 shadow-sm"
-        >
+          className="rounded-lg border border-gray-200 p-4 shadow-sm">
           <h3 className="text-lg font-semibold">{field.name}</h3>
           <p className="text-sm text-gray-600">{field.address}</p>
-          <p className="text-sm text-gray-600">Type: {field.type}</p>
+          <p className="text-sm text-gray-600">Fútbol {field.type}</p>
           <p className="text-sm text-gray-600">
-            Localidad ID: {field.localityId}
+            Localidad: {field.locality?.nombre ?? field.localityId}
           </p>
           <div className="mt-3 flex gap-2">
             <button
