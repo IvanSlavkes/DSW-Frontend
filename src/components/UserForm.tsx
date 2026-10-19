@@ -19,6 +19,7 @@ const empty: UserInput = {
 };
 
 export default function UserForm({ userEditing, onSubmit, onCancel }: Props) {
+  // Inicializamos el estado una sola vez basándonos en userEditing
   const [form, setForm] = useState<UserInput>(() => {
     if (userEditing) {
       return {
@@ -28,7 +29,7 @@ export default function UserForm({ userEditing, onSubmit, onCancel }: Props) {
         password: '',
         description: userEditing.description ?? '',
         position: userEditing.position,
-        birthDate: userEditing.birthDate.slice(0, 10),
+        birthDate: userEditing.birthDate ? userEditing.birthDate.slice(0, 10) : '',
         localityId: userEditing.localityId,
       };
     }
@@ -44,7 +45,9 @@ export default function UserForm({ userEditing, onSubmit, onCancel }: Props) {
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     onSubmit(form);
-    setForm(empty);
+    if (!userEditing) {
+      setForm(empty);
+    }
   }
 
   return (
