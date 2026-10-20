@@ -1,90 +1,63 @@
-
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 export default function Sidebar() {
-  const [menuOpen, setMenuOpen] = useState(true);
+  const location = useLocation();
   const navigate = useNavigate();
 
-  const cerrarSesion = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
-  };
-
-  const opciones = [
-    { nombre: "Inicio", ruta: "/dashboard", icono: "⌂" },
-    { nombre: "Partidos", ruta: "/matches", icono: "⚽" },
-    { nombre: "Crear partido", ruta: "/matches/create", icono: "+" },
-    { nombre: "Notificaciones", ruta: "/notifications", icono: "♧" },
-    { nombre: "Mi perfil", ruta: "/profile", icono: "♙" },
+  const menuItems = [
+    { label: "Inicio", path: "/dashboard", icon: "🏠" },
+    { label: "Partidos", path: "/matches", icon: "🏟️" },
+    { label: "Notificaciones", path: "/notifications", icon: "🔔" },
+    { label: "Crear partido", path: "/matches/create", icon: "➕" },
   ];
 
   return (
-    <aside className="w-64 min-h-screen shrink-0 bg-[#123D30] text-white flex flex-col p-5">
-      {/* Logo y nombre */}
-      <Link
-        to="/dashboard"
-        className="flex items-center gap-3 mb-8"
-      >
-        <img
-          src="/images/Ball.png"
-          alt="Logo FUTGO"
-          className="w-14 h-14 object-contain"
-        />
+    <aside
+      className="flex h-[50vh] w-64 shrink-0 flex-col
+      bg-[linear-gradient(to_bottom,#073B2E_0%,#073B2E_90%,rgba(7,59,46,0.85)_95%,rgba(7,59,46,0.35)_100%)]
+      text-white shadow-xl"
+    >
+      {/* Opciones del menú */}
+      <nav className="mt-6 flex flex-col gap-2 px-4">
+        {menuItems.map((item) => {
+          const active =
+            location.pathname === item.path ||
+            (item.path !== "/dashboard" &&
+              location.pathname.startsWith(item.path + "/"));
 
-        <span className="text-2xl font-black italic tracking-wide">
-          FUTGO
-        </span>
-      </Link>
-
-      {/* Botón desplegable */}
-      <button
-        type="button"
-        onClick={() => setMenuOpen(!menuOpen)}
-        aria-expanded={menuOpen}
-        className="w-full flex items-center justify-between gap-3 rounded-xl bg-[#205744] hover:bg-[#286b53] px-4 py-3 transition-colors"
-      >
-        <span className="flex items-center gap-3 font-semibold">
-          <span className="text-xl">☰</span>
-          Menú
-        </span>
-
-        <span
-          className={`transition-transform ${
-            menuOpen ? "rotate-180" : ""
-          }`}
-        >
-          ▼
-        </span>
-      </button>
-
-      {/* Opciones desplegables */}
-      {menuOpen && (
-        <nav className="mt-3 flex flex-col gap-2">
-          {opciones.map((opcion) => (
+          return (
             <Link
-              key={opcion.ruta}
-              to={opcion.ruta}
-              className="flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium hover:bg-[#205744] transition-colors"
+              key={item.path}
+              to={item.path}
+              className={`flex items-center gap-3 rounded-xl px-4 py-3 transition-colors duration-200 ${
+                active
+                  ? "bg-green-600 font-bold text-white shadow-md"
+                  : "text-white/90 hover:bg-white/10 hover:text-white"
+              }`}
             >
-              <span className="w-6 text-center text-lg">
-                {opcion.icono}
-              </span>
-              {opcion.nombre}
+              <span className="text-xl">{item.icon}</span>
+              <span>{item.label}</span>
             </Link>
-          ))}
-        </nav>
-      )}
+          );
+        })}
+      </nav>
 
-      {/* Cerrar sesión abajo */}
-      <button
-        type="button"
-        onClick={cerrarSesion}
-        className="mt-auto flex items-center gap-3 rounded-lg px-4 py-3 text-left text-sm hover:bg-red-900/40 transition-colors"
-      >
-        <span className="text-lg">↪</span>
-        Cerrar sesión
-      </button>
+      {/* Cerrar sesión al final del sidebar */}
+      <div className="mt-auto px-4 pb-4 pt-4">
+        <div className="mb-3 border-t border-white/15" />
+
+        <button
+          type="button"
+          onClick={() => {
+            localStorage.removeItem("token");
+            navigate("/login");
+          }}
+          className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-white/90 transition-colors duration-200 hover:bg-red-500/20 hover:text-white"
+        >
+          <span className="text-xl">⏻</span>
+          <span>Cerrar sesión</span>
+        </button>
+      </div>
     </aside>
   );
 }
