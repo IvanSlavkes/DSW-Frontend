@@ -2,7 +2,7 @@ import api from './client';
 import type { Locality, LocalityInput } from '../types/locality';
 
 export async function getLocalities(): Promise<Locality[]> {
-  const res = await api.get<Locality[]>('/localities');
+  const res = await api.get<Locality[]>("/localities");
   return res.data;
 }
 

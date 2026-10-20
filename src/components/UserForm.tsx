@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import type { User, UserInput } from '../types/user';
+import LocalitySelect from './LocalitySelect';
+import PositionSelect from './PositionSelect';
 
 interface Props {
   userEditing: User | null;
@@ -111,14 +113,11 @@ export default function UserForm({ userEditing, onSubmit, onCancel }: Props) {
         </div>
       </div>
 
-      <input
-        name="position"
-        value={form.position}
-        onChange={handleChange}
-        placeholder="Posición (ej. Delantero)"
-        className="rounded border border-gray-300 px-3 py-2"
-        required
-      />
+      <PositionSelect
+       value={form.position} 
+       onChange={(position) => setForm((prev) => ({ ...prev, position }))} 
+       className="rounded border border-gray-300 px-3 py-2" />
+       
       <input
         name="birthDate"
         type="date"
@@ -127,13 +126,9 @@ export default function UserForm({ userEditing, onSubmit, onCancel }: Props) {
         className="rounded border border-gray-300 px-3 py-2"
         required
       />
-      <input
-        name="localityId"
-        value={form.localityId}
-        onChange={handleChange}
-        placeholder="ID Localidad"
-        className="rounded border border-gray-300 px-3 py-2"
-        required
+      <LocalitySelect 
+        localityId={form.localityId} 
+        onChange={(localityId) => setForm((prev) => ({ ...prev, localityId }))} 
       />
       <input
         name="description"
