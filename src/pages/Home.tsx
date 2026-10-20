@@ -4,7 +4,7 @@ export default function Home() {
   return (
     /* Todo el fondo de la pantalla es únicamente el césped */
     <div
-      className="min-h-screen w-full bg-cover bg-center flex items-center justify-center p-4 sm:p-6"
+      className="h-dvh w-full bg-cover bg-center flex items-center justify-center p-4 sm:p-6"
       style={{
         backgroundImage: "url('/images/Grass.jpg')",
       }}

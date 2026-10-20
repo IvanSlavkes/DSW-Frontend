@@ -29,7 +29,7 @@ export default function Login() {
 
   return (
     <div
-      className="min-h-screen w-full bg-cover bg-center flex items-center justify-start pl-16 sm:pl-36 lg:pl-56 p-4 sm:p-6"
+      className="h-dvh w-full overflow-hidden bg-cover bg-center flex items-center justify-center p-4 md:justify-start md:p-6 md:pl-36 lg:pl-56"
       style={{
         backgroundImage: "url('/images/Login.png')",
       }}

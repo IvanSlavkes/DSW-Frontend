@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios, { AxiosError } from "axios";
+import PositionSelect from "../components/PositionSelect";
+// import LocalitySelect from "../components/LocalitySelect";
+
+const fieldBase = //Para no repetir el className en cada campo
+  "w-full px-4 py-3 text-sm rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#1B4D3E] bg-gray-50/50 font-medium";
 
 export default function Register() {
   const [name, setName] = useState("");
@@ -9,6 +14,7 @@ export default function Register() {
   const [password, setPassword] = useState("");
   const [position, setPosition] = useState("");
   const [birthDate, setBirthDate] = useState("");
+  // const [localityId, setLocalityId] = useState("");
   const navigate = useNavigate();
 
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -20,7 +26,8 @@ export default function Register() {
         email,
         password,
         position,
-        birthDate,
+        birthDate
+        // localityId
       });
       alert(res.data.message);
       navigate("/login");
@@ -32,7 +39,7 @@ export default function Register() {
 
   return (
     <div
-      className="min-h-screen w-full bg-cover bg-center flex items-center justify-center p-4 sm:p-6"
+      className="h-dvh w-full bg-cover bg-center flex items-center justify-center p-4 sm:p-6"
       style={{
         backgroundImage: "url('/images/Register.png')",
       }}
@@ -71,7 +78,7 @@ export default function Register() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
-                className="w-full px-4 py-3 text-sm rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#1B4D3E] bg-gray-50/50 text-gray-900 font-medium placeholder-gray-500"
+                className={ fieldBase }
               />
 
               <input
@@ -80,7 +87,7 @@ export default function Register() {
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
                 required
-                className="w-full px-4 py-3 text-sm rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#1B4D3E] bg-gray-50/50 text-gray-900 font-medium placeholder-gray-500"
+                className={ fieldBase }
               />
             </div>
 
@@ -90,7 +97,7 @@ export default function Register() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-4 py-3 text-sm rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#1B4D3E] bg-gray-50/50 text-gray-900 font-medium placeholder-gray-500"
+              className={ fieldBase }
             />
 
             <input
@@ -99,11 +106,11 @@ export default function Register() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full px-4 py-3 text-sm rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#1B4D3E] bg-gray-50/50 text-gray-900 font-medium placeholder-gray-500"
+              className={ fieldBase }
             />
 
             {/* Selector de posición */}
-            <select
+            {/* <select
               value={position}
               onChange={(e) => setPosition(e.target.value)}
               required
@@ -116,7 +123,12 @@ export default function Register() {
               <option value="centrocampista" className="text-gray-900">Centrocampista</option>
               <option value="defensor" className="text-gray-900">Defensor</option>
               <option value="arquero" className="text-gray-900">Arquero</option>
-            </select>
+            </select> */}
+
+            <PositionSelect 
+              value={position} 
+              onChange={setPosition} 
+              className={`${fieldBase} ${position === "" ? "text-gray-500" : "text-gray-900"}`} />
 
             {/* Input de fecha */}
             <input
