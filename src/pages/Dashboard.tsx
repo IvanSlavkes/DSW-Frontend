@@ -105,18 +105,25 @@ export default function Dashboard() {
       {/* Capa clara para mejorar la lectura */}
       <div className="flex min-h-screen w-full flex-col bg-[#1C2928]/25">
         <header
-          className="flex min-h-[76px] w-full items-center justify-between gap-4 bg-cover bg-center px-5 py-3 shadow-md md:px-8"
+          className="flex min-h-[60px] w-full items-center justify-between gap-4 bg-cover bg-center px-5 py-1 shadow-md md:px-8"
           style={{ backgroundImage: "linear-gradient(rgba(18, 35, 32, 0.3), rgba(18, 35, 32, 0.3)), url('/images/DashboardTexture.png')" }}
         >
-          <div className="flex items-center gap-3">
-            <img src="/images/Ball.png" alt="" className="h-14 w-14 object-contain" />
-            <span className="text-3xl font-black tracking-wide text-white">FutGO</span>
+          <div className="flex items-center gap-1">
+            <img src="/images/Ball.png" alt="" className="h-[52px] w-[52px] object-contain" />
+            <span className="text-xl font-black tracking-wide text-white">FutGO</span>
           </div>
-          <div className="max-w-44 text-right">
-            <p className="truncate font-semibold text-white">
-              {userEditing ? `${userEditing.name} ${userEditing.lastName}` : "Cargando usuario..."}
-            </p>
-            <p className="text-xs text-white/75">Mi cuenta</p>
+          <div className="flex items-center gap-3">
+            <svg viewBox="0 0 24 24" aria-hidden="true" className="h-4 w-4 shrink-0">
+              <circle cx="12" cy="12" r="11" fill="white" />
+              <circle cx="12" cy="8.5" r="3" fill="#1F2B24" />
+              <path d="M5.5 19a6.5 6.5 0 0 1 13 0" fill="#1F2B24" />
+            </svg>
+            <div className="max-w-44 text-right">
+              <p className="truncate font-semibold text-white">
+                {userEditing ? `${userEditing.name} ${userEditing.lastName}` : "Cargando usuario..."}
+              </p>
+              <p className="text-xs text-white/75">Mi cuenta</p>
+            </div>
           </div>
         </header>
         <div className="flex min-h-0 flex-1">
@@ -135,7 +142,7 @@ export default function Dashboard() {
                 }}
               >
                 <div className="relative z-10 max-w-xl">
-                  <div className="mb-4 h-1.5 w-12 rounded-full bg-green-400" />
+                  <div className="mb-4 h-[3px] w-12 rounded-full bg-green-400" />
 
                   <p className="mb-2 text-sm font-semibold uppercase tracking-[0.2em] text-green-200">
                     Tu próximo partido empieza acá
@@ -272,6 +279,9 @@ export default function Dashboard() {
     </div>
   );
 }
+
+
+
 
 
 

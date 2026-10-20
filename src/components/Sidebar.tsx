@@ -29,9 +29,10 @@ export default function Sidebar() {
 
   return (
     <aside
-      className="flex h-[50vh] w-64 shrink-0 flex-col bg-cover bg-center text-white shadow-xl"
+      className="flex h-[calc(100vh-60px)] w-64 shrink-0 flex-col bg-cover bg-center text-white shadow-xl"
       style={{
-        backgroundImage: "linear-gradient(to bottom, rgba(31, 43, 36, 0.78) 0%, rgba(31, 43, 36, 0.78) 90%, rgba(31, 43, 36, 0) 100%), url('/images/DashboardTexture.png')",
+        backgroundImage: "linear-gradient(to right, rgba(16, 30, 29, 0) 90%, rgba(16, 30, 29, 0.9) 100%), linear-gradient(to bottom, rgba(16, 30, 29, 0) 80%, rgba(16, 30, 29, 0.8) 100%), url('/images/DashboardTexture.png')",
+        backgroundSize: "100% 100%, 100% 100%, cover",
         backgroundColor: "#1F2B24",
       }}
     >
@@ -80,3 +81,5 @@ export default function Sidebar() {
     </aside>
   );
 }
+
+

@@ -12,7 +12,14 @@ export default function NotificationList({
   onDelete,
 }: Props) {
   if (notifications.length === 0) {
-    return <p className="text-white/70">No hay notificaciones todavia.</p>;
+    return (
+      <div className="flex min-h-40 flex-col items-center justify-center gap-3 py-5 text-center text-white/80">
+        <svg viewBox="0 0 24 24" aria-hidden="true" className="h-10 w-10" fill="none" stroke="currentColor" strokeWidth="1.6">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9m-8 12h4" />
+        </svg>
+        <p className="max-w-48 text-sm leading-5">No tenés notificaciones<br />por el momento</p>
+      </div>
+    );
   }
 
   return (
@@ -55,4 +62,5 @@ export default function NotificationList({
     </div>
   );
 }
+
 
