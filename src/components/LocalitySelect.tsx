@@ -13,7 +13,7 @@ interface Props {
   onChange: (localityId: string) => void;
 }
 
-export default function LocationSelect({ localityId, onChange }: Props) {
+export default function LocalitySelect({ localityId, onChange }: Props) {
   const [localities, setLocalities] = useState<Locality[]>([]);
 
   useEffect(() => {

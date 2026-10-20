@@ -1,5 +1,5 @@
 import { useState } from "react";
-import LocationSelect from "./LocalitySelect";
+import LocalitySelect from "./LocalitySelect";
 import type { Field, FieldInput } from "../types/field";
 
 interface Props {
@@ -64,7 +64,7 @@ export default function FieldForm({ fieldEditing, onSubmit, onCancel }: Props) {
         <option value="11">Fútbol 11</option>
       </select>
 
-      <LocationSelect localityId={localityId} onChange={setLocalityId} />
+      <LocalitySelect localityId={localityId} onChange={setLocalityId} />
 
       <div className="flex gap-2">
         <button type="submit" className="rounded bg-green-600 px-4 py-2 text-white hover:bg-green-700">
