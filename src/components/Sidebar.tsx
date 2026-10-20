@@ -1,23 +1,40 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
+const menuItems = [
+  {
+    label: "Inicio",
+    path: "/dashboard",
+    icon: <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8"><path strokeLinecap="round" strokeLinejoin="round" d="m3 10 9-7 9 7M5 9v12h14V9M9 21v-7h6v7" /></svg>,
+  },
+  {
+    label: "Partidos",
+    path: "/matches",
+    icon: <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="3" y="5" width="18" height="16" rx="2" /><path strokeLinecap="round" d="M7 3v4m10-4v4M3 10h18" /></svg>,
+  },
+  {
+    label: "Notificaciones",
+    path: "/notifications",
+    icon: <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8"><path strokeLinecap="round" strokeLinejoin="round" d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9m-8 12h4" /></svg>,
+  },
+  {
+    label: "Crear partido",
+    path: "/matches/create",
+    icon: <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8"><path strokeLinecap="round" d="M12 5v14M5 12h14" /></svg>,
+  },
+];
+
 export default function Sidebar() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const menuItems = [
-    { label: "Inicio", path: "/dashboard", icon: "🏠" },
-    { label: "Partidos", path: "/matches", icon: "🏟️" },
-    { label: "Notificaciones", path: "/notifications", icon: "🔔" },
-    { label: "Crear partido", path: "/matches/create", icon: "➕" },
-  ];
-
   return (
     <aside
-      className="flex h-[50vh] w-64 shrink-0 flex-col
-      bg-[linear-gradient(to_bottom,#073B2E_0%,#073B2E_90%,rgba(7,59,46,0.85)_95%,rgba(7,59,46,0.35)_100%)]
-      text-white shadow-xl"
+      className="flex h-[50vh] w-64 shrink-0 flex-col bg-cover bg-center text-white shadow-xl"
+      style={{
+        backgroundImage: "linear-gradient(to bottom, rgba(31, 43, 36, 0.78) 0%, rgba(31, 43, 36, 0.78) 90%, rgba(31, 43, 36, 0) 100%), url('/images/DashboardTexture.png')",
+        backgroundColor: "#1F2B24",
+      }}
     >
-      {/* Opciones del menú */}
       <nav className="mt-6 flex flex-col gap-2 px-4">
         {menuItems.map((item) => {
           const active =
@@ -26,35 +43,37 @@ export default function Sidebar() {
               location.pathname.startsWith(item.path + "/"));
 
           return (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={`flex items-center gap-3 rounded-xl px-4 py-3 transition-colors duration-200 ${
-                active
-                  ? "bg-green-600 font-bold text-white shadow-md"
-                  : "text-white/90 hover:bg-white/10 hover:text-white"
-              }`}
-            >
-              <span className="text-xl">{item.icon}</span>
-              <span>{item.label}</span>
-            </Link>
+            <div key={item.path}>
+              <Link
+                to={item.path}
+                className={`flex items-center gap-3 rounded-xl px-4 py-3 transition-colors duration-200 ${
+                  active
+                    ? "font-bold text-white"
+                    : "text-white/90 hover:bg-white/10 hover:text-white"
+                }`}
+              >
+                {item.icon}
+                <span>{item.label}</span>
+              </Link>
+              {item.path === "/dashboard" && (
+                <div className="mx-4 mt-2 border-t border-white/50" />
+              )}
+            </div>
           );
         })}
       </nav>
 
-      {/* Cerrar sesión al final del sidebar */}
       <div className="mt-auto px-4 pb-4 pt-4">
         <div className="mb-3 border-t border-white/15" />
-
         <button
           type="button"
           onClick={() => {
             localStorage.removeItem("token");
             navigate("/login");
           }}
-          className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-white/90 transition-colors duration-200 hover:bg-red-500/20 hover:text-white"
+          className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-white/90 transition-colors duration-200 hover:bg-white/10 hover:text-white"
         >
-          <span className="text-xl">⏻</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8"><path strokeLinecap="round" d="M12 3v9m6.36-6.36a9 9 0 1 1-12.72 0" /></svg>
           <span>Cerrar sesión</span>
         </button>
       </div>

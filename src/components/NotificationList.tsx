@@ -12,7 +12,7 @@ export default function NotificationList({
   onDelete,
 }: Props) {
   if (notifications.length === 0) {
-    return <p className="text-gray-500">No hay notificaciones todavia.</p>;
+    return <p className="text-white/70">No hay notificaciones todavia.</p>;
   }
 
   return (
@@ -21,17 +21,17 @@ export default function NotificationList({
         <div
           key={notification.id}
           className={`rounded-lg border p-4 shadow-sm ${
-            notification.read ? 'border-gray-200' : 'border-blue-400 bg-blue-50'
+            notification.read ? 'border-white/15' : 'border-white/30 bg-white/10'
           }`}
         >
-          <p className="text-xs uppercase text-gray-500">{notification.type}</p>
+          <p className="text-xs uppercase text-white/70">{notification.type}</p>
           <p className="text-sm">{notification.message}</p>
           {notification.match && (
-            <p className="mt-1 text-xs text-gray-600">
+            <p className="mt-1 text-xs text-white/70">
               Partido: {notification.match.name}
             </p>
           )}
-          <p className="mt-1 text-xs text-gray-500">
+          <p className="mt-1 text-xs text-white/70">
             {notification.read ? 'Leída' : 'No leída'}
           </p>
           <div className="mt-3 flex gap-2">
@@ -55,3 +55,4 @@ export default function NotificationList({
     </div>
   );
 }
+

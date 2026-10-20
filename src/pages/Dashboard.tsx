@@ -95,11 +95,6 @@ export default function Dashboard() {
     setShowUserForm(false);
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
-  };
-
   return (
     <div
       className="flex min-h-screen w-full bg-cover bg-center bg-fixed"
@@ -108,53 +103,25 @@ export default function Dashboard() {
       }}
     >
       {/* Capa clara para mejorar la lectura */}
-      <div className="flex min-h-screen w-full bg-white/25">
-        {/* Menú lateral */}
-        <Sidebar />
-
-        {/* Contenido principal */}
-        <div className="flex min-w-0 flex-1 flex-col">
-          {/* Encabezado */}
-          <header className="flex min-h-[76px] flex-wrap items-center justify-between gap-3 border-b border-white/40 bg-white/90 px-5 py-4 shadow-sm backdrop-blur-md md:px-8">
-            <div>
-              <h1 className="text-xl font-extrabold text-[#123F31] md:text-2xl">
-                {userEditing
-                  ? `¡Bienvenida, ${userEditing.name} ${userEditing.lastName}!`
-                  : "¡Bienvenida a FUTGO!"}
-              </h1>
-              <p className="mt-1 text-sm text-gray-600">
-                Encontrá, jugá y disfrutá el fútbol.
-              </p>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <img
-                src="/images/Ball.png"
-                alt="FUTGO"
-                className="h-11 w-11 object-contain"
-              />
-
-              <div className="max-w-44">
-                <p className="truncate font-semibold text-[#123F31]">
-                  {userEditing
-                    ? `${userEditing.name} ${userEditing.lastName}`
-                    : "Cargando usuario..."}
-                </p>
-                <p className="text-xs text-gray-500">
-                  Mi cuenta
-                </p>
-              </div>
-
-              <button
-                type="button"
-                onClick={handleLogout}
-                className="ml-2 rounded-lg px-3 py-2 text-sm font-semibold text-[#164D39] transition hover:bg-green-100"
-              >
-                Salir
-              </button>
-            </div>
-          </header>
-
+      <div className="flex min-h-screen w-full flex-col bg-[#1C2928]/25">
+        <header
+          className="flex min-h-[76px] w-full items-center justify-between gap-4 bg-cover bg-center px-5 py-3 shadow-md md:px-8"
+          style={{ backgroundImage: "linear-gradient(rgba(18, 35, 32, 0.3), rgba(18, 35, 32, 0.3)), url('/images/DashboardTexture.png')" }}
+        >
+          <div className="flex items-center gap-3">
+            <img src="/images/Ball.png" alt="" className="h-14 w-14 object-contain" />
+            <span className="text-3xl font-black tracking-wide text-white">FutGO</span>
+          </div>
+          <div className="max-w-44 text-right">
+            <p className="truncate font-semibold text-white">
+              {userEditing ? `${userEditing.name} ${userEditing.lastName}` : "Cargando usuario..."}
+            </p>
+            <p className="text-xs text-white/75">Mi cuenta</p>
+          </div>
+        </header>
+        <div className="flex min-h-0 flex-1">
+          <Sidebar />
+          <div className="flex min-w-0 flex-1 flex-col">
           {/* Paneles */}
           <main className="grid flex-1 grid-cols-1 content-start gap-5 p-4 sm:p-6 xl:grid-cols-[minmax(0,1.8fr)_minmax(280px,0.85fr)] xl:gap-6 xl:p-7">
             {/* Columna central */}
@@ -195,18 +162,18 @@ export default function Dashboard() {
               </section>
 
               {/* Próximos partidos */}
-              <section className="rounded-2xl border border-white/60 bg-white/95 p-5 shadow-lg backdrop-blur-sm sm:p-6">
+              <section className="rounded-2xl border border-white/15 bg-[#1C2928] p-5 text-white shadow-lg sm:p-6">
                 <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
                   <div>
-                    <h2 className="text-xl font-bold text-[#164D39]">
+                    <h2 className="text-xl font-bold text-white">
                       Mis próximos partidos
                     </h2>
-                    <p className="mt-1 text-sm text-gray-500">
+                    <p className="mt-1 text-sm text-white/70">
                       Organizá tus encuentros y revisá los detalles.
                     </p>
                   </div>
 
-                  <span className="rounded-full bg-green-100 px-3 py-1 text-sm font-bold text-green-800">
+                  <span className="rounded-full bg-white/10 px-3 py-1 text-sm font-bold text-white">
                     {matches.length} partidos
                   </span>
                 </div>
@@ -222,8 +189,8 @@ export default function Dashboard() {
             {/* Columna derecha */}
             <aside className="flex min-w-0 flex-col gap-5">
               {/* Perfil */}
-              <section className="rounded-2xl border border-white/60 bg-white/95 p-5 shadow-lg backdrop-blur-sm sm:p-6">
-                <h2 className="mb-5 text-lg font-bold text-[#164D39]">
+              <section className="rounded-2xl border border-white/15 bg-[#1C2928] p-5 text-white shadow-lg sm:p-6">
+                <h2 className="mb-5 text-lg font-bold text-white">
                   Mi perfil
                 </h2>
 
@@ -237,24 +204,24 @@ export default function Dashboard() {
                   </div>
 
                   <div className="min-w-0">
-                    <h3 className="truncate font-bold text-gray-900">
+                    <h3 className="truncate font-bold text-white">
                       {userEditing
                         ? `${userEditing.name} ${userEditing.lastName}`
                         : "Cargando perfil..."}
                     </h3>
 
-                    <p className="mt-1 text-sm text-gray-600">
+                    <p className="mt-1 text-sm text-white/75">
                       {userEditing?.position || "Jugador/a"}
                     </p>
 
-                    <p className="mt-1 truncate text-sm text-gray-500">
+                    <p className="mt-1 truncate text-sm text-white/65">
                       {userEditing?.email || ""}
                     </p>
                   </div>
                 </div>
 
                 {userEditing?.description && (
-                  <p className="mt-4 text-sm leading-6 text-gray-600">
+                  <p className="mt-4 text-sm leading-6 text-white/75">
                     {userEditing.description}
                   </p>
                 )}
@@ -262,13 +229,13 @@ export default function Dashboard() {
                 <button
                   type="button"
                   onClick={() => setShowUserForm((previous) => !previous)}
-                  className="mt-5 w-full rounded-lg bg-green-50 px-4 py-3 font-semibold text-[#164D39] transition hover:bg-green-100"
+                  className="mt-5 w-full rounded-lg bg-white/10 px-4 py-3 font-semibold text-white transition hover:bg-white/20"
                 >
                   {showUserForm ? "Cerrar edición" : "Editar perfil"}
                 </button>
 
                 {showUserForm && userEditing && (
-                  <div className="mt-5 border-t border-gray-200 pt-5">
+                  <div className="mt-5 border-t border-white/20 pt-5">
                     <UserForm
                       key={userEditing.id}
                       userEditing={userEditing}
@@ -280,9 +247,9 @@ export default function Dashboard() {
               </section>
 
               {/* Notificaciones */}
-              <section className="rounded-2xl border border-white/60 bg-white/95 p-5 shadow-lg backdrop-blur-sm sm:p-6">
+              <section className="rounded-2xl border border-white/15 bg-[#1C2928] p-5 text-white shadow-lg sm:p-6">
                 <div className="mb-5 flex items-center justify-between gap-2">
-                  <h2 className="text-lg font-bold text-[#164D39]">
+                  <h2 className="text-lg font-bold text-white">
                     Notificaciones
                   </h2>
 
@@ -299,9 +266,14 @@ export default function Dashboard() {
               </section>
             </aside>
           </main>
+          </div>
         </div>
       </div>
     </div>
   );
 }
+
+
+
+
 

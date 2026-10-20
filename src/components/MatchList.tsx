@@ -8,7 +8,7 @@ interface Props {
 
 export default function MatchList({ matches, onEdit, onDelete }: Props) {
   if (matches.length === 0) {
-    return <p className="text-gray-500">No hay partidos cargados todavia.</p>;
+    return <p className="text-white/70">No hay partidos cargados todavia.</p>;
   }
 
   return (
@@ -16,22 +16,22 @@ export default function MatchList({ matches, onEdit, onDelete }: Props) {
       {matches.map((match) => (
         <div
           key={match.id}
-          className="rounded-lg border border-gray-200 p-4 shadow-sm"
+          className="rounded-lg border border-white/15 p-4 shadow-sm"
         >
           <h3 className="text-lg font-semibold">{match.name}</h3>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-white/70">
             {match.date.slice(0, 10)} - {match.time}
           </p>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-white/70">
             Cancha: {match.field?.name ?? `#${match.fieldId}`}
           </p>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-white/70">
             Creador:{' '}
             {match.creator
               ? `${match.creator.name} ${match.creator.lastName}`
               : `#${match.creatorId}`}
           </p>
-          <p className="text-sm text-gray-600">Estado: {match.status}</p>
+          <p className="text-sm text-white/70">Estado: {match.status}</p>
           <div className="mt-3 flex gap-2">
             <button
               onClick={() => onEdit(match)}
@@ -51,3 +51,4 @@ export default function MatchList({ matches, onEdit, onDelete }: Props) {
     </div>
   );
 }
+

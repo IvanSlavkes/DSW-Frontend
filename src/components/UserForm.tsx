@@ -55,7 +55,7 @@ export default function UserForm({ userEditing, onSubmit, onCancel }: Props) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="mb-6 flex flex-col gap-3 rounded-lg border border-gray-200 p-4"
+      className="mb-6 flex flex-col gap-3 rounded-lg border border-white/20 p-4 text-white"
     >
       <h2 className="text-lg font-semibold">
         {userEditing ? 'Editar usuario' : 'Nuevo usuario'}
@@ -66,7 +66,7 @@ export default function UserForm({ userEditing, onSubmit, onCancel }: Props) {
         value={form.name}
         onChange={handleChange}
         placeholder="Nombre"
-        className="rounded border border-gray-300 px-3 py-2"
+        className="rounded border border-gray-300 bg-white px-3 py-2 text-gray-900"
         required
       />
       <input
@@ -74,7 +74,7 @@ export default function UserForm({ userEditing, onSubmit, onCancel }: Props) {
         value={form.lastName}
         onChange={handleChange}
         placeholder="Apellido"
-        className="rounded border border-gray-300 px-3 py-2"
+        className="rounded border border-gray-300 bg-white px-3 py-2 text-gray-900"
         required
       />
       <input
@@ -83,12 +83,12 @@ export default function UserForm({ userEditing, onSubmit, onCancel }: Props) {
         value={form.email}
         onChange={handleChange}
         placeholder="Email"
-        className="rounded border border-gray-300 px-3 py-2"
+        className="rounded border border-gray-300 bg-white px-3 py-2 text-gray-900"
         required
       />
 
       <div>
-        <label className="mb-1 block text-sm text-gray-600">
+        <label className="mb-1 block text-sm text-white/85">
           {userEditing
             ? 'Nueva contraseña (dejar vacío para no cambiarla)'
             : 'Contraseña'}
@@ -99,14 +99,14 @@ export default function UserForm({ userEditing, onSubmit, onCancel }: Props) {
             type={showPassword ? 'text' : 'password'}
             value={form.password}
             onChange={handleChange}
-            className="w-full rounded border border-gray-300 px-3 py-2"
+            className="w-full rounded border border-gray-300 bg-white px-3 py-2 text-gray-900"
             required={!userEditing}
             minLength={6}
           />
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="rounded border border-gray-300 px-3 py-2 text-sm hover:bg-gray-100"
+            className="rounded border border-white/30 bg-[#1F2B24] px-3 py-2 text-sm text-white hover:bg-[#34463A]"
           >
             {showPassword ? 'Ocultar' : 'Mostrar'}
           </button>
@@ -116,14 +116,14 @@ export default function UserForm({ userEditing, onSubmit, onCancel }: Props) {
       <PositionSelect
        value={form.position} 
        onChange={(position) => setForm((prev) => ({ ...prev, position }))} 
-       className="rounded border border-gray-300 px-3 py-2" />
+       className="rounded border border-gray-300 bg-white px-3 py-2 text-gray-900" />
        
       <input
         name="birthDate"
         type="date"
         value={form.birthDate}
         onChange={handleChange}
-        className="rounded border border-gray-300 px-3 py-2"
+        className="rounded border border-gray-300 bg-white px-3 py-2 text-gray-900"
         required
       />
       <LocalitySelect 
@@ -135,7 +135,7 @@ export default function UserForm({ userEditing, onSubmit, onCancel }: Props) {
         value={form.description}
         onChange={handleChange}
         placeholder="Descripción (opcional)"
-        className="rounded border border-gray-300 px-3 py-2"
+        className="rounded border border-gray-300 bg-white px-3 py-2 text-gray-900"
       />
 
       <div className="flex gap-2">
@@ -149,7 +149,7 @@ export default function UserForm({ userEditing, onSubmit, onCancel }: Props) {
           <button
             type="button"
             onClick={onCancel}
-            className="rounded bg-gray-300 px-4 py-2 hover:bg-gray-400"
+            className="rounded bg-gray-300 px-4 py-2 text-gray-900 hover:bg-gray-400"
           >
             Cancelar
           </button>

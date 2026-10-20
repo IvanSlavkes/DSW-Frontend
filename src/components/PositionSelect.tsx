@@ -12,7 +12,7 @@ export default function PositionSelect({ value, onChange, className = '' }: Prop
       value={value}
       onChange={(e) => onChange(e.target.value)}
       required
-      className={className}
+      className={`${className} bg-white text-gray-900`}
     >
       <option value="" disabled>
         Seleccionar posición

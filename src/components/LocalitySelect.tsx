@@ -6,7 +6,7 @@ const PROVINCE_NAME = "Santa Fe";
 const DEPARTMENT_NAME = "Rosario";
 
 const inputClass =
-  "w-full rounded border border-gray-300 px-3 py-2 disabled:bg-gray-100 disabled:text-gray-500";
+  "w-full rounded border border-gray-300 bg-white px-3 py-2 text-gray-900 disabled:bg-gray-100 disabled:text-gray-600";
 
 interface Props {
   localityId: string;
@@ -35,21 +35,21 @@ export default function LocalitySelect({ localityId, onChange }: Props) {
   return (
     <div className="flex flex-col gap-3">
       <div>
-        <label htmlFor="province" className="mb-1 block text-sm text-gray-600">
+        <label htmlFor="province" className="mb-1 block text-sm text-white/85">
           Provincia
         </label>
         <input id="province" value={PROVINCE_NAME} disabled className={inputClass} />
       </div>
 
       <div>
-        <label htmlFor="department" className="mb-1 block text-sm text-gray-600">
+        <label htmlFor="department" className="mb-1 block text-sm text-white/85">
           Departamento
         </label>
         <input id="department" value={DEPARTMENT_NAME} disabled className={inputClass} />
       </div>
 
       <div>
-        <label htmlFor="locality" className="mb-1 block text-sm text-gray-600">
+        <label htmlFor="locality" className="mb-1 block text-sm text-white/85">
           Localidad
         </label>
         <select
