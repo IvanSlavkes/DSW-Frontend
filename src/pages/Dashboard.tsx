@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
-import MatchList from "../components/MatchList";
+import AppHeader from "../components/AppHeader";
+import { useSidebar } from "../hooks/useSidebar";
+import AvailableMatchGrid from "../components/AvailableMatchGrid";
 import NotificationList from "../components/NotificationList";
 import UserForm from "../components/UserForm";
 import type { Match } from "../types/match";
@@ -9,15 +11,32 @@ import type { Notification } from "../types/notification";
 import type { User, UserInput } from "../types/user";
 import axios from "axios";
 
+function getAvailableUpcomingMatches(matches: Match[]) {
+  const today = new Date();
+  const todayString = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+
+  return matches
+    .filter((match) => {
+      if (match.date.slice(0, 10) < todayString || match.status.toLowerCase() !== "open") return false;
+      const positions = match.teams?.flatMap((team) => team.positions ?? []) ?? [];
+      if (positions.length === 0) return true;
+      return positions.some((position) => position.status === "free" && position.occupantId == null);
+    })
+    .sort((a, b) => `${a.date.slice(0, 10)} ${a.time}`.localeCompare(`${b.date.slice(0, 10)} ${b.time}`));
+}
+
 export default function Dashboard() {
   const [matches, setMatches] = useState<Match[]>([]);
+  const [matchesLoading, setMatchesLoading] = useState(true);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [userEditing, setUserEditing] = useState<User | null>(null);
   const [showUserForm, setShowUserForm] = useState(false);
 
   const navigate = useNavigate();
+  const { collapsed: sidebarCollapsed, toggleSidebar } = useSidebar();
 
   const token = localStorage.getItem("token");
+  const availableUpcomingMatches = getAvailableUpcomingMatches(matches);
 
   useEffect(() => {
     // 1. Si no hay token, redirigir y cortar ejecución
@@ -40,7 +59,8 @@ export default function Dashboard() {
           localStorage.removeItem("token");
           navigate("/login");
         }
-      });
+      })
+      .finally(() => setMatchesLoading(false));
 
     // 3. Notificaciones
     axios
@@ -62,14 +82,6 @@ export default function Dashboard() {
         }
       });
   }, [navigate, token]);
-
-  const handleEditMatch = (match: Match) => {
-    console.log("Editar partido:", match);
-  };
-
-  const handleDeleteMatch = (id: number) => {
-    console.log("Eliminar partido con id:", id);
-  };
 
   const handleMarkAsRead = (id: number) => {
     console.log("Marcar notificación como leída:", id);
@@ -111,14 +123,7 @@ export default function Dashboard() {
     >
       {/* Capa clara para mejorar la lectura */}
       <div className="flex h-full w-full flex-col bg-[#1C2928]/25">
-        <header
-          className="flex min-h-[60px] h-[60px] w-full shrink-0 items-center justify-between gap-4 bg-cover bg-center px-5 py-1 shadow-md md:px-8"
-          style={{ backgroundImage: "linear-gradient(rgba(18, 35, 32, 0.3), rgba(18, 35, 32, 0.3)), url('/images/DashboardTexture.png')" }}
-        >
-          <div className="flex items-center gap-1">
-            <img src="/images/Ball.png" alt="" className="h-[52px] w-[52px] object-contain" />
-            <span className="text-xl font-black tracking-wide text-white">FutGO</span>
-          </div>
+        <AppHeader sidebarCollapsed={sidebarCollapsed} onToggleSidebar={toggleSidebar}>
           <div className="flex items-center gap-3">
             <svg viewBox="0 0 24 24" aria-hidden="true" className="h-4 w-4 shrink-0">
               <circle cx="12" cy="12" r="11" fill="white" />
@@ -132,9 +137,9 @@ export default function Dashboard() {
               <p className="text-xs text-white/75">Mi cuenta</p>
             </div>
           </div>
-        </header>
+        </AppHeader>
         <div className="flex min-h-0 flex-1 overflow-hidden">
-          <Sidebar />
+          <Sidebar collapsed={sidebarCollapsed} />
           <div className="flex min-w-0 flex-1 flex-col overflow-y-auto">
           {/* Paneles */}
           <main className="grid flex-1 grid-cols-1 content-start gap-5 p-4 sm:p-6 xl:grid-cols-[minmax(0,1.8fr)_minmax(280px,0.85fr)] xl:gap-6 xl:p-7">
@@ -183,19 +188,18 @@ export default function Dashboard() {
                       Mis próximos partidos
                     </h2>
                     <p className="mt-1 text-sm text-white/70">
-                      Organizá tus encuentros y revisá los detalles.
+                      Partidos futuros que todavía tienen lugares disponibles.
                     </p>
                   </div>
 
                   <span className="rounded-full bg-white/10 px-3 py-1 text-sm font-bold text-white">
-                    {matches.length} partidos
+                    {availableUpcomingMatches.length} disponibles
                   </span>
                 </div>
 
-                <MatchList
-                  matches={matches}
-                  onEdit={handleEditMatch}
-                  onDelete={handleDeleteMatch}
+                <AvailableMatchGrid
+                  matches={availableUpcomingMatches}
+                  emptyMessage={matchesLoading ? "Cargando partidos..." : "No hay partidos disponibles próximamente."}
                 />
               </section>
             </div>
