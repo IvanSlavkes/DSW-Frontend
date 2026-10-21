@@ -104,15 +104,15 @@ export default function Dashboard() {
 
   return (
     <div
-      className="flex min-h-screen w-full bg-cover bg-center bg-fixed"
+      className="flex h-dvh w-full overflow-hidden bg-cover bg-center bg-fixed"
       style={{
         backgroundImage: "url('/images/Fondo.jpg')",
       }}
     >
       {/* Capa clara para mejorar la lectura */}
-      <div className="flex min-h-screen w-full flex-col bg-[#1C2928]/25">
+      <div className="flex h-full w-full flex-col bg-[#1C2928]/25">
         <header
-          className="flex min-h-[60px] w-full items-center justify-between gap-4 bg-cover bg-center px-5 py-1 shadow-md md:px-8"
+          className="flex min-h-[60px] h-[60px] w-full shrink-0 items-center justify-between gap-4 bg-cover bg-center px-5 py-1 shadow-md md:px-8"
           style={{ backgroundImage: "linear-gradient(rgba(18, 35, 32, 0.3), rgba(18, 35, 32, 0.3)), url('/images/DashboardTexture.png')" }}
         >
           <div className="flex items-center gap-1">
@@ -133,9 +133,9 @@ export default function Dashboard() {
             </div>
           </div>
         </header>
-        <div className="flex min-h-0 flex-1">
+        <div className="flex min-h-0 flex-1 overflow-hidden">
           <Sidebar />
-          <div className="flex min-w-0 flex-1 flex-col">
+          <div className="flex min-w-0 flex-1 flex-col overflow-y-auto">
           {/* Paneles */}
           <main className="grid flex-1 grid-cols-1 content-start gap-5 p-4 sm:p-6 xl:grid-cols-[minmax(0,1.8fr)_minmax(280px,0.85fr)] xl:gap-6 xl:p-7">
             {/* Columna central */}
