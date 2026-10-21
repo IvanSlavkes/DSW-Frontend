@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Sidebar from "../components/Sidebar";
+import AppHeader from "../components/AppHeader";
+import { useSidebar } from "../hooks/useSidebar";
 import { getFields } from "../api/field";
 import { createMatch } from "../api/matches";
 import type { Field } from "../types/field";
@@ -21,18 +23,30 @@ function todayLocal(): string {
 
 function errorMessage(err: unknown): string {
   if (axios.isAxiosError(err)) {
-    const data = err.response?.data;
-    if (Array.isArray(data?.errors)) {
-      return data.errors.map((e: { message: string }) => e.message).join(". ");
+    const data = err.response?.data as {
+      error?: unknown;
+      message?: unknown;
+      mensaje?: unknown;
+      errors?: { message?: string }[];
+      errores?: { message?: string }[];
+    } | undefined;
+    const validationErrors = data?.errores ?? data?.errors;
+    if (Array.isArray(validationErrors) && validationErrors.length > 0) {
+      return validationErrors.map((issue) => issue.message).filter(Boolean).join(". ");
     }
     if (typeof data?.error === "string") return data.error;
     if (typeof data?.message === "string") return data.message;
+    if (typeof data?.mensaje === "string") return data.mensaje;
+    if (err.response?.status === 401 || err.response?.status === 403) {
+      return "Tu sesión venció. Iniciá sesión nuevamente.";
+    }
   }
   return "No se pudo crear el partido. Intentá de nuevo.";
 }
 
 export default function CreateMatch() {
   const navigate = useNavigate();
+  const { collapsed: sidebarCollapsed, toggleSidebar } = useSidebar();
   const [fields, setFields] = useState<Field[]>([]);
   const [loadingFields, setLoadingFields] = useState(true);
 
@@ -77,17 +91,21 @@ export default function CreateMatch() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    setError(null);
     if (!selectedField) {
       setError("Elegí una cancha.");
       return;
     }
-    setSubmitting(true);
-    setError(null);
-
     if (creatorId === null) {
       setError("No se pudo identificar al usuario. Volvé a iniciar sesión.");
       return;
     }
+    if (!Number.isInteger(duration) || duration < 1) {
+      setError("La duración debe ser un número entero mayor a cero.");
+      return;
+    }
+
+    setSubmitting(true);
     try {
       await createMatch({
         name,
@@ -109,15 +127,14 @@ export default function CreateMatch() {
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      <Sidebar />
+    <div className="flex h-dvh w-full flex-col bg-gray-50">
+      <AppHeader sidebarCollapsed={sidebarCollapsed} onToggleSidebar={toggleSidebar}>
+        <span className="truncate text-sm font-semibold text-white sm:text-base">Crear partido</span>
+      </AppHeader>
 
-      <div className="flex flex-1 flex-col">
-        <header className="bg-white p-6 shadow">
-          <h1 className="text-2xl font-bold text-[#1B4D3E]">Crear partido</h1>
-        </header>
-
-        <main className="p-6">
+      <div className="flex min-h-0 flex-1 overflow-hidden">
+        <Sidebar collapsed={sidebarCollapsed} />
+        <main className="min-w-0 flex-1 overflow-y-auto p-6">
           <section className="mx-auto max-w-2xl rounded-xl bg-white p-6 shadow">
             <h2 className="mb-4 text-xl font-semibold text-[#1B4D3E]">Datos del partido</h2>
 
@@ -204,7 +221,7 @@ export default function CreateMatch() {
                 )}
                 {selectedField && (
                   <p className="mt-1 text-sm text-gray-500">
-                    Formato: Fútbol {selectedField.type} · {selectedField.address}
+                    Formato: Fútbol {selectedField.type} · {selectedField.address} · Precio: ${selectedField.price}
                   </p>
                 )}
               </div>

@@ -2,13 +2,15 @@ import type { Match } from '../types/match';
 
 interface Props {
   matches: Match[];
-  onEdit: (match: Match) => void;
-  onDelete: (id: number) => void;
+  onEdit?: (match: Match) => void;
+  onDelete?: (id: number) => void;
+  showActions?: boolean;
+  emptyMessage?: string;
 }
 
-export default function MatchList({ matches, onEdit, onDelete }: Props) {
+export default function MatchList({ matches, onEdit, onDelete, showActions = true, emptyMessage = "No hay partidos cargados todavia." }: Props) {
   if (matches.length === 0) {
-    return <p className="text-white/70">No hay partidos cargados todavia.</p>;
+    return <p className="text-white/70">{emptyMessage}</p>;
   }
 
   return (
@@ -25,6 +27,8 @@ export default function MatchList({ matches, onEdit, onDelete }: Props) {
           <p className="text-sm text-white/70">
             Cancha: {match.field?.name ?? `#${match.fieldId}`}
           </p>
+          {match.field?.address && <p className="text-sm text-white/70">Dirección: {match.field.address}</p>}
+          {match.field?.type && <p className="text-sm text-white/70">Fútbol {match.field.type} · {match.duration} min</p>}
           <p className="text-sm text-white/70">
             Creador:{' '}
             {match.creator
@@ -32,20 +36,12 @@ export default function MatchList({ matches, onEdit, onDelete }: Props) {
               : `#${match.creatorId}`}
           </p>
           <p className="text-sm text-white/70">Estado: {match.status}</p>
-          <div className="mt-3 flex gap-2">
-            <button
-              onClick={() => onEdit(match)}
-              className="rounded bg-blue-500 px-3 py-1 text-sm text-white hover:bg-blue-600"
-            >
-              Editar
-            </button>
-            <button
-              onClick={() => onDelete(match.id)}
-              className="rounded bg-red-500 px-3 py-1 text-sm text-white hover:bg-red-600"
-            >
-              Eliminar
-            </button>
-          </div>
+          {showActions && (onEdit || onDelete) && (
+            <div className="mt-3 flex gap-2">
+              {onEdit && <button onClick={() => onEdit(match)} className="rounded bg-blue-500 px-3 py-1 text-sm text-white hover:bg-blue-600">Editar</button>}
+              {onDelete && <button onClick={() => onDelete(match.id)} className="rounded bg-red-500 px-3 py-1 text-sm text-white hover:bg-red-600">Eliminar</button>}
+            </div>
+          )}
         </div>
       ))}
     </div>

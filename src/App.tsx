@@ -4,6 +4,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import CreateMatch from "./pages/CreateMatch";
+import AvailableMatches from "./pages/AvailableMatches";
 
 import Dashboard1 from "./pages/Dashboard1"; // DESPUES ELIMINAR ESTO
 
@@ -15,6 +16,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/matches" element={<AvailableMatches />} />
         <Route path="/matches/create" element={<CreateMatch />} />
         
         <Route path="/dashboard1" element={<Dashboard1 />} /> {/*DESPUES ELIMINAR ESTO */}

@@ -13,6 +13,15 @@ export interface Match {
   fieldId: number;
   creatorId: number;
   field?: Field;
+  teams?: {
+    id: number;
+    name: string;
+    positions?: {
+      id: number;
+      status: string;
+      occupantId: number | null;
+    }[];
+  }[];
   creator?: {
     id: number;
     name: string;
