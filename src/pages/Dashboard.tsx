@@ -20,35 +20,42 @@ export default function Dashboard() {
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    axios
-      .get("http://localhost:3000/matches")
-      .then((res) => setMatches(res.data))
-      .catch((err) =>
-        console.error("Error cargando partidos:", err)
-      );
-
-    axios
-      .get("http://localhost:3000/notifications", {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((res) => setNotifications(res.data))
-      .catch((err) =>
-        console.error("Error cargando notificaciones:", err)
-      );
-
+    // 1. Si no hay token, redirigir y cortar ejecución
     if (!token) {
       navigate("/login");
       return;
     }
 
+    const authHeaders = {
+      headers: { Authorization: `Bearer ${token}` },
+    };
+
+    // 2. Partidos (con token incluido)
     axios
-      .get("http://localhost:3000/users/me", {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+      .get("http://localhost:3000/matches", authHeaders)
+      .then((res) => setMatches(res.data))
+      .catch((err) => {
+        console.error("Error cargando partidos:", err);
+        if (err.response?.status === 401) {
+          localStorage.removeItem("token");
+          navigate("/login");
+        }
+      });
+
+    // 3. Notificaciones
+    axios
+      .get("http://localhost:3000/notifications", authHeaders)
+      .then((res) => setNotifications(res.data))
+      .catch((err) => {
+        console.error("Error cargando notificaciones:", err);
+      });
+
+    // 4. Usuario actual
+    axios
+      .get("http://localhost:3000/users/me", authHeaders)
       .then((res) => setUserEditing(res.data))
       .catch((err) => {
         console.error("Error cargando usuario:", err);
-
         if (err.response?.status === 401) {
           localStorage.removeItem("token");
           navigate("/login");
