@@ -3,9 +3,11 @@ import type { Field } from './field';
 export interface Match {
   id: number;
   name: string;
+  description: string | null;
   date: string;
   time: string;
-  fieldType: string;
+  duration: number;
+  createdAt: string;
   privacy: string;
   status: string;
   fieldId: number;
@@ -20,9 +22,10 @@ export interface Match {
 
 export type MatchInput = {
   name: string;
-  date: string;
-  time: string;
-  fieldType: string;
+  description?: string;
+  date: string; // "YYYY-MM-DD"
+  time: string; // "HH:MM"
+  duration?: number;
   privacy: string;
   fieldId: number;
   creatorId: number;

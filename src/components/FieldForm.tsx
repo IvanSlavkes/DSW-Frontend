@@ -8,18 +8,19 @@ interface Props {
   onCancel: () => void;
 }
 
-const empty = { name: "", address: "", type: "" };
+const empty = { name: "", address: "", type: "", price: 0 };
 
 export default function FieldForm({ fieldEditing, onSubmit, onCancel }: Props) {
   const [form, setForm] = useState(() =>
     fieldEditing
-      ? { name: fieldEditing.name, address: fieldEditing.address, type: fieldEditing.type }
+      ? { name: fieldEditing.name, address: fieldEditing.address, type: fieldEditing.type, price: fieldEditing.price }
       : empty
   );
   const [localityId, setLocalityId] = useState(fieldEditing?.localityId ?? "");
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const value = e.target.name === "price" ? Number(e.target.value) : e.target.value;
+    setForm({ ...form, [e.target.name]: value });
   }
 
   function handleSubmit(e: React.FormEvent) {
@@ -63,6 +64,18 @@ export default function FieldForm({ fieldEditing, onSubmit, onCancel }: Props) {
         <option value="7">Fútbol 7</option>
         <option value="11">Fútbol 11</option>
       </select>
+
+      <input
+        name="price"
+        type="number"
+        min="0"
+        step="0.01"
+        value={form.price}
+        onChange={handleChange}
+        placeholder="Precio total de la cancha"
+        className="rounded border border-gray-300 px-3 py-2"
+        required
+      />
 
       <LocalitySelect localityId={localityId} onChange={setLocalityId} />
 

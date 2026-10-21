@@ -9,9 +9,10 @@ interface Props {
 
 const empty: MatchInput = {
   name: '',
+  description: '',
   date: '',
   time: '',
-  fieldType: '',
+  duration: 60,
   privacy: 'public',
   fieldId: 0,
   creatorId: 0,
@@ -22,9 +23,10 @@ export default function MatchForm({ matchEditing, onSubmit, onCancel }: Props) {
     if (matchEditing) {
       return {
         name: matchEditing.name,
+        description: matchEditing.description ?? '',
         date: matchEditing.date.slice(0, 10),
         time: matchEditing.time,
-        fieldType: matchEditing.fieldType,
+        duration: matchEditing.duration,
         privacy: matchEditing.privacy,
         fieldId: matchEditing.fieldId,
         creatorId: matchEditing.creatorId,
@@ -37,7 +39,7 @@ export default function MatchForm({ matchEditing, onSubmit, onCancel }: Props) {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) {
     const { name, value } = e.target;
-    const isNumberField = name === 'fieldId' || name === 'creatorId';
+    const isNumberField = name === 'fieldId' || name === 'creatorId' || name === 'duration';
     setForm({ ...form, [name]: isNumberField ? Number(value) : value });
   }
 
@@ -64,6 +66,13 @@ export default function MatchForm({ matchEditing, onSubmit, onCancel }: Props) {
         className="rounded border border-gray-300 px-3 py-2"
         required
       />
+      <textarea
+        name="description"
+        value={form.description ?? ''}
+        onChange={handleChange}
+        placeholder="Descripción (opcional)"
+        className="rounded border border-gray-300 px-3 py-2"
+      />
       <input
         name="date"
         type="date"
@@ -80,18 +89,15 @@ export default function MatchForm({ matchEditing, onSubmit, onCancel }: Props) {
         className="rounded border border-gray-300 px-3 py-2"
         required
       />
-      <select
-        name="fieldType"
-        value={form.fieldType}
+      <input
+        name="duration"
+        type="number"
+        min="1"
+        value={form.duration ?? 60}
         onChange={handleChange}
         className="rounded border border-gray-300 px-3 py-2"
         required
-      >
-        <option value="">Seleccionar tipo</option>
-        <option value="5">5</option>
-        <option value="7">7</option>
-        <option value="11">11</option>
-      </select>
+      />
       <select
         name="privacy"
         value={form.privacy}

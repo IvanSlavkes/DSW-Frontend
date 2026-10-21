@@ -19,7 +19,7 @@ import TeamPositionForm from '../components/TeamPositionForm';
 import FriendRequestList from '../components/FriendRequestList';
 import FriendRequestForm from '../components/FriendRequestForm';
 import { getFields, createField, updateField, deleteField } from '../api/field';
-import { getMatches, createMatch, updateMatch, deleteMatch } from '../api/match';
+import { getMatches, createMatch, updateMatch, deleteMatch } from '../api/matches';
 import {
   getNotifications,
   createNotification,

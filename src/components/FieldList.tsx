@@ -20,6 +20,7 @@ export default function FieldList({ fields, onEdit, onDelete }: Props) {
           <h3 className="text-lg font-semibold">{field.name}</h3>
           <p className="text-sm text-gray-600">{field.address}</p>
           <p className="text-sm text-gray-600">Fútbol {field.type}</p>
+          <p className="text-sm text-gray-600">Precio: ${field.price}</p>
           <p className="text-sm text-gray-600">
             Localidad: {field.locality?.nombre ?? field.localityId}
           </p>

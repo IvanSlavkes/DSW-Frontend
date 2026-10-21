@@ -5,6 +5,7 @@ export interface Field {
   name: string;
   address: string;
   type: string;
+  price: number;
   localityId: string;
   locality?: Locality;
 }
