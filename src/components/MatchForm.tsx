@@ -15,7 +15,7 @@ const empty: MatchInput = {
   duration: 60,
   privacy: 'public',
   fieldId: 0,
-  creatorId: 0,
+  teamAName: '',
 };
 
 export default function MatchForm({ matchEditing, onSubmit, onCancel }: Props) {
@@ -27,19 +27,19 @@ export default function MatchForm({ matchEditing, onSubmit, onCancel }: Props) {
         date: matchEditing.date.slice(0, 10),
         time: matchEditing.time,
         duration: matchEditing.duration,
-        privacy: matchEditing.privacy,
+        privacy: matchEditing.privacy as MatchInput['privacy'],
         fieldId: matchEditing.fieldId,
-        creatorId: matchEditing.creatorId,
+        teamAName: matchEditing.teams?.[0]?.name ?? '',
       };
     }
     return empty;
   });
 
   function handleChange(
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
   ) {
     const { name, value } = e.target;
-    const isNumberField = name === 'fieldId' || name === 'creatorId' || name === 'duration';
+    const isNumberField = name === 'fieldId' || name === 'duration';
     setForm({ ...form, [name]: isNumberField ? Number(value) : value });
   }
 
@@ -72,6 +72,15 @@ export default function MatchForm({ matchEditing, onSubmit, onCancel }: Props) {
         onChange={handleChange}
         placeholder="Descripción (opcional)"
         className="rounded border border-gray-300 px-3 py-2"
+      />
+      <input
+        name="teamAName"
+        value={form.teamAName}
+        onChange={handleChange}
+        placeholder="Nombre de tu equipo"
+        maxLength={50}
+        className="rounded border border-gray-300 px-3 py-2"
+        required
       />
       <input
         name="date"
@@ -120,20 +129,6 @@ export default function MatchForm({ matchEditing, onSubmit, onCancel }: Props) {
           required
         />
       </div>
-      <div>
-        <label className="mb-1 block text-sm text-gray-600">
-          ID del Creador (usuario)
-        </label>
-        <input
-          name="creatorId"
-          type="number"
-          value={form.creatorId}
-          onChange={handleChange}
-          className="w-full rounded border border-gray-300 px-3 py-2"
-          required
-        />
-      </div>
-
       <div className="flex gap-2">
         <button
           type="submit"

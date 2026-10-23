@@ -1,17 +1,10 @@
 import { useState } from 'react';
-import type { TeamPosition, TeamPositionInput } from '../types/team-position';
+import type { TeamPosition, TeamPositionInput, TeamPositionUpdateInput } from '../types/team-position';
 
 interface Props {
   teamPositionEditing: TeamPosition | null;
   onCreate: (data: TeamPositionInput) => void;
-  onUpdate: (
-    data: Partial<{
-      status: string;
-      role: string;
-      occupantId: number;
-      requesterId: number;
-    }>,
-  ) => void;
+  onUpdate: (data: TeamPositionUpdateInput) => void;
   onCancel: () => void;
 }
 
@@ -19,7 +12,6 @@ const empty: TeamPositionInput = {
   positionType: '',
   matchTeamId: 0,
   occupantId: undefined,
-  requesterId: undefined,
   role: 'player',
 };
 
@@ -34,13 +26,11 @@ export default function TeamPositionForm({
     status: 'free',
     role: 'player',
     occupantId: '',
-    requesterId: '',
   });
 
   function handleCreateChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
-    const isNumberField =
-      name === 'matchTeamId' || name === 'occupantId' || name === 'requesterId';
+    const isNumberField = name === 'matchTeamId' || name === 'occupantId';
     setCreateForm({
       ...createForm,
       [name]: isNumberField
@@ -59,7 +49,7 @@ export default function TeamPositionForm({
 
   function handleCreateSubmit(e: React.FormEvent) {
     e.preventDefault();
-    onCreate(createForm);
+    onCreate({ ...createForm, positionType: createForm.positionType || undefined });
     setCreateForm(empty);
   }
 
@@ -70,8 +60,6 @@ export default function TeamPositionForm({
       role: editForm.role,
       occupantId:
         editForm.occupantId === '' ? undefined : Number(editForm.occupantId),
-      requesterId:
-        editForm.requesterId === '' ? undefined : Number(editForm.requesterId),
     });
   }
 
@@ -147,11 +135,10 @@ export default function TeamPositionForm({
 
       <input
         name="positionType"
-        value={createForm.positionType}
+        value={createForm.positionType ?? ''}
         onChange={handleCreateChange}
         placeholder="Tipo de posición (ej. Arquero)"
         className="rounded border border-gray-300 px-3 py-2"
-        required
       />
 
       <div>

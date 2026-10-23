@@ -7,7 +7,10 @@ import AppHeader from "../components/AppHeader";
 import { useSidebar } from "../hooks/useSidebar";
 import { getFields } from "../api/field";
 import { createMatch } from "../api/matches";
+import PositionSelect from "../components/PositionSelect";
+import { POSITIONS } from "../constants/positions";
 import type { Field } from "../types/field";
+import type { MatchInput } from "../types/match";
 
 const labelClass = "mb-1 block text-sm font-medium text-gray-700";
 const inputClass =
@@ -56,8 +59,10 @@ export default function CreateMatch() {
   const [time, setTime] = useState("");
   const [duration, setDuration] = useState(60);
   const [fieldId, setFieldId] = useState("");
-  const [privacy, setPrivacy] = useState("public");
-  const [creatorId, setCreatorId] = useState<number | null>(null);
+  const [privacy, setPrivacy] = useState<MatchInput["privacy"]>("public");
+  const [teamAName, setTeamAName] = useState("");
+  const [positionType, setPositionType] = useState<MatchInput["positionType"] | "">("");
+  const [secondaryPositionType, setSecondaryPositionType] = useState<MatchInput["secondaryPositionType"] | "">("");
 
 
   const [submitting, setSubmitting] = useState(false);
@@ -69,11 +74,11 @@ export default function CreateMatch() {
     try {
       const [fieldsData, me] = await Promise.all([
         getFields(),
-        api.get<{ id: number }>("/users/me"),
+        api.get<{ position: string }>("/users/me"),
       ]);
       if (cancelled) return;
       setFields(fieldsData);
-      setCreatorId(me.data.id);
+      setPositionType(POSITIONS.find((position) => position.value === me.data.position)?.value ?? "");
     } catch (err) {
       console.error(err);
       if (!cancelled) setError("No se pudieron cargar los datos.");
@@ -96,10 +101,6 @@ export default function CreateMatch() {
       setError("Elegí una cancha.");
       return;
     }
-    if (creatorId === null) {
-      setError("No se pudo identificar al usuario. Volvé a iniciar sesión.");
-      return;
-    }
     if (!Number.isInteger(duration) || duration < 1) {
       setError("La duración debe ser un número entero mayor a cero.");
       return;
@@ -115,7 +116,9 @@ export default function CreateMatch() {
         duration,
         privacy,
         fieldId: selectedField.id,
-        creatorId,
+        teamAName,
+        positionType: positionType || undefined,
+        secondaryPositionType: secondaryPositionType || undefined,
       });
       navigate("/dashboard");
     } catch (err) {
@@ -151,6 +154,43 @@ export default function CreateMatch() {
                   className={inputClass}
                   required
                 />
+              </div>
+
+              <div>
+                <label htmlFor="teamAName" className={labelClass}>
+                  Nombre de tu equipo
+                </label>
+                <input
+                  id="teamAName"
+                  value={teamAName}
+                  onChange={(event) => setTeamAName(event.target.value)}
+                  maxLength={50}
+                  className={inputClass}
+                  required
+                />
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label className={labelClass}>Tu posición principal (opcional)</label>
+                  <PositionSelect
+                    value={positionType ?? ""}
+                    onChange={(value) => setPositionType(value as MatchInput["positionType"] | "")}
+                    className={inputClass}
+                    required={false}
+                    wildcardLabel="Comodín: donde haga falta"
+                  />
+                </div>
+                <div>
+                  <label className={labelClass}>Tu posición secundaria (opcional)</label>
+                  <PositionSelect
+                    value={secondaryPositionType ?? ""}
+                    onChange={(value) => setSecondaryPositionType(value as MatchInput["secondaryPositionType"] | "")}
+                    className={inputClass}
+                    required={false}
+                    wildcardLabel="Comodín: donde haga falta"
+                  />
+                </div>
               </div>
 
               <div>
@@ -246,7 +286,7 @@ export default function CreateMatch() {
                 <select
                   id="privacy"
                   value={privacy}
-                  onChange={(e) => setPrivacy(e.target.value)}
+                  onChange={(e) => setPrivacy(e.target.value as MatchInput["privacy"])}
                   className={inputClass}
                 >
                   <option value="public">Público: cualquiera puede unirse</option>

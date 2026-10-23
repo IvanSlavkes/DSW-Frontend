@@ -64,7 +64,7 @@ import type { Rating, RatingInput } from '../types/rating';
 import type { User, UserInput } from '../types/user';
 import type { Locality, LocalityInput } from '../types/locality';
 import type { MatchTeam, MatchTeamInput } from '../types/match-team';
-import type { TeamPosition, TeamPositionInput } from '../types/team-position';
+import type { TeamPosition, TeamPositionInput, TeamPositionUpdateInput } from '../types/team-position';
 import type { FriendRequest, FriendRequestInput } from '../types/friend-request';
 
 type Tab =
@@ -534,12 +534,7 @@ function App() {
   }
 
   async function handleTeamPositionUpdate(
-    data: Partial<{
-      status: string;
-      role: string;
-      occupantId: number;
-      requesterId: number;
-    }>,
+    data: TeamPositionUpdateInput,
   ) {
     if (!teamPositionEditing) return;
     try {

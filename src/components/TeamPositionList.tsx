@@ -22,7 +22,7 @@ export default function TeamPositionList({
           key={position.id}
           className="rounded-lg border border-gray-200 p-4 shadow-sm"
         >
-          <h3 className="text-lg font-semibold">{position.positionType}</h3>
+          <h3 className="text-lg font-semibold">{position.positionType ?? 'Comodín'}</h3>
           <p className="text-sm text-gray-600">
             Equipo: {position.matchTeam?.name ?? `#${position.matchTeamId}`}
           </p>

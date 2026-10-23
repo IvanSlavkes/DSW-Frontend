@@ -1,5 +1,5 @@
 import api from './client';
-import type { TeamPosition, TeamPositionInput } from '../types/team-position';
+import type { TeamPosition, TeamPositionInput, TeamPositionUpdateInput } from '../types/team-position';
 
 export async function getTeamPositions(): Promise<TeamPosition[]> {
   const res = await api.get<TeamPosition[]>('/team-positions');
@@ -15,12 +15,7 @@ export async function createTeamPosition(
 
 export async function updateTeamPosition(
   id: number,
-  data: Partial<{
-    status: string;
-    role: string;
-    occupantId: number;
-    requesterId: number;
-  }>,
+  data: TeamPositionUpdateInput,
 ): Promise<TeamPosition> {
   const res = await api.put<TeamPosition>(`/team-positions/${id}`, data);
   return res.data;
