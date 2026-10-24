@@ -4,7 +4,7 @@ import Sidebar from '../components/Sidebar';
 import AppHeader from '../components/AppHeader';
 import { useSidebar } from '../hooks/useSidebar';
 import AvailableMatchGrid from '../components/AvailableMatchGrid';
-import NotificationList from '../components/NotificationList';
+import NotificationPanel from '../components/NotificationPanel';
 import UserForm from '../components/UserForm';
 import type { Match } from '../types/match';
 import type { Notification } from '../types/notification';
@@ -302,23 +302,11 @@ export default function Dashboard() {
                 </section>
 
                 {/* Notificaciones */}
-                <section className="rounded-2xl border border-white/15 bg-[#1C2928] p-5 text-white shadow-lg sm:p-6">
-                  <div className="mb-5 flex items-center justify-between gap-2">
-                    <h2 className="text-lg font-bold text-white">
-                      Notificaciones
-                    </h2>
-
-                    <span className="flex h-7 min-w-7 items-center justify-center rounded-full bg-red-500 px-2 text-xs font-bold text-white">
-                      {notifications.filter((n) => !n.read).length}
-                    </span>
-                  </div>
-
-                  <NotificationList
-                    notifications={notifications}
-                    onMarkAsRead={handleMarkAsRead}
-                    onDelete={handleDeleteNotification}
-                  />
-                </section>
+                <NotificationPanel
+                  notifications={notifications}
+                  onMarkAsRead={handleMarkAsRead}
+                  onDelete={handleDeleteNotification}
+                />
               </aside>
             </main>
           </div>
