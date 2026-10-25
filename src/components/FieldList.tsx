@@ -22,7 +22,7 @@ export default function FieldList({ fields, onEdit, onDelete }: Props) {
           <p className="text-sm text-gray-600">{field.category?.name ?? "Categoría sin nombre"} · {field.category?.playersPerTeam} por equipo · {field.category?.surfaceType}</p>
           <p className="text-sm text-gray-600">Precio: ${field.price}</p>
           <p className="text-sm text-gray-600">
-            Localidad: {field.locality?.nombre ?? field.localityId}
+            Localidad: {field.locality?.name ?? field.localityId}
           </p>
           <div className="mt-3 flex gap-2">
             <button

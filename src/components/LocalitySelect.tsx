@@ -62,7 +62,7 @@ export default function LocalitySelect({ localityId, onChange }: Props) {
           <option value="">Elegí una localidad</option>
           {localities.map((l) => (
             <option key={l.id} value={l.id}>
-              {l.nombre}
+              {l.name}
             </option>
           ))}
         </select>

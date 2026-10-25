@@ -1,4 +1,5 @@
-﻿import type { Match } from '../types/match';
+import type { Match } from '../types/match';
+import { formatMatchDate, formatMatchTime } from '../utils/matchDateTime';
 
 interface Props {
   matches: Match[];
@@ -22,7 +23,7 @@ export default function MatchList({ matches, onEdit, onDelete, showActions = tru
         >
           <h3 className="text-lg font-semibold">{match.name}</h3>
           <p className="text-sm text-white/70">
-            {match.date.slice(0, 10)} - {match.time}
+            {formatMatchDate(match.startsAt)} - {formatMatchTime(match.startsAt)}
           </p>
           <p className="text-sm text-white/70">
             Cancha: {match.field?.name ?? `#${match.fieldId}`}

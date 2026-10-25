@@ -8,7 +8,7 @@ interface Props {
 }
 
 const empty: LocalityInput = {
-  nombre: '',
+  name: '',
 };
 
 export default function LocalityForm({
@@ -18,7 +18,7 @@ export default function LocalityForm({
 }: Props) {
   const [form, setForm] = useState<LocalityInput>(() => {
     if (localityEditing) {
-      return { nombre: localityEditing.nombre };
+      return { name: localityEditing.name };
     }
     return empty;
   });
@@ -43,8 +43,8 @@ export default function LocalityForm({
       </h2>
 
       <input
-        name="nombre"
-        value={form.nombre}
+        name="name"
+        value={form.name}
         onChange={handleChange}
         placeholder="Nombre (ej. Rosario)"
         className="rounded border border-gray-300 px-3 py-2"

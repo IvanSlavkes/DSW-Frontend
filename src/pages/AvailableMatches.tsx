@@ -11,13 +11,6 @@ import { isMatchFull } from "../utils/matchAvailability";
 
 type SortMode = "date" | "price";
 
-function localDateString() {
-  const today = new Date();
-  const month = String(today.getMonth() + 1).padStart(2, "0");
-  const day = String(today.getDate()).padStart(2, "0");
-  return `${today.getFullYear()}-${month}-${day}`;
-}
-
 function loadErrorMessage(error: unknown) {
   if (axios.isAxiosError(error) && (error.response?.status === 401 || error.response?.status === 403)) {
     return "Tu sesión venció. Iniciá sesión nuevamente para ver los partidos.";
@@ -51,15 +44,14 @@ export default function AvailableMatches() {
   }, []);
 
   const upcomingMatches = useMemo(() => {
-    const today = localDateString();
     return matches
-      .filter((match) => match.date.slice(0, 10) >= today)
+      .filter((match) => Date.parse(match.startsAt) >= Date.now())
       .sort((a, b) => {
         if (sortMode === "price") {
           const priceDifference = (a.field?.price ?? 0) - (b.field?.price ?? 0);
           if (priceDifference !== 0) return priceDifference;
         }
-        return `${a.date.slice(0, 10)} ${a.time}`.localeCompare(`${b.date.slice(0, 10)} ${b.time}`);
+        return Date.parse(a.startsAt) - Date.parse(b.startsAt);
       });
   }, [matches, sortMode]);
 

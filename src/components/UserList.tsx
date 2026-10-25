@@ -24,7 +24,7 @@ export default function UserList({ users, onEdit, onDelete }: Props) {
           <p className="text-sm text-gray-600">{user.email}</p>
           <p className="text-sm text-gray-600">Posición: {user.position}</p>
           <p className="text-sm text-gray-600">
-            Localidad: {user.locality?.nombre ?? user.localityId}
+            Localidad: {user.locality?.name ?? user.localityId}
           </p>
           <p className="text-sm text-gray-600">
             Rating: {user.averageRating} - Partidos jugados:{' '}

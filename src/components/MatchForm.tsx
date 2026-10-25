@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { Match, MatchInput } from '../types/match';
+import { argentinaDateTimeInput, startsAtInputToIso } from '../utils/matchDateTime';
 
 interface Props {
   matchEditing: Match | null;
@@ -10,8 +11,7 @@ interface Props {
 const empty: MatchInput = {
   name: '',
   description: '',
-  date: '',
-  time: '',
+  startsAt: '',
   duration: 60,
   privacy: 'public',
   fieldId: 0,
@@ -24,8 +24,7 @@ export default function MatchForm({ matchEditing, onSubmit, onCancel }: Props) {
       return {
         name: matchEditing.name,
         description: matchEditing.description ?? '',
-        date: matchEditing.date.slice(0, 10),
-        time: matchEditing.time,
+        startsAt: argentinaDateTimeInput(matchEditing.startsAt),
         duration: matchEditing.duration,
         privacy: matchEditing.privacy as MatchInput['privacy'],
         fieldId: matchEditing.fieldId,
@@ -39,13 +38,21 @@ export default function MatchForm({ matchEditing, onSubmit, onCancel }: Props) {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
   ) {
     const { name, value } = e.target;
+    if (name === 'date' || name === 'time') {
+      const [currentDate = '', currentTime = ''] = form.startsAt.split('T');
+      setForm({
+        ...form,
+        startsAt: name === 'date' ? `${value}T${currentTime}` : `${currentDate}T${value}`,
+      });
+      return;
+    }
     const isNumberField = name === 'fieldId' || name === 'duration';
     setForm({ ...form, [name]: isNumberField ? Number(value) : value });
   }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    onSubmit(form);
+    onSubmit({ ...form, startsAt: startsAtInputToIso(form.startsAt) });
     setForm(empty);
   }
 
@@ -82,22 +89,10 @@ export default function MatchForm({ matchEditing, onSubmit, onCancel }: Props) {
         className="rounded border border-gray-300 px-3 py-2"
         required
       />
-      <input
-        name="date"
-        type="date"
-        value={form.date}
-        onChange={handleChange}
-        className="rounded border border-gray-300 px-3 py-2"
-        required
-      />
-      <input
-        name="time"
-        value={form.time}
-        onChange={handleChange}
-        placeholder="Hora (ej. 20:00)"
-        className="rounded border border-gray-300 px-3 py-2"
-        required
-      />
+<div className="grid gap-3 sm:grid-cols-2">
+        <input name="date" type="date" value={form.startsAt.split('T')[0] ?? ''} onChange={handleChange} className="rounded border border-gray-300 px-3 py-2" required />
+        <input name="time" type="time" value={form.startsAt.split('T')[1] ?? ''} onChange={handleChange} className="rounded border border-gray-300 px-3 py-2" required />
+      </div>
       <input
         name="duration"
         type="number"

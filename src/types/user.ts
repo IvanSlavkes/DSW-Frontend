@@ -6,14 +6,14 @@ export interface User {
   password: string;
   description?: string;
   position: string;
-  averageRating: number;
-  matchesPlayed: number;
+  averageRating: number; // Promedio de las calificaciones recibidas.
+  matchesPlayed: number; // Partidos únicos con una calificación dada o recibida.
   birthDate: string;
   role: string;
   localityId: string;
   locality?: {
     id: string;
-    nombre: string;
+    name: string;
   };
 }
 

@@ -1,4 +1,4 @@
-﻿import api from "../api/client";
+import api from "../api/client";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -11,18 +11,11 @@ import PositionSelect from "../components/PositionSelect";
 import { POSITIONS } from "../constants/positions";
 import type { Field } from "../types/field";
 import type { MatchInput } from "../types/match";
+import { argentinaDateAndTimeToIso, argentinaNowTimeInput, argentinaTodayDateInput } from "../utils/matchDateTime";
 
 const labelClass = "mb-1 block text-sm font-medium text-gray-700";
 const inputClass =
   "w-full rounded border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B4D3E]";
-
-// fecha local (toISOString devuelve UTC y a la noche podría marcar "mañana")
-function todayLocal(): string {
-  const d = new Date();
-  const month = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${d.getFullYear()}-${month}-${day}`;
-}
 
 function errorMessage(err: unknown): string {
   if (axios.isAxiosError(err)) {
@@ -111,8 +104,7 @@ export default function CreateMatch() {
       await createMatch({
         name,
         description: description || undefined,
-        date,
-        time,
+        startsAt: argentinaDateAndTimeToIso(date, time),
         duration,
         privacy,
         fieldId: selectedField.id,
@@ -206,31 +198,12 @@ export default function CreateMatch() {
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
-                  <label htmlFor="date" className={labelClass}>
-                    Fecha
-                  </label>
-                  <input
-                    id="date"
-                    type="date"
-                    min={todayLocal()}
-                    value={date}
-                    onChange={(e) => setDate(e.target.value)}
-                    className={inputClass}
-                    required
-                  />
+                  <label htmlFor="date" className={labelClass}>Fecha</label>
+                  <input id="date" type="date" min={argentinaTodayDateInput()} value={date} onChange={(e) => setDate(e.target.value)} className={inputClass} required />
                 </div>
                 <div>
-                  <label htmlFor="time" className={labelClass}>
-                    Hora
-                  </label>
-                  <input
-                    id="time"
-                    type="time"
-                    value={time}
-                    onChange={(e) => setTime(e.target.value)}
-                    className={inputClass}
-                    required
-                  />
+                  <label htmlFor="time" className={labelClass}>Hora (Argentina)</label>
+                  <input id="time" type="time" min={date === argentinaTodayDateInput() ? argentinaNowTimeInput() : undefined} value={time} onChange={(e) => setTime(e.target.value)} className={inputClass} required />
                 </div>
               </div>
 
@@ -252,7 +225,7 @@ export default function CreateMatch() {
                   {fields.map((f) => (
                     <option key={f.id} value={f.id}>
                       {f.name}
-                      {f.locality ? ` — ${f.locality.nombre}` : ""} ({f.category.name})
+                      {f.locality ? ` — ${f.locality.name}` : ""} ({f.category.name})
                     </option>
                   ))}
                 </select>
@@ -323,4 +296,3 @@ export default function CreateMatch() {
     </div>
   );
 }
-

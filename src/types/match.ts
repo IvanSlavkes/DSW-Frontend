@@ -6,8 +6,7 @@ export interface Match {
   id: number;
   name: string;
   description: string | null;
-  date: string;
-  time: string;
+  startsAt: string;
   duration: number;
   createdAt: string;
   privacy: string;
@@ -39,8 +38,7 @@ export interface Match {
 export type MatchInput = {
   name: string;
   description?: string | undefined;
-  date: string; // "YYYY-MM-DD"
-  time: string; // "HH:MM"
+  startsAt: string; // ISO 8601 con offset explícito
   duration?: number | undefined;
   privacy: "public" | "private";
   fieldId: number;

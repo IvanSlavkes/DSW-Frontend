@@ -20,7 +20,7 @@ export default function LocalityList({ localities, onEdit, onDelete }: Props) {
           key={locality.id}
           className="rounded-lg border border-gray-200 p-4 shadow-sm"
         >
-          <h3 className="text-lg font-semibold">{locality.nombre}</h3>
+          <h3 className="text-lg font-semibold">{locality.name}</h3>
           <p className="text-sm text-gray-600">ID: {locality.id}</p>
           <div className="mt-3 flex gap-2">
             <button

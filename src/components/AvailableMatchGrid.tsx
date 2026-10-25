@@ -1,24 +1,11 @@
-﻿import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import type { Match } from "../types/match";
 import { getMatchCapacity, isMatchFull } from "../utils/matchAvailability";
+import { formatMatchDate, formatMatchTime } from "../utils/matchDateTime";
 
 interface Props {
   matches: Match[];
   emptyMessage?: string;
-}
-
-function formatMatchDate(value: string) {
-  const [year, month, day] = value.slice(0, 10).split("-").map(Number);
-  const date = new Date(year, month - 1, day);
-  const now = new Date();
-  if (date.getFullYear() === now.getFullYear() && date.getMonth() === now.getMonth() && date.getDate() === now.getDate()) {
-    return "Hoy";
-  }
-  const formatted = new Intl.DateTimeFormat("es-AR", {
-    day: "2-digit",
-    month: "long",
-  }).format(date);
-  return formatted.charAt(0).toLocaleUpperCase("es-AR") + formatted.slice(1);
 }
 
 function formatPrice(value: number) {
@@ -70,7 +57,7 @@ function MatchDetailsModal({ match, onClose }: { match: Match; onClose: () => vo
 
         <div className="min-h-0 flex-1 overflow-y-auto p-4 sm:p-7">
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            <div className="rounded-2xl border border-slate-200 bg-white p-4"><p className="text-xs font-bold uppercase text-slate-500">Fecha y horario</p><p className="mt-1 font-bold text-[#1F2B24]">{formatMatchDate(match.date)} · {match.time}</p><p className="text-sm text-slate-600">{match.duration} min</p></div>
+            <div className="rounded-2xl border border-slate-200 bg-white p-4"><p className="text-xs font-bold uppercase text-slate-500">Fecha y horario</p><p className="mt-1 font-bold text-[#1F2B24]">{formatMatchDate(match.startsAt)} · {formatMatchTime(match.startsAt)}</p><p className="text-sm text-slate-600">{match.duration} min</p></div>
             <div className="rounded-2xl border border-slate-200 bg-white p-4"><p className="text-xs font-bold uppercase text-slate-500">Cancha</p><p className="mt-1 font-bold text-[#1F2B24]">{match.field?.name ?? `Cancha #${match.fieldId}`}</p><div className="mt-1 flex flex-wrap items-center justify-between gap-2"><p className="text-sm text-slate-600">{match.field?.address ?? "Dirección no disponible"}</p>{match.field?.address && <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(match.field.address)}`} target="_blank" rel="noopener noreferrer" className="shrink-0 rounded-lg bg-[#E8F0FF] px-3 py-1.5 text-xs font-bold text-[#24466F] transition hover:bg-[#DCE8FF]">Ver en Google Maps</a>}</div></div>
             <div className="rounded-2xl border border-slate-200 bg-white p-4"><p className="text-xs font-bold uppercase text-slate-500">Precio estimado por jugador</p><p className="mt-1 text-xl font-black text-[#08743A]">{formatPrice(total ? Math.round((match.field?.price ?? 0) / total) : 0)}</p><p className="text-sm text-slate-600">Creador: {match.creator ? `${match.creator.name} ${match.creator.lastName}` : "Usuario"}</p></div>
           </div>
@@ -141,9 +128,9 @@ export default function AvailableMatchGrid({
             </p>
 
             <div className="mt-4 flex flex-wrap gap-2 rounded-xl bg-[#EEF4FF] px-3 py-2.5 text-xs font-semibold text-[#24466F]">
-              <span>{formatMatchDate(match.date)}</span>
+              <span>{formatMatchDate(match.startsAt)}</span>
               <span aria-hidden="true">·</span>
-              <span>{match.time}</span>
+              <span>{formatMatchTime(match.startsAt)}</span>
               <span aria-hidden="true">·</span>
               <span>{match.duration} min</span>
             </div>

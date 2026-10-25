@@ -13,13 +13,10 @@ import axios from 'axios';
 import { markAsRead, deleteNotification } from '../api/notification';
 
 function getAvailableUpcomingMatches(matches: Match[]) {
-  const today = new Date();
-  const todayString = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-
   return matches
     .filter((match) => {
       if (
-        match.date.slice(0, 10) < todayString ||
+        Date.parse(match.startsAt) < Date.now() ||
         match.status.toLowerCase() !== 'open'
       )
         return false;
@@ -30,11 +27,7 @@ function getAvailableUpcomingMatches(matches: Match[]) {
         (position) => position.status === 'free' && position.occupantId == null,
       );
     })
-    .sort((a, b) =>
-      `${a.date.slice(0, 10)} ${a.time}`.localeCompare(
-        `${b.date.slice(0, 10)} ${b.time}`,
-      ),
-    );
+    .sort((a, b) => Date.parse(a.startsAt) - Date.parse(b.startsAt));
 }
 
 export default function Dashboard() {

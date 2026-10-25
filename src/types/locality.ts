@@ -1,8 +1,8 @@
 export interface Locality {
   id: string;
-  nombre: string;
+  name: string;
 }
 
 export type LocalityInput = {
-  nombre: string;
+  name: string;
 };
