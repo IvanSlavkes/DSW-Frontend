@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios, { AxiosError } from "axios";
 import PositionSelect from "../components/PositionSelect";
+import { API_URL } from '../api/client';
 // import LocalitySelect from "../components/LocalitySelect";
 
 const fieldBase = //Para no repetir el className en cada campo
@@ -20,13 +21,13 @@ export default function Register() {
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:3000/auth/register", {
+      const res = await axios.post(`${API_URL}/auth/register`, {
         name,
         lastName,
         email,
         password,
         position,
-        birthDate
+        birthDate,
         // localityId
       });
       alert(res.data.message);
