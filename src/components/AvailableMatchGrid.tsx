@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useEffect, useState } from "react";
 import type { Match } from "../types/match";
 import { getMatchCapacity, isMatchFull } from "../utils/matchAvailability";
 
@@ -30,25 +30,93 @@ function formatPrice(value: number) {
   }).format(value);
 }
 
+function positionLabel(position: string | null | undefined) {
+  if (!position) return "Posición sin definir";
+  return position.charAt(0).toLocaleUpperCase("es-AR") + position.slice(1);
+}
+
+function MatchDetailsModal({ match, onClose }: { match: Match; onClose: () => void }) {
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKeyDown);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = "";
+    };
+  }, [onClose]);
+
+  const teams = match.teams ?? [];
+  const capacity = getMatchCapacity(match);
+  const total = Number(match.field?.type) * 2 || capacity.total;
+  const playerCount = Math.max(total, ...teams.map((team) => team.positions?.length ?? 0));
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 sm:items-center sm:p-5" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
+      <section role="dialog" aria-modal="true" aria-labelledby="match-modal-title" className="flex h-[100dvh] max-h-[100dvh] w-full flex-col overflow-hidden rounded-none bg-[#F3F6F4] shadow-2xl sm:h-auto sm:max-h-[92dvh] sm:rounded-3xl">
+        <header className="flex shrink-0 items-start justify-between gap-4 border-b border-slate-200 bg-white p-5 sm:p-7">
+          <div className="min-w-0">
+            <div className="mb-2 flex flex-wrap gap-2 text-xs font-bold text-[#08743A]">
+              <span className="rounded-full bg-[#DDF3E4] px-3 py-1">{match.privacy === "public" ? "Público" : "Privado · requiere aprobación"}</span>
+              {match.field?.type && <span className="rounded-full bg-slate-100 px-3 py-1 text-slate-600">Fútbol {match.field.type}</span>}
+            </div>
+            <h2 id="match-modal-title" className="text-xl font-black text-[#1F2B24] sm:text-3xl">{match.name}</h2>
+            {match.description && <p className="mt-1 text-sm text-slate-600">{match.description}</p>}
+          </div>
+          <button type="button" onClick={onClose} aria-label="Cerrar detalles" className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-slate-100 text-xl text-slate-700 hover:bg-slate-200">X</button>
+        </header>
+
+        <div className="min-h-0 flex-1 overflow-y-auto p-4 sm:p-7">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="rounded-2xl border border-slate-200 bg-white p-4"><p className="text-xs font-bold uppercase text-slate-500">Fecha y horario</p><p className="mt-1 font-bold text-[#1F2B24]">{formatMatchDate(match.date)} · {match.time}</p><p className="text-sm text-slate-600">{match.duration} min</p></div>
+            <div className="rounded-2xl border border-slate-200 bg-white p-4"><p className="text-xs font-bold uppercase text-slate-500">Cancha</p><p className="mt-1 font-bold text-[#1F2B24]">{match.field?.name ?? `Cancha #${match.fieldId}`}</p><div className="mt-1 flex flex-wrap items-center justify-between gap-2"><p className="text-sm text-slate-600">{match.field?.address ?? "Dirección no disponible"}</p>{match.field?.address && <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(match.field.address)}`} target="_blank" rel="noopener noreferrer" className="shrink-0 rounded-lg bg-[#E8F0FF] px-3 py-1.5 text-xs font-bold text-[#24466F] transition hover:bg-[#DCE8FF]">Ver en Google Maps</a>}</div></div>
+            <div className="rounded-2xl border border-slate-200 bg-white p-4"><p className="text-xs font-bold uppercase text-slate-500">Precio estimado por jugador</p><p className="mt-1 text-xl font-black text-[#08743A]">{formatPrice(total ? Math.round((match.field?.price ?? 0) / total) : 0)}</p><p className="text-sm text-slate-600">Creador: {match.creator ? `${match.creator.name} ${match.creator.lastName}` : "Usuario"}</p></div>
+          </div>
+
+          <div className="mt-6 flex flex-wrap items-center justify-between gap-2"><div><p className="text-xs font-bold uppercase tracking-wide text-[#08743A]">Alineación táctica y convocatoria</p><h3 className="text-xl font-black text-[#1F2B24]">Pizarra de equipos</h3></div><span className="rounded-full bg-white px-3 py-2 text-sm font-bold text-slate-600">{capacity.confirmed}{total ? ` / ${total}` : ""} jugadores confirmados</span></div>
+          <div className="my-4 flex items-center justify-center gap-3 rounded-2xl bg-[#E7EEE9] p-3 text-sm font-black text-[#1F2B24]"><span>{teams[0]?.name ?? "Equipo A"}</span><span className="rounded-full bg-white px-3 py-1 text-[#08743A]">VS</span><span>{teams[1]?.name ?? "Equipo B"}</span></div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {[0, 1].map((teamIndex) => {
+              const team = teams[teamIndex];
+              const positions = team?.positions ?? [];
+              const slots = Math.max(positions.length, Math.ceil(playerCount / 2));
+              return <section key={team?.id ?? teamIndex} className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5"><h4 className="mb-3 flex items-center gap-2 font-black text-[#1F2B24]"><span className="h-2.5 w-2.5 rounded-full bg-[#08743A]" />{team?.name ?? `Equipo ${teamIndex ? "B" : "A"}`}</h4><ul className="space-y-2">{Array.from({ length: slots }, (_, index) => {
+                const player = positions[index];
+                const name = player?.guestName || (player?.occupant ? `${player.occupant.name} ${player.occupant.lastName}` : "");
+                const occupied = Boolean(name) || player?.status === "occupied";
+                const isCaptain = player?.role?.toLowerCase() === "captain";
+                return <li key={player?.id ?? index} className="flex min-h-14 items-center gap-3 rounded-xl bg-[#F5F7F5] px-3 py-2"><span className="grid h-9 w-9 shrink-0 place-items-center rounded-full border-2 border-[#D6E4DA] bg-white text-sm font-bold text-[#08743A]">{occupied ? name.charAt(0).toLocaleUpperCase("es-AR") : "+"}</span><span className="min-w-0 flex-1"><span className="block truncate text-sm font-bold text-[#1F2B24]">{occupied ? `${name}${isCaptain ? " (Capitán)" : ""}` : "Lugar libre"}</span><span className="block text-xs text-slate-500">{positionLabel(player?.positionType)}</span></span>{occupied && <span className="rounded-full bg-[#DDF3E4] px-2 py-1 text-[10px] font-bold text-[#08743A]">Confirmado</span>}</li>;
+              })}</ul></section>;
+            })}
+          </div>
+          <p className="mt-4 text-center text-xs text-slate-500">La solicitud para unirse a un equipo estará disponible en una próxima etapa.</p>
+        </div>
+        <footer className="shrink-0 border-t border-slate-200 bg-white p-4 sm:px-7"><button type="button" onClick={onClose} className="w-full rounded-xl bg-green-700 px-5 py-3 font-bold text-white hover:bg-green-800">Cerrar</button></footer>
+      </section>
+    </div>
+  );
+}
+
 export default function AvailableMatchGrid({
   matches,
   emptyMessage = "No hay partidos disponibles.",
 }: Props) {
-  const [expandedMatchId, setExpandedMatchId] = useState<number | null>(null);
+  const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
 
   if (matches.length === 0) {
     return <p className="text-sm text-slate-600">{emptyMessage}</p>;
   }
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 2xl:grid-cols-3">
+    <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2 2xl:grid-cols-3">
       {matches.map((match) => {
         const positionCapacity = getMatchCapacity(match);
         const total = Number(match.field?.type) * 2 || positionCapacity.total;
         const capacity = { ...positionCapacity, total, free: Math.max(0, total - positionCapacity.confirmed) };
         const full = isMatchFull(match);
         const isOpen = match.status.toLowerCase() === "open" && !full;
-        const expanded = expandedMatchId === match.id;
 
         return (
           <article key={match.id} className="flex flex-col rounded-2xl border border-slate-200 bg-white p-5 text-[#1F2B24] shadow-[0_4px_14px_rgba(15,23,42,0.07)]">
@@ -68,7 +136,9 @@ export default function AvailableMatchGrid({
             </div>
 
             <h2 className="mt-4 text-lg font-extrabold leading-snug">{match.name}</h2>
-            {match.description && <p className="mt-1 line-clamp-2 text-sm leading-5 text-slate-600">{match.description}</p>}
+            <p className={`mt-1 line-clamp-2 text-sm leading-5 text-slate-600 ${match.description ? "" : "italic"}`}>
+              {match.description || "Sin descripción"}
+            </p>
 
             <div className="mt-4 flex flex-wrap gap-2 rounded-xl bg-[#EEF4FF] px-3 py-2.5 text-xs font-semibold text-[#24466F]">
               <span>{formatMatchDate(match.date)}</span>
@@ -102,24 +172,13 @@ export default function AvailableMatchGrid({
               <span>{match.creator ? `${match.creator.name} ${match.creator.lastName}` : "Usuario"}</span>
             </div>
 
-            {expanded && (
-              <div className="mt-3 rounded-xl border border-slate-100 bg-slate-50 p-3 text-sm text-slate-600">
-                <p className="mt-1">{match.privacy === "public" ? "Cualquier jugador puede solicitar un lugar." : "Este partido es privado."}</p>
-              </div>
-            )}
-
-            <button
-              type="button"
-              aria-expanded={isOpen ? undefined : expanded}
-              onClick={isOpen ? undefined : () => setExpandedMatchId(expanded ? null : match.id)}
-              className={`mt-4 w-full rounded-xl px-4 py-3 text-sm font-extrabold transition ${isOpen ? "bg-green-700 text-white hover:bg-green-800" : "bg-[#DCE8FF] text-[#24466F] hover:bg-[#CFDFFF]"}`}
-            >
-              {isOpen ? "Unirse al partido" : expanded ? "Ocultar detalles" : "Ver detalles"}
-              <span className="ml-2" aria-hidden="true">→</span>
-            </button>
+            <button type="button" onClick={() => setSelectedMatch(match)} className="mt-4 w-full rounded-xl bg-[#DCE8FF] px-4 py-3 text-sm font-extrabold text-[#24466F] transition hover:bg-[#CFDFFF]">Ver partido <span className="ml-2" aria-hidden="true">→</span></button>
           </article>
         );
       })}
+      {selectedMatch && <MatchDetailsModal match={selectedMatch} onClose={() => setSelectedMatch(null)} />}
     </div>
   );
 }
+
+

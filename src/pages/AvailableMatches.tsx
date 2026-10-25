@@ -85,9 +85,9 @@ export default function AvailableMatches() {
 
         <div className="flex min-h-0 flex-1 overflow-hidden">
           <Sidebar collapsed={sidebarCollapsed} />
-          <main className="min-w-0 flex-1 overflow-y-auto bg-[#F3F6F4] p-4 sm:p-6 xl:p-8">
+          <main className="min-w-0 flex-1 overflow-y-auto bg-[#F3F6F4] p-3 sm:p-5 lg:p-8">
             <div className="mx-auto max-w-7xl">
-              <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+              <div className="mb-5 flex flex-col items-stretch gap-3 sm:mb-6 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between sm:gap-4">
                 <div>
                   <div className="flex flex-wrap items-center gap-3">
                     <h1 className="text-2xl font-black text-[#1F2B24] sm:text-3xl">Partidos disponibles</h1>
@@ -97,12 +97,12 @@ export default function AvailableMatches() {
                   </div>
                   <p className="mt-2 text-sm text-slate-600">Encontrá tu próximo partido y revisá los datos de la cancha.</p>
                 </div>
-                <label className="flex items-center gap-2 text-sm font-medium text-slate-600">
+                <label className="flex items-center justify-between gap-2 text-sm font-medium text-slate-600 sm:justify-start">
                   Ordenar por
                   <select
                     value={sortMode}
                     onChange={(event) => setSortMode(event.target.value as SortMode)}
-                    className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-[#1F2B24] shadow-sm outline-none focus:ring-2 focus:ring-green-600"
+                    className="min-w-0 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-[#1F2B24] shadow-sm outline-none focus:ring-2 focus:ring-green-600"
                   >
                     <option value="date">Horario</option>
                     <option value="price">Precio</option>
