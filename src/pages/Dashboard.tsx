@@ -11,6 +11,7 @@ import type { Notification } from '../types/notification';
 import type { User, UserInput } from '../types/user';
 import axios from 'axios';
 import { markAsRead, deleteNotification } from '../api/notification';
+import { API_URL } from '../api/client';
 
 function getAvailableUpcomingMatches(matches: Match[]) {
   return matches
@@ -56,7 +57,7 @@ export default function Dashboard() {
 
     // 2. Partidos (con token incluido)
     axios
-      .get('http://localhost:3000/matches', authHeaders)
+      .get(`${API_URL}/matches`, authHeaders)
       .then((res) => setMatches(res.data))
       .catch((err) => {
         console.error('Error cargando partidos:', err);
@@ -69,7 +70,7 @@ export default function Dashboard() {
 
     // 3. Notificaciones
     axios
-      .get('http://localhost:3000/notifications', authHeaders)
+      .get(`${API_URL}/notifications`, authHeaders)
       .then((res) => setNotifications(res.data))
       .catch((err) => {
         console.error('Error cargando notificaciones:', err);
@@ -77,7 +78,7 @@ export default function Dashboard() {
 
     // 4. Usuario actual
     axios
-      .get('http://localhost:3000/users/me', authHeaders)
+      .get(`${API_URL}/users/me`, authHeaders)
       .then((res) => setUserEditing(res.data))
       .catch((err) => {
         console.error('Error cargando usuario:', err);
@@ -113,7 +114,7 @@ export default function Dashboard() {
 
   const handleSubmitUser = (data: UserInput) => {
     axios
-      .put('http://localhost:3000/users/me', data, {
+      .put(`${API_URL}/users/me`, data, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {

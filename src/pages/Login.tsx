@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios, { AxiosError } from "axios";
+import { API_URL } from '../api/client';
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -11,7 +12,10 @@ export default function Login() {
     e.preventDefault();
     try {
       // 👇 asegurate que tu backend tenga esta ruta
-      const res = await axios.post("http://localhost:3000/auth/login", { email, password });
+      const res = await axios.post(`${API_URL}/auth/login`, {
+        email,
+        password,
+      });
       
       // 👇 usar "mensaje" porque tu backend devuelve esa propiedad
       alert(res.data.mensaje);
