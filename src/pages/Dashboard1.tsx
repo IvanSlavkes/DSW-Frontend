@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import axios from 'axios';
 import FieldList from '../components/FieldList';
 import FieldForm from '../components/FieldForm';
+import FieldCategoryManager from '../components/FieldCategoryManager';
 import MatchList from '../components/MatchList';
 import MatchForm from '../components/MatchForm';
 import NotificationList from '../components/NotificationList';
@@ -69,6 +70,7 @@ import type { FriendRequest, FriendRequestInput } from '../types/friend-request'
 
 type Tab =
   | 'fields'
+  | 'fieldCategories'
   | 'matches'
   | 'notifications'
   | 'ratings'
@@ -615,6 +617,7 @@ function App() {
         >
           Canchas
         </button>
+        <button onClick={() => setTab('fieldCategories')} className={`rounded px-3 py-1 ${tab === 'fieldCategories' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}>Categorías</button>
         <button
           onClick={() => setTab('matches')}
           className={`rounded px-3 py-1 ${tab === 'matches' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
@@ -685,6 +688,8 @@ function App() {
           )}
         </>
       )}
+
+      {tab === 'fieldCategories' && <FieldCategoryManager />}
 
       {tab === 'matches' && (
         <>
@@ -854,3 +859,8 @@ function App() {
 }
 
 export default App;
+
+
+
+
+
