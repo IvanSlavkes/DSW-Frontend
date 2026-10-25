@@ -137,8 +137,8 @@ export default function CreateMatch() {
 
       <div className="flex min-h-0 flex-1 overflow-hidden">
         <Sidebar collapsed={sidebarCollapsed} />
-        <main className="min-w-0 flex-1 overflow-y-auto p-6">
-          <section className="mx-auto max-w-2xl rounded-xl bg-white p-6 shadow">
+        <main className="min-w-0 flex-1 overflow-y-auto p-3 sm:p-5 lg:p-8">
+          <section className="mx-auto max-w-2xl rounded-xl bg-white p-4 shadow sm:p-6">
             <h2 className="mb-4 text-xl font-semibold text-[#1B4D3E]">Datos del partido</h2>
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -300,18 +300,18 @@ export default function CreateMatch() {
                 </p>
               )}
 
-              <div className="flex gap-2">
+              <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
                 <button
                   type="submit"
                   disabled={submitting || fields.length === 0}
-                  className="rounded-xl bg-[#1B4D3E] px-6 py-3 font-semibold text-white shadow-sm transition-colors hover:bg-[#14382d] disabled:opacity-50"
+                  className="w-full rounded-xl bg-[#1B4D3E] px-6 py-3 font-semibold text-white shadow-sm transition-colors hover:bg-[#14382d] disabled:opacity-50 sm:w-auto"
                 >
                   {submitting ? "Creando..." : "Crear partido"}
                 </button>
                 <button
                   type="button"
                   onClick={() => navigate("/dashboard")}
-                  className="rounded-xl bg-gray-200 px-6 py-3 hover:bg-gray-300"
+                  className="w-full rounded-xl bg-gray-200 px-6 py-3 hover:bg-gray-300 sm:w-auto"
                 >
                   Cancelar
                 </button>

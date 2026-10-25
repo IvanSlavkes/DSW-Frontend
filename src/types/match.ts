@@ -26,6 +26,7 @@ export interface Match {
       secondaryPositionType?: string | null;
       role?: string;
       guestName?: string | null;
+      occupant?: { id: number; name: string; lastName: string } | null;
     }[];
   }[];
   creator?: {

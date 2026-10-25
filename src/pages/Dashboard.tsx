@@ -176,12 +176,12 @@ export default function Dashboard() {
           <Sidebar collapsed={sidebarCollapsed} />
           <div className="flex min-w-0 flex-1 flex-col overflow-y-auto">
             {/* Paneles */}
-            <main className="grid flex-1 grid-cols-1 content-start gap-5 p-4 sm:p-6 xl:grid-cols-[minmax(0,1.8fr)_minmax(280px,0.85fr)] xl:gap-6 xl:p-7">
+            <main className="grid flex-1 grid-cols-1 content-start gap-4 p-3 sm:gap-5 sm:p-5 lg:p-7 xl:grid-cols-[minmax(0,1.8fr)_minmax(280px,0.85fr)] xl:gap-6">
               {/* Columna central */}
               <div className="flex min-w-0 flex-col gap-5">
                 {/* Banner de bienvenida */}
                 <section
-                  className="relative flex min-h-[230px] items-center overflow-hidden rounded-2xl bg-cover bg-center p-6 shadow-lg sm:min-h-[290px] sm:p-9"
+                  className="relative flex min-h-[210px] items-center overflow-hidden rounded-2xl bg-cover bg-center p-5 shadow-lg sm:min-h-[260px] sm:p-8 lg:min-h-[290px] lg:p-9"
                   style={{
                     backgroundImage:
                       "linear-gradient(90deg, rgba(4,40,27,0.88), rgba(4,40,27,0.35)), url('/images/Fondo.jpg')",
@@ -215,7 +215,7 @@ export default function Dashboard() {
                 </section>
 
                 {/* Próximos partidos */}
-                <section className="rounded-2xl border border-white/15 bg-[#1C2928] p-5 text-white shadow-lg sm:p-6">
+                <section className="min-w-0 rounded-2xl border border-white/15 bg-[#1C2928] p-3 text-white shadow-lg sm:p-5 lg:p-6">
                   <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
                     <div>
                       <h2 className="text-xl font-bold text-white">
@@ -245,7 +245,7 @@ export default function Dashboard() {
               {/* Columna derecha */}
               <aside className="flex min-w-0 flex-col gap-5">
                 {/* Perfil */}
-                <section className="rounded-2xl border border-white/15 bg-[#1C2928] p-5 text-white shadow-lg sm:p-6">
+                <section className="min-w-0 rounded-2xl border border-white/15 bg-[#1C2928] p-4 text-white shadow-lg sm:p-5 lg:p-6">
                   <h2 className="mb-5 text-lg font-bold text-white">
                     Mi perfil
                   </h2>
