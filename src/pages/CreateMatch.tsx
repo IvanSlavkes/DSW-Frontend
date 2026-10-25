@@ -1,4 +1,4 @@
-import api from "../api/client";
+﻿import api from "../api/client";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -252,7 +252,7 @@ export default function CreateMatch() {
                   {fields.map((f) => (
                     <option key={f.id} value={f.id}>
                       {f.name}
-                      {f.locality ? ` — ${f.locality.nombre}` : ""} (Fútbol {f.type})
+                      {f.locality ? ` — ${f.locality.nombre}` : ""} ({f.category.name})
                     </option>
                   ))}
                 </select>
@@ -261,7 +261,7 @@ export default function CreateMatch() {
                 )}
                 {selectedField && (
                   <p className="mt-1 text-sm text-gray-500">
-                    Formato: Fútbol {selectedField.type} · {selectedField.address} · Precio: ${selectedField.price}
+                    Formato: {selectedField.category.name} · {selectedField.category.playersPerTeam} por equipo · {selectedField.category.surfaceType} · {selectedField.address} · Precio: ${selectedField.price}
                   </p>
                 )}
               </div>
@@ -323,3 +323,4 @@ export default function CreateMatch() {
     </div>
   );
 }
+

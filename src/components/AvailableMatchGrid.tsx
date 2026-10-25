@@ -50,7 +50,7 @@ function MatchDetailsModal({ match, onClose }: { match: Match; onClose: () => vo
 
   const teams = match.teams ?? [];
   const capacity = getMatchCapacity(match);
-  const total = Number(match.field?.type) * 2 || capacity.total;
+  const total = (match.field?.category?.playersPerTeam ?? 0) * 2 || capacity.total;
   const playerCount = Math.max(total, ...teams.map((team) => team.positions?.length ?? 0));
 
   return (
@@ -60,7 +60,7 @@ function MatchDetailsModal({ match, onClose }: { match: Match; onClose: () => vo
           <div className="min-w-0">
             <div className="mb-2 flex flex-wrap gap-2 text-xs font-bold text-[#08743A]">
               <span className="rounded-full bg-[#DDF3E4] px-3 py-1">{match.privacy === "public" ? "Público" : "Privado · requiere aprobación"}</span>
-              {match.field?.type && <span className="rounded-full bg-slate-100 px-3 py-1 text-slate-600">Fútbol {match.field.type}</span>}
+              {match.field?.category?.name && <span className="rounded-full bg-slate-100 px-3 py-1 text-slate-600">Fútbol {match.field.category.name}</span>}
             </div>
             <h2 id="match-modal-title" className="text-xl font-black text-[#1F2B24] sm:text-3xl">{match.name}</h2>
             {match.description && <p className="mt-1 text-sm text-slate-600">{match.description}</p>}
@@ -113,7 +113,7 @@ export default function AvailableMatchGrid({
     <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2 2xl:grid-cols-3">
       {matches.map((match) => {
         const positionCapacity = getMatchCapacity(match);
-        const total = Number(match.field?.type) * 2 || positionCapacity.total;
+        const total = (match.field?.category?.playersPerTeam ?? 0) * 2 || positionCapacity.total;
         const capacity = { ...positionCapacity, total, free: Math.max(0, total - positionCapacity.confirmed) };
         const full = isMatchFull(match);
         const isOpen = match.status.toLowerCase() === "open" && !full;
@@ -151,7 +151,7 @@ export default function AvailableMatchGrid({
             <div className="mt-3 rounded-xl bg-[#F7F9F8] px-3 py-3 text-sm text-slate-700">
               <p className="font-bold text-[#1F2B24]">{match.field?.name ?? `Cancha #${match.fieldId}`}</p>
               <p className="mt-0.5 text-slate-600">{match.field?.address ?? "Dirección no disponible"}</p>
-              {match.field?.type && <p className="mt-1 text-xs font-semibold text-slate-500">Fútbol {match.field.type}</p>}
+              {match.field?.category?.name && <p className="mt-1 text-xs font-semibold text-slate-500">Fútbol {match.field.category.name}</p>}
             </div>
 
             <div className="mt-4">
@@ -180,5 +180,8 @@ export default function AvailableMatchGrid({
     </div>
   );
 }
+
+
+
 
 

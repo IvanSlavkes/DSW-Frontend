@@ -1,4 +1,4 @@
-import type { Match } from '../types/match';
+﻿import type { Match } from '../types/match';
 
 interface Props {
   matches: Match[];
@@ -28,7 +28,7 @@ export default function MatchList({ matches, onEdit, onDelete, showActions = tru
             Cancha: {match.field?.name ?? `#${match.fieldId}`}
           </p>
           {match.field?.address && <p className="text-sm text-white/70">Dirección: {match.field.address}</p>}
-          {match.field?.type && <p className="text-sm text-white/70">Fútbol {match.field.type} · {match.duration} min</p>}
+          {match.field?.category?.name && <p className="text-sm text-white/70">{match.field.category.name} · {match.duration} min</p>}
           <p className="text-sm text-white/70">
             Creador:{' '}
             {match.creator
@@ -47,4 +47,7 @@ export default function MatchList({ matches, onEdit, onDelete, showActions = tru
     </div>
   );
 }
+
+
+
 

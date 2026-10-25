@@ -1,4 +1,4 @@
-import type { Field } from '../types/field';
+﻿import type { Field } from '../types/field';
 
 interface Props {
   fields: Field[];
@@ -19,7 +19,7 @@ export default function FieldList({ fields, onEdit, onDelete }: Props) {
           className="rounded-lg border border-gray-200 p-4 shadow-sm">
           <h3 className="text-lg font-semibold">{field.name}</h3>
           <p className="text-sm text-gray-600">{field.address}</p>
-          <p className="text-sm text-gray-600">Fútbol {field.type}</p>
+          <p className="text-sm text-gray-600">{field.category?.name ?? "Categoría sin nombre"} · {field.category?.playersPerTeam} por equipo · {field.category?.surfaceType}</p>
           <p className="text-sm text-gray-600">Precio: ${field.price}</p>
           <p className="text-sm text-gray-600">
             Localidad: {field.locality?.nombre ?? field.localityId}
@@ -43,3 +43,4 @@ export default function FieldList({ fields, onEdit, onDelete }: Props) {
     </div>
   );
 }
+
