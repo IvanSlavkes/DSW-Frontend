@@ -13,9 +13,9 @@ import type { Field } from "../types/field";
 import type { MatchInput } from "../types/match";
 import { argentinaDateAndTimeToIso, argentinaNowTimeInput, argentinaTodayDateInput } from "../utils/matchDateTime";
 
-const labelClass = "mb-1 block text-sm font-medium text-gray-700";
+const labelClass = "mb-1 block text-sm font-semibold text-white/80";
 const inputClass =
-  "w-full rounded border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B4D3E]";
+  "w-full min-w-0 rounded-xl border border-white/15 bg-[#10372A] px-3 py-2.5 text-sm text-white outline-none placeholder:text-white/45 focus:ring-2 focus:ring-[#01AB48] [color-scheme:dark]";
 
 function errorMessage(err: unknown): string {
   if (axios.isAxiosError(err)) {
@@ -54,8 +54,8 @@ export default function CreateMatch() {
   const [fieldId, setFieldId] = useState("");
   const [privacy, setPrivacy] = useState<MatchInput["privacy"]>("public");
   const [teamAName, setTeamAName] = useState("");
-  const [positionType, setPositionType] = useState<MatchInput["positionType"] | "">("");
-  const [secondaryPositionType, setSecondaryPositionType] = useState<MatchInput["secondaryPositionType"] | "">("");
+  const [positionType, setPositionType] = useState("");
+  const [secondaryPositionType, setSecondaryPositionType] = useState("");
 
 
   const [submitting, setSubmitting] = useState(false);
@@ -109,8 +109,8 @@ export default function CreateMatch() {
         privacy,
         fieldId: selectedField.id,
         teamAName,
-        positionType: positionType || undefined,
-        secondaryPositionType: secondaryPositionType || undefined,
+        positionType: positionType ? positionType.toLowerCase() as MatchInput["positionType"] : undefined,
+        secondaryPositionType: secondaryPositionType ? secondaryPositionType.toLowerCase() as MatchInput["secondaryPositionType"] : undefined,
       });
       navigate("/dashboard");
     } catch (err) {
@@ -122,16 +122,18 @@ export default function CreateMatch() {
   }
 
   return (
-    <div className="flex h-dvh w-full flex-col bg-gray-50">
+    <div className="flex h-dvh min-h-screen w-full flex-col bg-cover bg-center bg-fixed" style={{ backgroundImage: "url('/images/Fondo.jpg')" }}>
+      <div className="flex h-full w-full flex-col bg-[#061910]/55">
       <AppHeader sidebarCollapsed={sidebarCollapsed} onToggleSidebar={toggleSidebar}>
         <span className="truncate text-sm font-semibold text-white sm:text-base">Crear partido</span>
       </AppHeader>
 
       <div className="flex min-h-0 flex-1 overflow-hidden">
         <Sidebar collapsed={sidebarCollapsed} />
-        <main className="min-w-0 flex-1 overflow-y-auto p-3 sm:p-5 lg:p-8">
-          <section className="mx-auto max-w-2xl rounded-xl bg-white p-4 shadow sm:p-6">
-            <h2 className="mb-4 text-xl font-semibold text-[#1B4D3E]">Datos del partido</h2>
+        <main className="min-w-0 flex-1 overflow-y-auto px-3 py-5 sm:px-5 lg:px-8">
+          <section className="mx-auto max-w-3xl rounded-2xl border border-white/10 bg-[#09241B] p-5 text-white shadow-xl sm:p-7">
+            <h2 className="mb-2 text-2xl font-black">Organizar partido</h2>
+            <p className="mb-6 text-sm text-white/65">Completá los datos para crear un nuevo encuentro.</p>
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
               <div>
@@ -167,7 +169,7 @@ export default function CreateMatch() {
                   <label className={labelClass}>Tu posición principal (opcional)</label>
                   <PositionSelect
                     value={positionType ?? ""}
-                    onChange={(value) => setPositionType(value as MatchInput["positionType"] | "")}
+                    onChange={setPositionType}
                     className={inputClass}
                     required={false}
                     wildcardLabel="Comodín: donde haga falta"
@@ -177,7 +179,7 @@ export default function CreateMatch() {
                   <label className={labelClass}>Tu posición secundaria (opcional)</label>
                   <PositionSelect
                     value={secondaryPositionType ?? ""}
-                    onChange={(value) => setSecondaryPositionType(value as MatchInput["secondaryPositionType"] | "")}
+                    onChange={setSecondaryPositionType}
                     className={inputClass}
                     required={false}
                     wildcardLabel="Comodín: donde haga falta"
@@ -216,7 +218,7 @@ export default function CreateMatch() {
                   value={fieldId}
                   onChange={(e) => setFieldId(e.target.value)}
                   disabled={loadingFields || fields.length === 0}
-                  className={`${inputClass} disabled:bg-gray-100 disabled:text-gray-500`}
+                  className={`${inputClass} disabled:bg-[#0A3123] disabled:text-white/50`}
                   required
                 >
                   <option value="">
@@ -230,11 +232,11 @@ export default function CreateMatch() {
                   ))}
                 </select>
                 {!loadingFields && fields.length === 0 && (
-                  <p className="mt-1 text-sm text-gray-500">Todavía no hay canchas cargadas.</p>
+                  <p className="mt-1 text-sm text-white/60">Todavía no hay canchas cargadas.</p>
                 )}
                 {selectedField && (
-                  <p className="mt-1 text-sm text-gray-500">
-                    Formato: {selectedField.category.name} · {selectedField.category.playersPerTeam} por equipo · {selectedField.category.surfaceType} · {selectedField.address} · Precio: ${selectedField.price}
+                  <p className="mt-1 text-sm text-white/65">
+                    Formato: {selectedField.category.name} · {selectedField.address} · Precio: ${(selectedField.price)}
                   </p>
                 )}
               </div>
@@ -268,7 +270,7 @@ export default function CreateMatch() {
               </div>
 
               {error && (
-                <p role="alert" className="text-sm text-red-600">
+                <p role="alert" className="text-sm text-red-200">
                   {error}
                 </p>
               )}
@@ -277,14 +279,14 @@ export default function CreateMatch() {
                 <button
                   type="submit"
                   disabled={submitting || fields.length === 0}
-                  className="w-full rounded-xl bg-[#1B4D3E] px-6 py-3 font-semibold text-white shadow-sm transition-colors hover:bg-[#14382d] disabled:opacity-50 sm:w-auto"
+                  className="w-full rounded-xl bg-[#01AB48] px-6 py-3 font-bold text-white shadow-sm transition-colors hover:bg-[#029b42] disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
                 >
                   {submitting ? "Creando..." : "Crear partido"}
                 </button>
                 <button
                   type="button"
                   onClick={() => navigate("/dashboard")}
-                  className="w-full rounded-xl bg-gray-200 px-6 py-3 hover:bg-gray-300 sm:w-auto"
+                  className="w-full rounded-xl border border-white/15 bg-[#10372A] px-6 py-3 font-semibold text-white/85 transition hover:bg-white/10 hover:text-white sm:w-auto"
                 >
                   Cancelar
                 </button>
@@ -292,6 +294,7 @@ export default function CreateMatch() {
             </form>
           </section>
         </main>
+      </div>
       </div>
     </div>
   );

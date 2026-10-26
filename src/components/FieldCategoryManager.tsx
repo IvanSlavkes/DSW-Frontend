@@ -14,7 +14,20 @@ export default function FieldCategoryManager() {
   const [error, setError] = useState("");
 
   async function load() { setCategories(await getFieldCategories()); }
-  useEffect(() => { void load().catch(() => setError("No se pudieron cargar las categorías.")); }, []);
+  useEffect(() => {
+    let cancelled = false;
+    getFieldCategories()
+      .then((loadedCategories) => {
+        if (!cancelled) setCategories(loadedCategories);
+      })
+      .catch(() => {
+        if (!cancelled) setError("No se pudieron cargar las categorías.");
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   async function submit(event: React.FormEvent) {
     event.preventDefault();

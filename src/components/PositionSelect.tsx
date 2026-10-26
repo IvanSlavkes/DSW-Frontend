@@ -20,7 +20,7 @@ export default function PositionSelect({
       value={value}
       onChange={(event) => onChange(event.target.value)}
       required={required}
-      className={`${className} bg-white text-gray-900`}
+      className={className}
     >
       {wildcardLabel ? (
         <option value="">{wildcardLabel}</option>

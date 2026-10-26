@@ -1,4 +1,6 @@
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { getMyProfile } from "../api/user";
 
 const menuItems = [
   {
@@ -10,6 +12,11 @@ const menuItems = [
     label: "Partidos",
     path: "/matches",
     icon: <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="3" y="5" width="18" height="16" rx="2" /><path strokeLinecap="round" d="M7 3v4m10-4v4M3 10h18" /></svg>,
+  },
+  {
+    label: "Mi cuenta",
+    path: "/profile",
+    icon: <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="8" r="4" /><path strokeLinecap="round" strokeLinejoin="round" d="M4 21a8 8 0 0 1 16 0" /></svg>,
   },
   {
     label: "Notificaciones",
@@ -25,11 +32,29 @@ const menuItems = [
 
 interface SidebarProps {
   collapsed: boolean;
+  isAdmin?: boolean;
 }
 
-export default function Sidebar({ collapsed }: SidebarProps) {
+export default function Sidebar({ collapsed, isAdmin = false }: SidebarProps) {
   const location = useLocation();
-  const navigate = useNavigate();
+  const [profileIsAdmin, setProfileIsAdmin] = useState(false);
+
+  useEffect(() => {
+    if (isAdmin || !localStorage.getItem("token")) return;
+    let cancelled = false;
+    getMyProfile()
+      .then((profile) => { if (!cancelled) setProfileIsAdmin(profile.role === "admin"); })
+      .catch(() => { if (!cancelled) setProfileIsAdmin(false); });
+    return () => { cancelled = true; };
+  }, [isAdmin]);
+
+  const visibleMenuItems = isAdmin || profileIsAdmin
+    ? [...menuItems, {
+        label: "Administración",
+        path: "/admin",
+        icon: <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8"><path strokeLinecap="round" strokeLinejoin="round" d="M12 3 4 7v5c0 5 3.5 8 8 9 4.5-1 8-4 8-9V7l-8-4Z" /><path strokeLinecap="round" strokeLinejoin="round" d="m9 12 2 2 4-4" /></svg>,
+      }]
+    : menuItems;
 
   return (
     <aside
@@ -42,11 +67,13 @@ export default function Sidebar({ collapsed }: SidebarProps) {
       }}
     >
       <nav className={`mt-4 flex flex-col ${collapsed ? "gap-1 px-1" : "gap-2 px-4"}`}>
-        {menuItems.map((item) => {
+        {visibleMenuItems.map((item) => {
+          const isCreateMatchRoute = location.pathname.startsWith("/matches/create");
           const active =
             location.pathname === item.path ||
             (item.path !== "/dashboard" &&
-              location.pathname.startsWith(item.path + "/"));
+              location.pathname.startsWith(item.path + "/") &&
+              !(item.path === "/matches" && isCreateMatchRoute));
 
           return (
             <div key={item.path}>
@@ -70,21 +97,6 @@ export default function Sidebar({ collapsed }: SidebarProps) {
         })}
       </nav>
 
-      <div className={`mt-auto pb-4 pt-4 ${collapsed ? "px-2" : "px-4"}`}>
-        <div className="mb-3 border-t border-white/15" />
-        <button
-          type="button"
-          onClick={() => {
-            localStorage.removeItem("token");
-            navigate("/login");
-          }}
-          title={collapsed ? "Cerrar sesión" : undefined}
-          className={`flex w-full rounded-xl py-3 text-white/90 transition-colors duration-200 hover:bg-white/10 hover:text-white ${collapsed ? "flex-col items-center justify-center gap-1 px-1 text-[10px] leading-3" : "items-center gap-3 px-4"}`}
-        >
-          <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5 shrink-0" fill="none" stroke="currentColor" strokeWidth="1.8"><path strokeLinecap="round" d="M12 3v9m6.36-6.36a9 9 0 1 1-12.72 0" /></svg>
-          <span className={`max-w-full ${collapsed ? "whitespace-normal text-center text-[10px] leading-3" : "overflow-hidden whitespace-nowrap"}`}>Cerrar sesión</span>
-        </button>
-      </div>
     </aside>
   );
 }

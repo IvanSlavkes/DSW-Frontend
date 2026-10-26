@@ -1,1 +1,65 @@
 @import "tailwindcss";
+
+.admin-panel form {
+  margin-bottom: 1rem;
+  border: 1px solid rgb(255 255 255 / 10%);
+  border-radius: 1rem;
+  background: #09241b;
+  padding: 1.25rem;
+  color: #fff;
+  box-shadow: 0 12px 28px rgb(0 0 0 / 18%);
+}
+
+.admin-panel :is(input, select, textarea) {
+  min-height: 2.75rem;
+  border: 1px solid rgb(255 255 255 / 16%);
+  border-radius: 0.75rem;
+  background-color: #10372a;
+  padding: 0.625rem 0.75rem;
+  color: #fff;
+  color-scheme: dark;
+}
+
+.admin-panel :is(input, textarea)::placeholder {
+  color: rgb(255 255 255 / 48%);
+}
+
+.admin-panel select option {
+  background-color: #09241b;
+  color: #fff;
+}
+
+.admin-panel input:disabled {
+  background-color: #0a3123;
+  color: rgb(255 255 255 / 58%);
+}
+
+.admin-panel label {
+  color: rgb(255 255 255 / 85%);
+}
+
+.admin-panel :is(.grid > div, ul > li) {
+  border: 1px solid rgb(255 255 255 / 10%);
+  border-radius: 1rem;
+  background: #09241b;
+  padding: 1.25rem;
+  color: #fff;
+  box-shadow: 0 12px 28px rgb(0 0 0 / 18%);
+}
+
+.admin-panel :is(.grid > div, ul > li) :is(h2, h3) {
+  color: #fff;
+}
+
+.admin-panel :is(.grid > div, ul > li) p {
+  color: rgb(255 255 255 / 72%);
+}
+
+.admin-panel :is(p.text-gray-400, p.text-gray-500, p.text-gray-600) {
+  color: rgb(255 255 255 / 65%);
+}
+
+.admin-panel :is(input, select, textarea):focus-visible {
+  outline: 2px solid #01ab48;
+  outline-offset: 1px;
+}

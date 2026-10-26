@@ -5,10 +5,9 @@ import AppHeader from '../components/AppHeader';
 import { useSidebar } from '../hooks/useSidebar';
 import AvailableMatchGrid from '../components/AvailableMatchGrid';
 import NotificationPanel from '../components/NotificationPanel';
-import UserForm from '../components/UserForm';
 import type { Match } from '../types/match';
 import type { Notification } from '../types/notification';
-import type { User, UserInput } from '../types/user';
+import type { User } from '../types/user';
 import axios from 'axios';
 import { markAsRead, deleteNotification } from '../api/notification';
 import { API_URL } from '../api/client';
@@ -36,7 +35,7 @@ export default function Dashboard() {
   const [matchesLoading, setMatchesLoading] = useState(true);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [userEditing, setUserEditing] = useState<User | null>(null);
-  const [showUserForm, setShowUserForm] = useState(false);
+  const [accountMenuOpen, setAccountMenuOpen] = useState(false);
 
   const navigate = useNavigate();
   const { collapsed: sidebarCollapsed, toggleSidebar } = useSidebar();
@@ -112,26 +111,6 @@ export default function Dashboard() {
     }
   };
 
-  const handleSubmitUser = (data: UserInput) => {
-    axios
-      .put(`${API_URL}/users/me`, data, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((res) => {
-        setUserEditing(res.data);
-        setShowUserForm(false);
-        alert('Perfil actualizado correctamente');
-      })
-      .catch((err) => {
-        console.error('Error actualizando usuario:', err);
-        alert(err.response?.data?.error || 'No se pudo actualizar el perfil');
-      });
-  };
-
-  const handleCancelUser = () => {
-    setShowUserForm(false);
-  };
-
   return (
     <div
       className="flex h-dvh w-full overflow-hidden bg-cover bg-center bg-fixed"
@@ -145,28 +124,46 @@ export default function Dashboard() {
           sidebarCollapsed={sidebarCollapsed}
           onToggleSidebar={toggleSidebar}
         >
-          <div className="flex items-center gap-3">
-            <svg
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-              className="h-4 w-4 shrink-0"
+          <div className="relative">
+            <button
+              type="button"
+              aria-label="Abrir menú de usuario"
+              aria-expanded={accountMenuOpen}
+              onClick={() => setAccountMenuOpen((open) => !open)}
+              className="flex items-center gap-3 rounded-xl px-2 py-1 text-left transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-300"
             >
-              <circle cx="12" cy="12" r="11" fill="white" />
-              <circle cx="12" cy="8.5" r="3" fill="#1F2B24" />
-              <path d="M5.5 19a6.5 6.5 0 0 1 13 0" fill="#1F2B24" />
-            </svg>
-            <div className="max-w-44 text-right">
-              <p className="truncate font-semibold text-white">
-                {userEditing
-                  ? `${userEditing.name} ${userEditing.lastName}`
-                  : 'Cargando usuario...'}
-              </p>
-              <p className="text-xs text-white/75">Mi cuenta</p>
-            </div>
+              <svg viewBox="0 0 24 24" aria-hidden="true" className="h-8 w-8 shrink-0">
+                <circle cx="12" cy="12" r="11" fill="white" />
+                <circle cx="12" cy="8.5" r="3" fill="#1F2B24" />
+                <path d="M5.5 19a6.5 6.5 0 0 1 13 0" fill="#1F2B24" />
+              </svg>
+              <span className="max-w-44 truncate font-semibold text-white">
+                {userEditing ? `${userEditing.name} ${userEditing.lastName}` : 'Cargando usuario...'}
+              </span>
+            </button>
+            {accountMenuOpen && (
+              <div className="absolute right-0 top-full z-50 mt-2 w-48 overflow-hidden rounded-xl border border-white/10 bg-[#09241B] p-1 text-white shadow-xl">
+                <button
+                  type="button"
+                  onClick={() => { setAccountMenuOpen(false); navigate('/profile'); }}
+                  className="w-full rounded-lg px-3 py-2.5 text-left text-sm font-semibold transition hover:bg-white/10"
+                >
+                  Mi perfil
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { localStorage.removeItem('token'); navigate('/login'); }}
+                  className="w-full rounded-lg px-3 py-2.5 text-left text-sm font-semibold text-white/80 transition hover:bg-white/10 hover:text-white"
+                >
+                  Cerrar sesión
+                </button>
+              </div>
+            )}
+
           </div>
         </AppHeader>
         <div className="flex min-h-0 flex-1 overflow-hidden">
-          <Sidebar collapsed={sidebarCollapsed} />
+          <Sidebar collapsed={sidebarCollapsed} isAdmin={userEditing?.role === 'admin'} />
           <div className="flex min-w-0 flex-1 flex-col overflow-y-auto">
             {/* Paneles */}
             <main className="grid flex-1 grid-cols-1 content-start gap-4 p-3 sm:gap-5 sm:p-5 lg:p-7 xl:grid-cols-[minmax(0,1.8fr)_minmax(280px,0.85fr)] xl:gap-6">
@@ -226,6 +223,7 @@ export default function Dashboard() {
 
                   <AvailableMatchGrid
                     matches={availableUpcomingMatches}
+                    layout="list"
                     emptyMessage={
                       matchesLoading
                         ? 'Cargando partidos...'
@@ -263,36 +261,23 @@ export default function Dashboard() {
                         {userEditing?.position || 'Jugador/a'}
                       </p>
 
-                      <p className="mt-1 truncate text-sm text-white/65">
-                        {userEditing?.email || ''}
-                      </p>
                     </div>
                   </div>
 
-                  {userEditing?.description && (
-                    <p className="mt-4 text-sm leading-6 text-white/75">
-                      {userEditing.description}
-                    </p>
-                  )}
-
-                  <button
-                    type="button"
-                    onClick={() => setShowUserForm((previous) => !previous)}
-                    className="mt-5 w-full rounded-lg bg-white/10 px-4 py-3 font-semibold text-white transition hover:bg-white/20"
-                  >
-                    {showUserForm ? 'Cerrar edición' : 'Editar perfil'}
-                  </button>
-
-                  {showUserForm && userEditing && (
-                    <div className="mt-5 border-t border-white/20 pt-5">
-                      <UserForm
-                        key={userEditing.id}
-                        userEditing={userEditing}
-                        onSubmit={handleSubmitUser}
-                        onCancel={handleCancelUser}
-                      />
+                  <div className="mt-5 grid grid-cols-2 gap-3 border-t border-white/15 pt-5">
+                    <div className="rounded-xl bg-white/5 p-3">
+                      <p className="text-xl font-black text-white">
+                        {userEditing?.matchesPlayed ?? '—'}
+                      </p>
+                      <p className="mt-1 text-xs text-white/65">Partidos jugados</p>
                     </div>
-                  )}
+                    <div className="rounded-xl bg-white/5 p-3">
+                      <p className="text-xl font-black text-white">
+                        {userEditing?.averageRating ? userEditing.averageRating.toFixed(1) : '—'}
+                      </p>
+                      <p className="mt-1 text-xs text-white/65">Promedio</p>
+                    </div>
+                  </div>
                 </section>
 
                 {/* Notificaciones */}

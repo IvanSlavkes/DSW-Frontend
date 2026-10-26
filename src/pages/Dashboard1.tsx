@@ -82,6 +82,7 @@ type Tab =
 
 function App() {
   const [tab, setTab] = useState<Tab>('fields');
+  const tabButtonClass = (active: boolean) => `rounded-xl border px-4 py-2 text-sm font-semibold transition ${active ? 'border-[#01AB48] bg-[#01AB48] text-white shadow-md' : 'border-white/10 bg-[#10372A] text-white/80 hover:bg-white/10 hover:text-white'}`;
 
   const [fields, setFields] = useState<Field[]>([]);
   const [fieldEditing, setFieldEditing] = useState<Field | null>(null);
@@ -145,7 +146,7 @@ function App() {
   async function loadNotifications() {
     try {
       setLoading(true);
-      const data = await getNotifications();
+      const data = await getNotifications({ all: true });
       setNotifications(data);
       setError(null);
     } catch (err) {
@@ -609,60 +610,65 @@ function App() {
   }
 
   return (
-    <div className="mx-auto max-w-2xl p-4">
-      <div className="mb-4 flex flex-wrap gap-2">
+    <div className="admin-panel mx-auto max-w-7xl space-y-5 p-4 text-white sm:p-6">
+      <section className="rounded-2xl border border-white/10 bg-[#09241B] p-5 shadow-xl sm:p-6">
+        <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#01AB48]">FutGO</p>
+        <h1 className="mt-1 text-2xl font-black sm:text-3xl">Panel de administración</h1>
+        <p className="mt-2 text-sm text-white/70">Gestioná usuarios, partidos y recursos de la plataforma.</p>
+      </section>
+      <div className="flex flex-wrap gap-2">
         <button
           onClick={() => setTab('fields')}
-          className={`rounded px-3 py-1 ${tab === 'fields' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+          className={tabButtonClass(tab === 'fields')}
         >
           Canchas
         </button>
-        <button onClick={() => setTab('fieldCategories')} className={`rounded px-3 py-1 ${tab === 'fieldCategories' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}>Categorías</button>
+        <button onClick={() => setTab('fieldCategories')} className={tabButtonClass(tab === 'fieldCategories')}>Categorías</button>
         <button
           onClick={() => setTab('matches')}
-          className={`rounded px-3 py-1 ${tab === 'matches' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+          className={tabButtonClass(tab === 'matches')}
         >
           Partidos
         </button>
         <button
           onClick={() => setTab('notifications')}
-          className={`rounded px-3 py-1 ${tab === 'notifications' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+          className={tabButtonClass(tab === 'notifications')}
         >
           Notificaciones
         </button>
         <button
           onClick={() => setTab('ratings')}
-          className={`rounded px-3 py-1 ${tab === 'ratings' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+          className={tabButtonClass(tab === 'ratings')}
         >
           Calificaciones
         </button>
         <button
           onClick={() => setTab('users')}
-          className={`rounded px-3 py-1 ${tab === 'users' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+          className={tabButtonClass(tab === 'users')}
         >
           Usuarios
         </button>
         <button
           onClick={() => setTab('localities')}
-          className={`rounded px-3 py-1 ${tab === 'localities' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+          className={tabButtonClass(tab === 'localities')}
         >
           Localidades
         </button>
         <button
           onClick={() => setTab('matchTeams')}
-          className={`rounded px-3 py-1 ${tab === 'matchTeams' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+          className={tabButtonClass(tab === 'matchTeams')}
         >
           Equipos
         </button>
         <button
           onClick={() => setTab('teamPositions')}
-          className={`rounded px-3 py-1 ${tab === 'teamPositions' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+          className={tabButtonClass(tab === 'teamPositions')}
         >
           Posiciones
         </button>
         <button
           onClick={() => setTab('friendRequests')}
-          className={`rounded px-3 py-1 ${tab === 'friendRequests' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+          className={tabButtonClass(tab === 'friendRequests')}
         >
           Amigos
         </button>

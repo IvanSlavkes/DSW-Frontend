@@ -1,8 +1,10 @@
 import api from './client';
 import type { Notification, NotificationInput } from '../types/notification';
 
-export async function getNotifications(): Promise<Notification[]> {
-  const res = await api.get<Notification[]>('/notifications');
+export async function getNotifications(options: { all?: boolean } = {}): Promise<Notification[]> {
+  const res = await api.get<Notification[]>('/notifications', {
+    params: options.all ? { all: true } : undefined,
+  });
   return res.data;
 }
 

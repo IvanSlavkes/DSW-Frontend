@@ -1,6 +1,6 @@
 export const POSITIONS = [
-  { value: 'delantero', label: 'Delantero' },
-  { value: 'centrocampista', label: 'Centrocampista' },
-  { value: 'defensor', label: 'Defensor' },
-  { value: 'arquero', label: 'Arquero' },
+  { value: 'Delantero', label: 'Delantero' },
+  { value: 'Centrocampista', label: 'Centrocampista' },
+  { value: 'Defensor', label: 'Defensor' },
+  { value: 'Arquero', label: 'Arquero' },
 ] as const;

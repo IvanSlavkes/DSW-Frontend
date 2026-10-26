@@ -35,6 +35,7 @@ function playerPrice(match: Match) {
 
 export default function AvailableMatches() {
   const [matches, setMatches] = useState<Match[]>([]);
+  const [now, setNow] = useState<number | null>(null);
   const [localities, setLocalities] = useState<Locality[]>([]);
   const [sortMode, setSortMode] = useState<SortMode>("date");
   const [ascending, setAscending] = useState(true);
@@ -53,9 +54,19 @@ export default function AvailableMatches() {
   }, []);
 
   useEffect(() => { getLocalities().then(setLocalities).catch(() => setLocalities([])); }, []);
+
+  useEffect(() => {
+    const frameId = window.requestAnimationFrame(() => setNow(Date.now()));
+    const intervalId = window.setInterval(() => setNow(Date.now()), 60_000);
+    return () => {
+      window.cancelAnimationFrame(frameId);
+      window.clearInterval(intervalId);
+    };
+  }, []);
+
   const filteredMatches = useMemo(() => {
     const filtered = matches.map((match) => ({ ...match, field: match.field ? { ...match.field, locality: match.field.locality ?? localities.find((locality) => locality.id === match.field?.localityId) } : undefined })).filter((match) => {
-      if (Date.parse(match.startsAt) < Date.now()) return false;
+      if (now === null || Date.parse(match.startsAt) < now) return false;
       if (filters.locality && match.field?.localityId !== filters.locality) return false;
       if (filters.date && argentinaDateKey(match.startsAt) !== filters.date) return false;
       if (filters.privacy && match.privacy !== filters.privacy) return false;
@@ -71,7 +82,7 @@ export default function AvailableMatches() {
       if (comparison === 0) comparison = Date.parse(a.startsAt) - Date.parse(b.startsAt);
       return ascending ? comparison : -comparison;
     });
-  }, [matches, localities, filters, sortMode, ascending]);
+  }, [matches, localities, filters, sortMode, ascending, now]);
 
   const updateFilter = <K extends keyof Filters>(key: K, value: Filters[K]) => setFilters((current) => ({ ...current, [key]: value }));
   const clearFilters = () => setFilters(initialFilters);

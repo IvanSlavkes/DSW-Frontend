@@ -63,7 +63,7 @@ export default function FieldForm({ fieldEditing, onSubmit, onCancel }: Props) {
     onSubmit({ ...form, categoryId: selectedCategory.id });
   }
 
-  return <form onSubmit={handleSubmit} className="mb-6 flex flex-col gap-3 rounded-lg border border-gray-200 p-4">
+  return <form onSubmit={handleSubmit} className="bg-[#09241B] mb-6 flex flex-col gap-3 rounded-lg border border-gray-200 p-4">
     <h2 className="text-lg font-semibold">{fieldEditing ? "Editar cancha" : "Nueva cancha"}</h2>
     <input name="name" value={form.name} onChange={handleChange} placeholder="Nombre" className="rounded border px-3 py-2" required />
     <input name="address" value={form.address} onChange={handleChange} placeholder="Dirección" className="rounded border px-3 py-2" required />

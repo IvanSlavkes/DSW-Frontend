@@ -6,6 +6,16 @@ export async function getUsers(): Promise<User[]> {
   return res.data;
 }
 
+export async function getMyProfile(): Promise<User> {
+  const res = await api.get<User>('/users/me');
+  return res.data;
+}
+
+export async function updateMyProfile(data: Partial<UserInput>): Promise<User> {
+  const res = await api.put<User>('/users/me', data);
+  return res.data;
+}
+
 export async function createUser(data: UserInput): Promise<User> {
   const res = await api.post<User>('/users', data);
   return res.data;
