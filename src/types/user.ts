@@ -26,4 +26,5 @@ export type UserInput = {
   position: string;
   birthDate: string;
   localityId: string;
+  role?: 'user' | 'moderator' | 'admin';
 };

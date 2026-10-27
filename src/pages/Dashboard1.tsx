@@ -96,7 +96,7 @@ function App() {
   const [ratingEditing, setRatingEditing] = useState<Rating | null>(null);
 
   const [users, setUsers] = useState<User[]>([]);
-  const [userEditing, setUserEditing] = useState<User | null>(null);
+  const [createUserFormOpen, setCreateUserFormOpen] = useState(false);
 
   const [localities, setLocalities] = useState<Locality[]>([]);
   const [localityEditing, setLocalityEditing] = useState<Locality | null>(null);
@@ -407,17 +407,11 @@ function App() {
     }
   }
 
-  async function handleUserSubmit(data: UserInput) {
+  async function handleUserSubmit(data: UserInput): Promise<boolean> {
     try {
-      if (userEditing) {
-        const { password, ...rest } = data;
-        const payload = password ? { ...rest, password } : rest;
-        await updateUser(userEditing.id, payload);
-      } else {
-        await createUser(data);
-      }
-      setUserEditing(null);
+      await createUser(data);
       await loadUsers();
+      return true;
     } catch (err) {
       console.error(err);
       if (axios.isAxiosError(err)) {
@@ -427,8 +421,27 @@ function App() {
             .map((e: { message: string }) => e.message)
             .join('\n');
           alert(messages);
-          return;
+          return false;
         }
+        const mensaje = err.response?.data?.mensaje;
+        if (mensaje) {
+          alert(mensaje);
+          return false;
+        }
+      }
+      alert('An error occurred while saving the user.');
+      return false;
+    }
+  }
+
+  async function handleUserSave(user: User, data: UserInput) {
+    try {
+      const { password, ...rest } = data;
+      await updateUser(user.id, password ? { ...rest, password } : rest);
+      await loadUsers();
+    } catch (err) {
+      console.error(err);
+      if (axios.isAxiosError(err)) {
         const mensaje = err.response?.data?.mensaje;
         if (mensaje) {
           alert(mensaje);
@@ -761,19 +774,31 @@ function App() {
 
       {tab === 'users' && (
         <>
-          <h1 className="mb-4 text-2xl font-bold">Usuarios</h1>
-          <UserForm
-            key={userEditing?.id ?? 'new'}
-            userEditing={userEditing}
-            onSubmit={handleUserSubmit}
-            onCancel={() => setUserEditing(null)}
-          />
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <h1 className="text-2xl font-bold">Usuarios</h1>
+            <button
+              type="button"
+              aria-expanded={createUserFormOpen}
+              onClick={() => setCreateUserFormOpen((open) => !open)}
+              className="rounded-xl border border-[#01AB48]/40 bg-[#10372A] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#01AB48]"
+            >
+              {createUserFormOpen ? 'Cancelar creación' : '+ Crear usuario'}
+            </button>
+          </div>
+          {createUserFormOpen && (
+            <UserForm
+              key="new-user"
+              userEditing={null}
+              onSubmit={async (data) => { if (await handleUserSubmit(data)) setCreateUserFormOpen(false); }}
+              onCancel={() => setCreateUserFormOpen(false)}
+            />
+          )}
           {loading && <p className="text-gray-500">Cargando usuarios...</p>}
           {error && <p className="text-red-600">{error}</p>}
           {!loading && !error && (
             <UserList
               users={users}
-              onEdit={setUserEditing}
+              onSave={handleUserSave}
               onDelete={handleUserDelete}
             />
           )}
