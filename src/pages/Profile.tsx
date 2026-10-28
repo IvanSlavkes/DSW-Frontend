@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { CalendarDays, Goal, MapPin, UserRound } from "lucide-react";
+import { CalendarDays, Goal, MapPin } from "lucide-react";
 import AppHeader from "../components/AppHeader";
 import Sidebar from "../components/Sidebar";
+import UserAvatar from "../components/UserAvatar";
 import UserForm from "../components/UserForm";
 import { useSidebar } from "../hooks/useSidebar";
 import { getMyProfile, updateMyProfile } from "../api/user";
@@ -13,7 +14,7 @@ export default function Profile() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
     const [saved, setSaved] = useState(false);
-  const { collapsed: sidebarCollapsed, toggleSidebar } = useSidebar();
+  const { open: mobileSidebarOpen, toggleSidebar, closeSidebar } = useSidebar();
 
   useEffect(() => {
     let cancelled = false;
@@ -62,21 +63,20 @@ export default function Profile() {
     >
       <div className="flex h-full w-full flex-col bg-[#061910]/55">
         <AppHeader
-          sidebarCollapsed={sidebarCollapsed}
+          mobileSidebarOpen={mobileSidebarOpen}
           onToggleSidebar={toggleSidebar}
         />
         <div className="flex min-h-0 flex-1 overflow-hidden">
           <Sidebar
-            collapsed={sidebarCollapsed}
+            open={mobileSidebarOpen}
+            onNavigate={closeSidebar}
             isAdmin={profile?.role === 'admin'}
           />
           <main className="min-w-0 flex-1 overflow-y-auto px-3 py-5 sm:px-5 lg:px-8">
             <div className="mx-auto max-w-5xl space-y-6 px-4 sm:px-6">
               <section className="rounded-2xl border border-white/10 bg-[#09241B] p-5 text-white shadow-xl sm:p-7">
                 <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
-                  <div className="grid h-20 w-20 shrink-0 place-items-center rounded-2xl border border-white/10 bg-white/5">
-                    <UserRound className="h-10 w-10 text-[#01AB48]" />
-                  </div>
+                  <UserAvatar name={profile?.name} lastName={profile?.lastName} size="lg" colorIndex={profile?.id ?? 0} />
                   <div className="min-w-0">
                     <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#01AB48]">
                       Mi cuenta

@@ -5,30 +5,14 @@ import AppHeader from '../components/AppHeader';
 import { useSidebar } from '../hooks/useSidebar';
 import AvailableMatchGrid from '../components/AvailableMatchGrid';
 import NotificationPanel from '../components/NotificationPanel';
+import UserAvatar from '../components/UserAvatar';
 import type { Match } from '../types/match';
 import type { Notification } from '../types/notification';
 import type { User } from '../types/user';
 import axios from 'axios';
 import { markAsRead, deleteNotification } from '../api/notification';
 import { API_URL } from '../api/client';
-
-function getAvailableUpcomingMatches(matches: Match[]) {
-  return matches
-    .filter((match) => {
-      if (
-        Date.parse(match.startsAt) < Date.now() ||
-        match.status.toLowerCase() !== 'open'
-      )
-        return false;
-      const positions =
-        match.teams?.flatMap((team) => team.positions ?? []) ?? [];
-      if (positions.length === 0) return true;
-      return positions.some(
-        (position) => position.status === 'free' && position.occupantId == null,
-      );
-    })
-    .sort((a, b) => Date.parse(a.startsAt) - Date.parse(b.startsAt));
-}
+import { plural } from '../utils/plural';
 
 export default function Dashboard() {
   const [matches, setMatches] = useState<Match[]>([]);
@@ -38,10 +22,21 @@ export default function Dashboard() {
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
 
   const navigate = useNavigate();
-  const { collapsed: sidebarCollapsed, toggleSidebar } = useSidebar();
+  const { open: mobileSidebarOpen, toggleSidebar, closeSidebar } = useSidebar();
 
   const token = localStorage.getItem('token');
-  const availableUpcomingMatches = getAvailableUpcomingMatches(matches);
+  const myCreatedMatches = matches
+    .filter((match) => match.creatorId === userEditing?.id)
+    .sort((a, b) => Date.parse(a.startsAt) - Date.parse(b.startsAt));
+  const myJoinedMatches = matches
+    .filter(
+      (match) =>
+        match.creatorId !== userEditing?.id &&
+        match.teams?.some((team) =>
+          team.positions?.some((position) => position.occupantId === userEditing?.id),
+        ),
+    )
+    .sort((a, b) => Date.parse(a.startsAt) - Date.parse(b.startsAt));
 
   useEffect(() => {
     // 1. Si no hay token, redirigir y cortar ejecución
@@ -121,7 +116,7 @@ export default function Dashboard() {
       {/* Capa clara para mejorar la lectura */}
       <div className="flex h-full w-full flex-col bg-[#1C2928]/25">
         <AppHeader
-          sidebarCollapsed={sidebarCollapsed}
+          mobileSidebarOpen={mobileSidebarOpen}
           onToggleSidebar={toggleSidebar}
         >
           <div className="relative">
@@ -132,11 +127,7 @@ export default function Dashboard() {
               onClick={() => setAccountMenuOpen((open) => !open)}
               className="flex items-center gap-3 rounded-xl px-2 py-1 text-left transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-300"
             >
-              <svg viewBox="0 0 24 24" aria-hidden="true" className="h-8 w-8 shrink-0">
-                <circle cx="12" cy="12" r="11" fill="white" />
-                <circle cx="12" cy="8.5" r="3" fill="#1F2B24" />
-                <path d="M5.5 19a6.5 6.5 0 0 1 13 0" fill="#1F2B24" />
-              </svg>
+              <UserAvatar name={userEditing?.name} lastName={userEditing?.lastName} size="sm" colorIndex={userEditing?.id ?? 0} />
               <span className="max-w-44 truncate font-semibold text-white">
                 {userEditing ? `${userEditing.name} ${userEditing.lastName}` : 'Cargando usuario...'}
               </span>
@@ -163,7 +154,7 @@ export default function Dashboard() {
           </div>
         </AppHeader>
         <div className="flex min-h-0 flex-1 overflow-hidden">
-          <Sidebar collapsed={sidebarCollapsed} isAdmin={userEditing?.role === 'admin'} />
+          <Sidebar open={mobileSidebarOpen} onNavigate={closeSidebar} isAdmin={userEditing?.role === 'admin'} />
           <div className="flex min-w-0 flex-1 flex-col overflow-y-auto">
             {/* Paneles */}
             <main className="grid flex-1 grid-cols-1 content-start gap-4 p-3 sm:gap-5 sm:p-5 lg:p-7 xl:grid-cols-[minmax(0,1.8fr)_minmax(280px,0.85fr)] xl:gap-6">
@@ -209,27 +200,39 @@ export default function Dashboard() {
                   <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
                     <div>
                       <h2 className="text-xl font-bold text-white">
-                        Mis próximos partidos
+                        Mis partidos
                       </h2>
                       <p className="mt-1 text-sm text-white/70">
-                        Partidos futuros que todavía tienen lugares disponibles.
+                        Partidos que creaste o a los que te uniste.
                       </p>
                     </div>
 
                     <span className="rounded-full bg-white/10 px-3 py-1 text-sm font-bold text-white">
-                      {availableUpcomingMatches.length} disponibles
+                      {plural(myCreatedMatches.length + myJoinedMatches.length, "partido", "partidos")}
                     </span>
                   </div>
 
-                  <AvailableMatchGrid
-                    matches={availableUpcomingMatches}
-                    layout="list"
-                    emptyMessage={
-                      matchesLoading
-                        ? 'Cargando partidos...'
-                        : 'No hay partidos disponibles próximamente.'
-                    }
-                  />
+                  {matchesLoading ? (
+                    <p className="rounded-2xl bg-[#09241B] p-6 text-sm text-white/75">Cargando partidos...</p>
+                  ) : (
+                    <div className="space-y-6">
+                      <section>
+                        <div className="mb-3 flex items-center justify-between gap-3">
+                          <h3 className="font-bold text-white">Creados</h3>
+                          <span className="rounded-full bg-white/10 px-2.5 py-1 text-xs font-bold text-white/80">{myCreatedMatches.length}</span>
+                        </div>
+                        <AvailableMatchGrid matches={myCreatedMatches} layout="list" emptyMessage="Todavía no creaste partidos." />
+                  
+                      </section>
+                      <section>
+                        <div className="mb-3 flex items-center justify-between gap-3">
+                          <h3 className="font-bold text-white">Unidos</h3>
+                          <span className="rounded-full bg-white/10 px-2.5 py-1 text-xs font-bold text-white/80">{myJoinedMatches.length}</span>
+                        </div>
+                        <AvailableMatchGrid matches={myJoinedMatches} layout="list" emptyMessage="Todavía no te uniste a ningún partido." />
+                      </section>
+                    </div>
+                  )}
                 </section>
               </div>
 
@@ -242,13 +245,7 @@ export default function Dashboard() {
                   </h2>
 
                   <div className="flex items-center gap-4">
-                    <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-green-100 ring-4 ring-green-50">
-                      <img
-                        src="/images/Ball.png"
-                        alt="Perfil FUTGO"
-                        className="h-12 w-12 object-contain"
-                      />
-                    </div>
+                    <UserAvatar name={userEditing?.name} lastName={userEditing?.lastName} size="lg" colorIndex={userEditing?.id ?? 0} className="border-4 border-green-50" />
 
                     <div className="min-w-0">
                       <h3 className="truncate font-bold text-white">

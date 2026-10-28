@@ -1,15 +1,15 @@
 import { useState } from "react";
 
 export function useSidebar() {
-  const [collapsed, setCollapsed] = useState(
-    () => localStorage.getItem("sidebar-collapsed") === "true",
-  );
+  const [open, setOpen] = useState(false);
 
   function toggleSidebar() {
-    const next = !collapsed;
-    localStorage.setItem("sidebar-collapsed", String(next));
-    setCollapsed(next);
+    setOpen((current) => !current);
   }
 
-  return { collapsed, toggleSidebar };
+  function closeSidebar() {
+    setOpen(false);
+  }
+
+  return { open, toggleSidebar, closeSidebar };
 }

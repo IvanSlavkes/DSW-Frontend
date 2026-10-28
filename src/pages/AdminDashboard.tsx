@@ -8,12 +8,12 @@ import Dashboard1 from './Dashboard1';
 export default function AdminDashboard() {
   const [adminMenuOpen, setAdminMenuOpen] = useState(false);
   const navigate = useNavigate();
-  const { collapsed, toggleSidebar } = useSidebar();
+  const { open: mobileSidebarOpen, toggleSidebar, closeSidebar } = useSidebar();
 
   return (
     <div className="flex h-dvh min-h-screen w-full overflow-hidden bg-cover bg-center bg-fixed" style={{ backgroundImage: "url('/images/Fondo.jpg')" }}>
       <div className="flex h-full w-full flex-col bg-[#061910]/55">
-        <AppHeader sidebarCollapsed={collapsed} onToggleSidebar={toggleSidebar}>
+        <AppHeader mobileSidebarOpen={mobileSidebarOpen} onToggleSidebar={toggleSidebar}>
           <div className="relative">
             <button type="button" aria-expanded={adminMenuOpen} aria-label="Abrir menú de administrador" onClick={() => setAdminMenuOpen((open) => !open)} className="rounded-xl px-3 py-2 font-semibold text-white transition hover:bg-white/10">
               Administración
@@ -24,7 +24,7 @@ export default function AdminDashboard() {
           </div>
         </AppHeader>
         <div className="flex min-h-0 flex-1 overflow-hidden">
-          <Sidebar collapsed={collapsed} isAdmin />
+          <Sidebar open={mobileSidebarOpen} onNavigate={closeSidebar} isAdmin />
           <main className="min-w-0 flex-1 overflow-y-auto px-3 py-5 sm:px-5 lg:px-8">
             <Dashboard1 />
           </main>

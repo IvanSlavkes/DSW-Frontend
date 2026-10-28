@@ -43,7 +43,7 @@ export default function AvailableMatches() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const { collapsed: sidebarCollapsed, toggleSidebar } = useSidebar();
+  const { open: mobileSidebarOpen, toggleSidebar, closeSidebar } = useSidebar();
 
   useEffect(() => {
     let cancelled = false;
@@ -91,9 +91,9 @@ export default function AvailableMatches() {
   return (
     <div className="flex h-dvh min-h-screen w-full overflow-hidden bg-cover bg-center bg-fixed" style={{ backgroundImage: "url('/images/Fondo.jpg')" }}>
       <div className="flex h-full w-full flex-col bg-[#061910]/55">
-        <AppHeader sidebarCollapsed={sidebarCollapsed} onToggleSidebar={toggleSidebar} />
+        <AppHeader mobileSidebarOpen={mobileSidebarOpen} onToggleSidebar={toggleSidebar} />
         <div className="flex min-h-0 flex-1 overflow-hidden">
-          <Sidebar collapsed={sidebarCollapsed} />
+          <Sidebar open={mobileSidebarOpen} onNavigate={closeSidebar} />
           <main className="min-w-0 flex-1 overflow-y-auto px-3 py-5 sm:px-5 lg:px-8">
             <div className="mx-auto max-w-7xl space-y-6 px-4 sm:px-6">
               <section className="rounded-2xl border border-white/10 bg-[#09241B] p-5 text-white shadow-xl sm:p-7">
