@@ -35,6 +35,21 @@ export interface Match {
   };
 }
 
+export interface MatchParticipation {
+  isCreator: boolean;
+  position: { id: number; positionType: string | null; secondaryPositionType: string | null; matchTeam: { id: number; name: string } } | null;
+  request: { id: number; status: "pending" | "accepted" | "rejected"; positionType: string | null; secondaryPositionType: string | null; matchTeam: { id: number; name: string } } | null;
+}
+
+export interface PositionRequest {
+  id: number;
+  status: "pending" | "accepted" | "rejected";
+  positionType: string | null;
+  secondaryPositionType: string | null;
+  user: { id: number; name: string; lastName: string };
+  matchTeam: { id: number; name: string };
+}
+
 export type MatchInput = {
   name: string;
   description?: string | undefined;
