@@ -18,6 +18,7 @@ const empty: UserInput = {
   position: '',
   birthDate: '',
   localityId: '',
+  role: 'user',
 };
 
 export default function UserForm({ userEditing, onSubmit, onCancel }: Props) {
@@ -33,6 +34,7 @@ export default function UserForm({ userEditing, onSubmit, onCancel }: Props) {
         position: userEditing.position,
         birthDate: userEditing.birthDate ? userEditing.birthDate.slice(0, 10) : '',
         localityId: userEditing.localityId,
+        role: userEditing.role === 'moderator' || userEditing.role === 'admin' ? userEditing.role : 'user',
       };
     }
     return empty;
@@ -117,6 +119,20 @@ export default function UserForm({ userEditing, onSubmit, onCancel }: Props) {
        value={form.position} 
        onChange={(position) => setForm((prev) => ({ ...prev, position }))} 
        className="rounded border border-gray-300 bg-white px-3 py-2 text-gray-900" />
+
+      <label className="flex flex-col gap-1 text-sm">
+        Rol
+        <select
+          name="role"
+          value={form.role ?? 'user'}
+          onChange={(e) => setForm((prev) => ({ ...prev, role: e.target.value as 'user' | 'moderator' | 'admin' }))}
+          className="rounded border border-gray-300 bg-white px-3 py-2 text-gray-900"
+        >
+          <option value="user">Usuario</option>
+          <option value="moderator">Moderador</option>
+          {userEditing?.role === 'admin' && <option value="admin" disabled>Administrador (sin cambios)</option>}
+        </select>
+      </label>
        
       <input
         name="birthDate"

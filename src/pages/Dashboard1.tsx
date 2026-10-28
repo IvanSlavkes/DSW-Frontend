@@ -82,10 +82,11 @@ type Tab =
 
 function App() {
   const [tab, setTab] = useState<Tab>('fields');
+  const [legacyOpen, setLegacyOpen] = useState(false);
   const tabButtonClass = (active: boolean) => `rounded-xl border px-4 py-2 text-sm font-semibold transition ${active ? 'border-[#01AB48] bg-[#01AB48] text-white shadow-md' : 'border-white/10 bg-[#10372A] text-white/80 hover:bg-white/10 hover:text-white'}`;
 
   const [fields, setFields] = useState<Field[]>([]);
-  const [fieldEditing, setFieldEditing] = useState<Field | null>(null);
+  const [createFieldFormOpen, setCreateFieldFormOpen] = useState(false);
 
   const [matches, setMatches] = useState<Match[]>([]);
   const [matchEditing, setMatchEditing] = useState<Match | null>(null);
@@ -96,10 +97,10 @@ function App() {
   const [ratingEditing, setRatingEditing] = useState<Rating | null>(null);
 
   const [users, setUsers] = useState<User[]>([]);
-  const [userEditing, setUserEditing] = useState<User | null>(null);
+  const [createUserFormOpen, setCreateUserFormOpen] = useState(false);
 
   const [localities, setLocalities] = useState<Locality[]>([]);
-  const [localityEditing, setLocalityEditing] = useState<Locality | null>(null);
+  const [createLocalityFormOpen, setCreateLocalityFormOpen] = useState(false);
 
   const [matchTeams, setMatchTeams] = useState<MatchTeam[]>([]);
   const [matchTeamEditing, setMatchTeamEditing] = useState<MatchTeam | null>(
@@ -264,15 +265,11 @@ function App() {
     }
   }, [tab]);
 
-  async function handleFieldSubmit(data: FieldInput) {
+  async function handleFieldCreate(data: FieldInput): Promise<boolean> {
     try {
-      if (fieldEditing) {
-        await updateField(fieldEditing.id, data);
-      } else {
-        await createField(data);
-      }
-      setFieldEditing(null);
+      await createField(data);
       await loadFields();
+      return true;
     } catch (err) {
       console.error(err);
       if (axios.isAxiosError(err)) {
@@ -282,9 +279,20 @@ function App() {
             .map((e: { message: string }) => e.message)
             .join('\n');
           alert(messages);
-          return;
+          return false;
         }
       }
+      alert('An error occurred while saving the field.');
+      return false;
+    }
+  }
+
+  async function handleFieldSave(field: Field, data: FieldInput) {
+    try {
+      await updateField(field.id, data);
+      await loadFields();
+    } catch (err) {
+      console.error(err);
       alert('An error occurred while saving the field.');
     }
   }
@@ -407,17 +415,11 @@ function App() {
     }
   }
 
-  async function handleUserSubmit(data: UserInput) {
+  async function handleUserSubmit(data: UserInput): Promise<boolean> {
     try {
-      if (userEditing) {
-        const { password, ...rest } = data;
-        const payload = password ? { ...rest, password } : rest;
-        await updateUser(userEditing.id, payload);
-      } else {
-        await createUser(data);
-      }
-      setUserEditing(null);
+      await createUser(data);
       await loadUsers();
+      return true;
     } catch (err) {
       console.error(err);
       if (axios.isAxiosError(err)) {
@@ -427,8 +429,27 @@ function App() {
             .map((e: { message: string }) => e.message)
             .join('\n');
           alert(messages);
-          return;
+          return false;
         }
+        const mensaje = err.response?.data?.mensaje;
+        if (mensaje) {
+          alert(mensaje);
+          return false;
+        }
+      }
+      alert('An error occurred while saving the user.');
+      return false;
+    }
+  }
+
+  async function handleUserSave(user: User, data: UserInput) {
+    try {
+      const { password, ...rest } = data;
+      await updateUser(user.id, password ? { ...rest, password } : rest);
+      await loadUsers();
+    } catch (err) {
+      console.error(err);
+      if (axios.isAxiosError(err)) {
         const mensaje = err.response?.data?.mensaje;
         if (mensaje) {
           alert(mensaje);
@@ -450,24 +471,31 @@ function App() {
     }
   }
 
-  async function handleLocalitySubmit(data: LocalityInput) {
+  async function handleLocalityCreate(data: LocalityInput): Promise<boolean> {
     try {
-      if (localityEditing) {
-        await updateLocality(localityEditing.id, data);
-      } else {
-        await createLocality(data);
-      }
-      setLocalityEditing(null);
+      await createLocality(data);
       await loadLocalities();
+      return true;
     } catch (err) {
       console.error(err);
       if (axios.isAxiosError(err)) {
         const mensaje = err.response?.data?.mensaje;
         if (mensaje) {
           alert(mensaje);
-          return;
+          return false;
         }
       }
+      alert('An error occurred while saving the locality.');
+      return false;
+    }
+  }
+
+  async function handleLocalitySave(locality: Locality, data: LocalityInput) {
+    try {
+      await updateLocality(locality.id, data);
+      await loadLocalities();
+    } catch (err) {
+      console.error(err);
       alert('An error occurred while saving the locality.');
     }
   }
@@ -631,40 +659,10 @@ function App() {
           Partidos
         </button>
         <button
-          onClick={() => setTab('notifications')}
-          className={tabButtonClass(tab === 'notifications')}
-        >
-          Notificaciones
-        </button>
-        <button
-          onClick={() => setTab('ratings')}
-          className={tabButtonClass(tab === 'ratings')}
-        >
-          Calificaciones
-        </button>
-        <button
           onClick={() => setTab('users')}
           className={tabButtonClass(tab === 'users')}
         >
           Usuarios
-        </button>
-        <button
-          onClick={() => setTab('localities')}
-          className={tabButtonClass(tab === 'localities')}
-        >
-          Localidades
-        </button>
-        <button
-          onClick={() => setTab('matchTeams')}
-          className={tabButtonClass(tab === 'matchTeams')}
-        >
-          Equipos
-        </button>
-        <button
-          onClick={() => setTab('teamPositions')}
-          className={tabButtonClass(tab === 'teamPositions')}
-        >
-          Posiciones
         </button>
         <button
           onClick={() => setTab('friendRequests')}
@@ -672,23 +670,56 @@ function App() {
         >
           Amigos
         </button>
+        <div className="relative">
+          <button
+            type="button"
+            aria-expanded={legacyOpen}
+            aria-controls="legacy-admin-sections"
+            onClick={() => setLegacyOpen((open) => !open)}
+            className={tabButtonClass(legacyOpen || ['notifications', 'ratings', 'localities', 'matchTeams', 'teamPositions'].includes(tab))}
+          >
+            Legacy <span aria-hidden="true" className="ml-1">{legacyOpen ? '⌃' : '⌄'}</span>
+          </button>
+          {legacyOpen && (
+            <div id="legacy-admin-sections" className="absolute left-0 top-full z-30 mt-2 flex min-w-48 flex-col gap-1 rounded-xl border border-white/10 bg-[#09241B] p-2 shadow-xl">
+              {([
+                ['notifications', 'Notificaciones'],
+                ['ratings', 'Calificaciones'],
+                ['localities', 'Localidades'],
+                ['matchTeams', 'Equipos'],
+                ['teamPositions', 'Posiciones'],
+              ] as const).map(([legacyTab, label]) => (
+                <button
+                  key={legacyTab}
+                  type="button"
+                  onClick={() => { setTab(legacyTab); setLegacyOpen(false); }}
+                  className={`rounded-lg px-3 py-2 text-left text-sm font-semibold transition ${tab === legacyTab ? 'bg-[#01AB48] text-white' : 'text-white/80 hover:bg-white/10 hover:text-white'}`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       {tab === 'fields' && (
         <>
-          <h1 className="mb-4 text-2xl font-bold">Canchas</h1>
-          <FieldForm
-            key={fieldEditing?.id ?? 'new'}
-            fieldEditing={fieldEditing}
-            onSubmit={handleFieldSubmit}
-            onCancel={() => setFieldEditing(null)}
-          />
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <h1 className="text-2xl font-bold">Canchas</h1>
+            <button type="button" aria-expanded={createFieldFormOpen} onClick={() => setCreateFieldFormOpen((open) => !open)} className="rounded-xl border border-[#01AB48]/40 bg-[#10372A] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#01AB48]">
+              {createFieldFormOpen ? 'Cancelar creación' : '+ Crear cancha'}
+            </button>
+          </div>
+          {createFieldFormOpen && (
+            <FieldForm key="new-field" fieldEditing={null} onSubmit={async (data) => { if (await handleFieldCreate(data)) setCreateFieldFormOpen(false); }} onCancel={() => setCreateFieldFormOpen(false)} />
+          )}
           {loading && <p className="text-gray-500">Cargando canchas...</p>}
           {error && <p className="text-red-600">{error}</p>}
           {!loading && !error && (
             <FieldList
               fields={fields}
-              onEdit={setFieldEditing}
+              onSave={handleFieldSave}
               onDelete={handleFieldDelete}
             />
           )}
@@ -761,19 +792,31 @@ function App() {
 
       {tab === 'users' && (
         <>
-          <h1 className="mb-4 text-2xl font-bold">Usuarios</h1>
-          <UserForm
-            key={userEditing?.id ?? 'new'}
-            userEditing={userEditing}
-            onSubmit={handleUserSubmit}
-            onCancel={() => setUserEditing(null)}
-          />
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <h1 className="text-2xl font-bold">Usuarios</h1>
+            <button
+              type="button"
+              aria-expanded={createUserFormOpen}
+              onClick={() => setCreateUserFormOpen((open) => !open)}
+              className="rounded-xl border border-[#01AB48]/40 bg-[#10372A] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#01AB48]"
+            >
+              {createUserFormOpen ? 'Cancelar creación' : '+ Crear usuario'}
+            </button>
+          </div>
+          {createUserFormOpen && (
+            <UserForm
+              key="new-user"
+              userEditing={null}
+              onSubmit={async (data) => { if (await handleUserSubmit(data)) setCreateUserFormOpen(false); }}
+              onCancel={() => setCreateUserFormOpen(false)}
+            />
+          )}
           {loading && <p className="text-gray-500">Cargando usuarios...</p>}
           {error && <p className="text-red-600">{error}</p>}
           {!loading && !error && (
             <UserList
               users={users}
-              onEdit={setUserEditing}
+              onSave={handleUserSave}
               onDelete={handleUserDelete}
             />
           )}
@@ -782,19 +825,21 @@ function App() {
 
       {tab === 'localities' && (
         <>
-          <h1 className="mb-4 text-2xl font-bold">Localidades</h1>
-          <LocalityForm
-            key={localityEditing?.id ?? 'new'}
-            localityEditing={localityEditing}
-            onSubmit={handleLocalitySubmit}
-            onCancel={() => setLocalityEditing(null)}
-          />
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <h1 className="text-2xl font-bold">Localidades</h1>
+            <button type="button" aria-expanded={createLocalityFormOpen} onClick={() => setCreateLocalityFormOpen((open) => !open)} className="rounded-xl border border-[#01AB48]/40 bg-[#10372A] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#01AB48]">
+              {createLocalityFormOpen ? 'Cancelar creación' : '+ Crear localidad'}
+            </button>
+          </div>
+          {createLocalityFormOpen && (
+            <LocalityForm key="new-locality" localityEditing={null} onSubmit={async (data) => { if (await handleLocalityCreate(data)) setCreateLocalityFormOpen(false); }} onCancel={() => setCreateLocalityFormOpen(false)} />
+          )}
           {loading && <p className="text-gray-500">Cargando localidades...</p>}
           {error && <p className="text-red-600">{error}</p>}
           {!loading && !error && (
             <LocalityList
               localities={localities}
-              onEdit={setLocalityEditing}
+              onSave={handleLocalitySave}
               onDelete={handleLocalityDelete}
             />
           )}

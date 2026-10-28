@@ -124,9 +124,7 @@ export default function CreateMatch() {
   return (
     <div className="flex h-dvh min-h-screen w-full flex-col bg-cover bg-center bg-fixed" style={{ backgroundImage: "url('/images/Fondo.jpg')" }}>
       <div className="flex h-full w-full flex-col bg-[#061910]/55">
-      <AppHeader sidebarCollapsed={sidebarCollapsed} onToggleSidebar={toggleSidebar}>
-        <span className="truncate text-sm font-semibold text-white sm:text-base">Crear partido</span>
-      </AppHeader>
+      <AppHeader sidebarCollapsed={sidebarCollapsed} onToggleSidebar={toggleSidebar} />
 
       <div className="flex min-h-0 flex-1 overflow-hidden">
         <Sidebar collapsed={sidebarCollapsed} />
