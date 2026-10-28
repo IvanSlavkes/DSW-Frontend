@@ -30,7 +30,7 @@ export default function Register() {
         birthDate,
         // localityId
       });
-      alert(res.data.message);
+            alert(res.data.mensaje);
       navigate("/login");
     } catch (error) {
       const err = error as AxiosError<{ error: string }>;
