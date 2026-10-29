@@ -19,7 +19,6 @@ export default function Dashboard() {
   const [matchesLoading, setMatchesLoading] = useState(true);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [userEditing, setUserEditing] = useState<User | null>(null);
-  const [accountMenuOpen, setAccountMenuOpen] = useState(false);
 
   const navigate = useNavigate();
   const { open: mobileSidebarOpen, toggleSidebar, closeSidebar } = useSidebar();
@@ -118,41 +117,7 @@ export default function Dashboard() {
         <AppHeader
           mobileSidebarOpen={mobileSidebarOpen}
           onToggleSidebar={toggleSidebar}
-        >
-          <div className="relative">
-            <button
-              type="button"
-              aria-label="Abrir menú de usuario"
-              aria-expanded={accountMenuOpen}
-              onClick={() => setAccountMenuOpen((open) => !open)}
-              className="flex items-center gap-3 rounded-xl px-2 py-1 text-left transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-300"
-            >
-              <UserAvatar name={userEditing?.name} lastName={userEditing?.lastName} size="sm" colorIndex={userEditing?.id ?? 0} />
-              <span className="max-w-44 truncate font-semibold text-white">
-                {userEditing ? `${userEditing.name} ${userEditing.lastName}` : 'Cargando usuario...'}
-              </span>
-            </button>
-            {accountMenuOpen && (
-              <div className="absolute right-0 top-full z-50 mt-2 w-48 overflow-hidden rounded-xl border border-white/10 bg-[#09241B] p-1 text-white shadow-xl">
-                <button
-                  type="button"
-                  onClick={() => { setAccountMenuOpen(false); navigate('/profile'); }}
-                  className="w-full rounded-lg px-3 py-2.5 text-left text-sm font-semibold transition hover:bg-white/10"
-                >
-                  Mi perfil
-                </button>
-                <button
-                  type="button"
-                  onClick={() => { localStorage.removeItem('token'); navigate('/login'); }}
-                  className="w-full rounded-lg px-3 py-2.5 text-left text-sm font-semibold text-white/80 transition hover:bg-white/10 hover:text-white"
-                >
-                  Cerrar sesión
-                </button>
-              </div>
-            )}
-
-          </div>
-        </AppHeader>
+        />
         <div className="flex min-h-0 flex-1 overflow-hidden">
           <Sidebar open={mobileSidebarOpen} onNavigate={closeSidebar} isAdmin={userEditing?.role === 'admin'} />
           <div className="flex min-w-0 flex-1 flex-col overflow-y-auto">
@@ -176,7 +141,7 @@ export default function Dashboard() {
                     </p>
 
                     <h2 className="text-3xl font-black text-white sm:text-5xl">
-                      ¡Bienvenida a FUTGO!
+                      ¡Bienvenida a FutGO!
                     </h2>
 
                     <p className="mt-3 max-w-md text-sm leading-6 text-white/90 sm:text-base">

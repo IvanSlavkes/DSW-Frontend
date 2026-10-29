@@ -56,10 +56,12 @@ export default function UserList({ users, onSave, onDelete }: Props) {
     <section className="space-y-3">
       <div className="grid gap-2 rounded-2xl border border-white/10 bg-[#09241B] p-3 sm:grid-cols-2 lg:grid-cols-5">
         <label className="flex flex-col gap-1 text-xs text-white/70">Buscar usuarios<input value={search} onChange={(event) => setSearch(event.target.value)} aria-label="Buscar jugadores por nombre o ID" className="min-w-0 rounded-lg border border-white/10 bg-[#10372A] px-3 py-2 text-sm text-white" /></label>
-        <select value={position} onChange={(event) => setPosition(event.target.value)} aria-label="Filtrar por posición" className="rounded-lg border border-white/10 bg-[#10372A] px-3 py-2 text-sm text-white">
-          <option value="">Todas las posiciones</option>
-          {positions.map((item) => <option key={item} value={item}>{item}</option>)}
-        </select>
+        <label className="flex flex-col gap-1 text-xs text-white/70">Posiciones
+          <select value={position} onChange={(event) => setPosition(event.target.value)} aria-label="Filtrar por posición" className="rounded-lg border border-white/10 bg-[#10372A] px-3 py-2 text-sm text-white">
+            <option value="">Todas las posiciones</option>
+            {positions.map((item) => <option key={item} value={item}>{item}</option>)}
+          </select>
+        </label>
         <label className="flex flex-col gap-1 text-xs text-white/70">Edad mínima<input type="number" min="0" value={minAge} onChange={(event) => setMinAge(event.target.value)} aria-label="Edad mínima" className="min-w-0 rounded-lg border border-white/10 bg-[#10372A] px-3 py-2 text-sm text-white" /></label>
         <label className="flex flex-col gap-1 text-xs text-white/70">Edad máxima<input type="number" min="0" value={maxAge} onChange={(event) => setMaxAge(event.target.value)} aria-label="Edad máxima" className="min-w-0 rounded-lg border border-white/10 bg-[#10372A] px-3 py-2 text-sm text-white" /></label>
         <select value={sort} onChange={(event) => setSort(event.target.value as SortOption)} aria-label="Ordenar jugadores" className="rounded-lg border border-white/10 bg-[#10372A] px-3 py-2 text-sm text-white">

@@ -38,19 +38,28 @@ export default function FieldList({ fields, onSave, onDelete }: Props) {
   return (
     <div className="space-y-2">
       <div className="grid gap-2 rounded-2xl border border-white/10 bg-[#09241B] p-3 sm:grid-cols-2 lg:grid-cols-3">
-        <label className="flex flex-col gap-1 text-xs text-white/70">Buscar canchas<input value={search} onChange={(event) => setSearch(event.target.value)} aria-label="Buscar canchas por nombre o ID" className="min-w-0 rounded-lg border border-white/10 bg-[#10372A] px-3 py-2 text-sm text-white" /></label>
-        <select value={playersPerTeam} onChange={(event) => setPlayersPerTeam(event.target.value)} aria-label="Filtrar por tipo de cancha" className="rounded-lg border border-white/10 bg-[#10372A] px-3 py-2 text-sm text-white">
-          <option value="">Todos los tipos</option>
-          {formats.map((format) => <option key={format} value={format}>Fútbol {format}</option>)}
-        </select>
-        <select value={sort} onChange={(event) => setSort(event.target.value)} aria-label="Ordenar canchas" className="rounded-lg border border-white/10 bg-[#10372A] px-3 py-2 text-sm text-white">
-          <option value="name-asc">Nombre: A a Z</option>
-          <option value="name-desc">Nombre: Z a A</option>
-          <option value="type-asc">Tipo: menor a mayor</option>
-          <option value="type-desc">Tipo: mayor a menor</option>
-          <option value="price-asc">Precio: menor a mayor</option>
-          <option value="price-desc">Precio: mayor a menor</option>
-        </select>
+
+        <label className="flex flex-col gap-1 text-xs text-white/70">Buscar canchas
+          <input value={search} onChange={(event) => setSearch(event.target.value)} aria-label="Buscar canchas por nombre o ID" className="min-w-0 rounded-lg border border-white/10 bg-[#10372A] px-3 py-2 text-sm text-white" />
+        </label>
+        
+        <label className="flex flex-col gap-1 text-xs text-white/70">Tipo
+          <select value={playersPerTeam} onChange={(event) => setPlayersPerTeam(event.target.value)} aria-label="Filtrar por tipo de cancha" className="rounded-lg border border-white/10 bg-[#10372A] px-3 py-2 text-sm text-white">
+            <option value="">Todos los tipos</option>
+            {formats.map((format) => <option key={format} value={format}>Fútbol {format}</option>)}
+          </select>
+        </label> 
+
+        <label className="flex flex-col gap-1 text-xs text-white/70">Orden
+          <select value={sort} onChange={(event) => setSort(event.target.value)} aria-label="Ordenar canchas" className="rounded-lg border border-white/10 bg-[#10372A] px-3 py-2 text-sm text-white">
+            <option value="name-asc">Nombre: A a Z</option>
+            <option value="name-desc">Nombre: Z a A</option>
+            <option value="type-asc">Tipo: menor a mayor</option>
+            <option value="type-desc">Tipo: mayor a menor</option>
+            <option value="price-asc">Precio: menor a mayor</option>
+            <option value="price-desc">Precio: mayor a menor</option>
+          </select>
+        </label> 
       </div>
       <p className="px-1 text-xs text-white/60">Mostrando {filteredFields.length} de {fields.length} canchas</p>
       {filteredFields.length === 0 && <p className="rounded-xl border border-white/10 bg-[#09241B] px-4 py-5 text-sm text-white/65">No se encontraron canchas con esos filtros.</p>}
