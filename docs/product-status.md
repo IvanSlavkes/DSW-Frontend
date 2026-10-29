@@ -1,35 +1,46 @@
-# Pantallas y estado del producto
+# Pantallas y estado funcional
 
-Este documento refleja el comportamiento visible en el código actual, no sustituye los tickets ni las minutas del grupo.
+Este documento describe las pantallas conectadas actualmente en el frontend.
 
 ## Rutas
 
-| Ruta | Pantalla |
-| --- | --- |
-| `/` | Home. |
-| `/login` | Inicio de sesión. |
-| `/register` | Registro de usuario. |
-| `/dashboard` | Dashboard con perfil, notificaciones y próximos partidos disponibles. |
-| `/matches` | Listado de partidos próximos, ordenable por horario o precio. |
-| `/matches/create` | Formulario para crear partido, elegir cancha, equipo y posiciones del creador. |
-| `/dashboard1` | Panel CRUD administrativo/experimental que permanece conectado en el router. |
+| Ruta | Acceso | Funcionalidad |
+| --- | --- | --- |
+| `/` | Público | Presentación de FUTGO y accesos a registro e inicio de sesión. |
+| `/login` | Público | Inicio de sesión; informa credenciales incorrectas y cuentas desactivadas. |
+| `/register` | Público | Registro en tres pasos: cuenta; localidad y fecha de nacimiento; posiciones y descripción opcional. Valida edad mínima de 18 años, formato de correo, contraseña y repetición de contraseña. |
+| `/dashboard` | Autenticado | Partidos creados y partidos a los que se unió el usuario, datos del perfil y notificaciones. |
+| `/matches` | Autenticado | Listado de partidos futuros con filtros por localidad, fecha, posición libre y privacidad, más orden por fecha o precio. |
+| `/matches/:id` | Autenticado | Detalle del partido, equipos, lugares, participación del usuario y, para el creador de partidos privados, gestión de solicitudes. |
+| `/matches/create` | Autenticado | Creación de partido con cancha, fecha, horario, privacidad, equipo y posiciones iniciales del creador. |
+| `/profile` | Autenticado | Consulta y edición del perfil. |
+| `/admin` | Administrador | Gestión de usuarios, canchas, categorías, partidos, localidades, equipos, posiciones, notificaciones, calificaciones y amistades. |
+| `/dashboard1` | Redirección | Redirige al panel administrativo `/admin`. |
 
-El listado actual puede ordenarse por horario o precio, pero todavía no tiene filtros. La propuesta desactualizada menciona filtros por localidad, posición, tipo de cancha, día/hora y filtros para jugadores; esos criterios deben volver a validarse con el grupo y los docentes antes de tratarlos como alcance vigente.
+## Flujos principales
 
-## Tarjetas y detalle de partido
+### Registro e inicio de sesión
 
-Las tarjetas del listado y del Dashboard muestran estado, privacidad, precio estimado por persona, fecha y hora, duración, cancha, dirección, formato, cantidad de jugadores y creador.
+El registro divide los campos en pasos para reducir el tamaño del formulario. El correo debe tener formato válido, la contraseña debe tener al menos seis caracteres y repetirse correctamente, la fecha debe corresponder a una persona de 18 años o más y la posición principal es obligatoria. La segunda posición y la descripción son opcionales; ambas posiciones no pueden ser iguales. El inicio de sesión rechaza cuentas con rol `disabled` y muestra el mensaje “Usuario desactivado”.
 
-La interacción actual de detalle expande información dentro de la tarjeta. Todavía no hay un modal que solicite `GET /matches/:id` al backend ni una vista de jugadores por equipo.
+### Encontrar y consultar partidos
 
-El componente `ProtectedRoute` existe, pero las rutas visibles en `App.tsx` actualmente no están envueltas por él. La API sí exige token para la mayoría de los recursos.
+El listado excluye partidos pasados y permite filtrar por localidad, fecha, privacidad y posición libre. Se puede ordenar por horario o precio. Al abrir una tarjeta se navega a `/matches/:id`, donde se muestran cancha, creador, equipos, integrantes, posiciones y cupos.
 
-## Decisiones acordadas para el siguiente flujo
+### Crear y unirse a partidos
 
-- Los partidos privados permanecen visibles y se identifican como privados; unirse requiere aprobación del creador.
-- El jugador elige si solicita un lugar en Equipo A o Equipo B.
-- Cada usuario puede estar en un solo lugar por partido y no puede cambiar de equipo por ahora.
-- El modal debe mostrar Equipo A y Equipo B en columnas, con foto, nombre, apellido y posición de cada jugador. Los lugares vacíos se muestran como “Libre” o como una acción para unirse.
-- El creador del partido aprueba o rechaza las solicitudes privadas.
+Al crear un partido se generan dos equipos y los lugares disponibles de acuerdo con la categoría de la cancha. El creador ocupa el primer lugar de su equipo y figura como capitán. Unirse a un partido público ocupa un lugar libre; un partido privado envía una solicitud que el creador puede aceptar o rechazar.
 
-Estos puntos son decisiones de producto acordadas, no funcionalidades ya terminadas. El botón de unión actual es visual y `PositionRequest` aún no tiene endpoints conectados al frontend.
+### Dashboard y perfil
+
+El Dashboard separa partidos creados de partidos donde el usuario ocupa un lugar. También presenta notificaciones y un resumen del perfil. El encabezado reutilizable muestra avatar con iniciales, nombre y menú para abrir el perfil o cerrar sesión en las páginas autenticadas que usan `AppHeader`.
+
+### Administración
+
+El panel `/admin` está protegido en el frontend y las operaciones administrativas relevantes también requieren rol de administrador en el backend. La gestión de usuarios permite cambiar su rol, incluido `disabled`.
+
+## Diseño adaptable y errores
+
+Las pantallas usan estilos responsive con puntos de quiebre de Tailwind y el menú lateral se superpone en pantallas móviles. Los formularios de registro e inicio de sesión muestran errores junto a los campos o en el formulario; las acciones principales de partidos y perfil muestran mensajes dentro de la pantalla.
+
+El estado de gestión del proyecto y el cumplimiento de los requisitos de Regularidad se resume en el [índice general de documentación](README.md).

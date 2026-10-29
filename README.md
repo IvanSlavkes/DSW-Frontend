@@ -1,25 +1,47 @@
 # FUTGO — Frontend
 
-Aplicación web para explorar partidos de fútbol, administrar el perfil y crear partidos. Está implementada con React, TypeScript, Vite y Tailwind CSS.
+Interfaz web de FUTGO, una aplicación para encontrar partidos de fútbol, crear encuentros y organizar la participación de jugadores. Está desarrollada con React, TypeScript, Vite y Tailwind CSS.
 
-## Inicio rápido
+## Requisitos
+
+- Node.js 20.19 o superior, o 22.12 o superior.
+- npm.
+- El repositorio [DSW-Backend](https://github.com/IvanSlavkes/DSW-Backend) instalado y configurado para las pantallas conectadas a la API.
+
+## Instalación y ejecución local
 
 ```powershell
 npm install
 npm run dev
 ```
 
-Iniciar también el backend para utilizar las pantallas que consultan datos. El cliente HTTP apunta actualmente a `http://localhost:3000`; la variable `VITE_API_URL` que pueda estar en `.env` aún no es utilizada por el cliente.
+Con el backend escuchando en `http://localhost:3000`, Vite sirve la interfaz y reenvía las solicitudes de API al backend. La dirección local de la interfaz aparece en la terminal.
 
-La documentación del frontend está en [`docs/README.md`](docs/README.md). La API y el modelo de datos se documentan en el [repositorio backend](https://github.com/IvanSlavkes/DSW-Backend/tree/main/docs).
+La variable `VITE_API_URL` es opcional. Si se deja vacía, se usa el proxy de Vite configurado en `vite.config.ts`. Para la demo con el comando de presentación debe permanecer vacía en `.env.local`.
+
+## Presentación desde un celular
+
+Con las dependencias instaladas en frontend y backend, y el backend configurado con la base Neon, ejecutar desde este repositorio:
+
+```powershell
+npm run presentacion
+```
+
+El comando inicia backend y frontend, crea un túnel temporal con Tunnelmole y muestra en la terminal la URL que se debe abrir en el celular. Requiere que los puertos `3000` y `5174` estén libres y que haya conexión a Internet. Mantener abierta la terminal durante la demostración. La URL puede cambiar en cada inicio.
 
 ## Scripts
 
 | Comando | Uso |
 | --- | --- |
-| `npm run dev` | Inicia Vite en desarrollo. |
-| `npm run build` | Ejecuta la comprobación TypeScript y genera la build de producción. |
+| `npm run dev` | Inicia Vite para desarrollo local. |
+| `npm run presentacion` | Inicia backend, frontend y túnel temporal para una demostración desde otra red. |
+| `npm run build` | Comprueba TypeScript y genera la build en `dist/`. |
 | `npm run lint` | Ejecuta ESLint. |
 | `npm run preview` | Sirve localmente la última build. |
 
-Todavía no hay un script de pruebas automatizadas configurado.
+## Documentación
+
+- [Documentación general, alcance de Regularidad y gestión del proyecto](docs/README.md).
+- [Instalación, configuración y ejecución](docs/setup.md).
+- [Pantallas y estado funcional](docs/product-status.md).
+- [Documentación técnica del backend](https://github.com/IvanSlavkes/DSW-Backend/tree/main/docs).
