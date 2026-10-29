@@ -237,7 +237,18 @@ export default function MatchDetails() {
                   </Info>
 
                   <Info
-                    icon={<UserRound />}
+                    icon={
+                      match.creator ? (
+                        <UserAvatar
+                          name={match.creator.name}
+                          lastName={match.creator.lastName}
+                          size="sm"
+                          colorIndex={match.creatorId}
+                        />
+                      ) : (
+                        <UserRound />
+                      )
+                    }
                     label="Organizador"
                     value={match.creator ? `${match.creator.name} ${match.creator.lastName}` : "Un usuario"}
                   />
