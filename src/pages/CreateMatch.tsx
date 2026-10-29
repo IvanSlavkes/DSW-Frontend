@@ -142,7 +142,6 @@ export default function CreateMatch() {
                   id="name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="Ej: Fútbol de los jueves"
                   className={inputClass}
                   required
                 />

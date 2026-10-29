@@ -65,8 +65,8 @@ export default function FieldForm({ fieldEditing, onSubmit, onCancel }: Props) {
 
   return <form onSubmit={handleSubmit} className="bg-[#09241B] mb-6 flex flex-col gap-3 rounded-lg border border-gray-200 p-4">
     <h2 className="text-lg font-semibold">{fieldEditing ? "Editar cancha" : "Nueva cancha"}</h2>
-    <input name="name" value={form.name} onChange={handleChange} placeholder="Nombre" className="rounded border px-3 py-2" required />
-    <input name="address" value={form.address} onChange={handleChange} placeholder="Dirección" className="rounded border px-3 py-2" required />
+    <label className="flex flex-col gap-1 text-sm font-medium">Nombre<input name="name" value={form.name} onChange={handleChange} className="rounded border px-3 py-2" required /></label>
+    <label className="flex flex-col gap-1 text-sm font-medium">Dirección<input name="address" value={form.address} onChange={handleChange} className="rounded border px-3 py-2" required /></label>
 
     <label className="flex flex-col gap-1 text-sm font-medium">
       Tipo
@@ -87,7 +87,7 @@ export default function FieldForm({ fieldEditing, onSubmit, onCancel }: Props) {
     {categories.length === 0 && !categoryError && <p className="text-sm text-amber-700">Primero cargá categorías en la pestaña Categorías.</p>}
     {categoryError && <p role="alert" className="text-sm text-amber-700">{categoryError}</p>}
 
-    <input name="price" type="number" min="0" step="0.01" value={form.price} onChange={handleChange} placeholder="Precio total de la cancha" className="rounded border px-3 py-2" required />
+    <label className="flex flex-col gap-1 text-sm font-medium">Precio total de la cancha<input name="price" type="number" min="0" step="0.01" value={form.price} onChange={handleChange} className="rounded border px-3 py-2" required /></label>
     <LocalitySelect localityId={form.localityId} onChange={(localityId) => setForm({ ...form, localityId })} />
     <div className="flex gap-2"><button type="submit" disabled={!categories.length} className="rounded bg-green-600 px-4 py-2 text-white disabled:opacity-50">{fieldEditing ? "Guardar cambios" : "Crear cancha"}</button>{fieldEditing && <button type="button" onClick={onCancel} className="rounded bg-gray-300 px-4 py-2">Cancelar</button>}</div>
   </form>;

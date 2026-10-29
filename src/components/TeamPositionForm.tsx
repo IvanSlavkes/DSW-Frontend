@@ -86,13 +86,10 @@ export default function TeamPositionForm({
           </select>
         </div>
 
-        <input
-          name="role"
-          value={editForm.role}
-          onChange={handleEditChange}
-          placeholder="Rol (ej. player)"
-          className="rounded border border-gray-300 px-3 py-2"
-        />
+        <label className="flex flex-col gap-1 text-sm text-gray-600">
+          Rol
+          <input name="role" value={editForm.role} onChange={handleEditChange} className="rounded border border-gray-300 px-3 py-2" />
+        </label>
 
         <div>
           <label className="mb-1 block text-sm text-gray-600">
@@ -133,13 +130,10 @@ export default function TeamPositionForm({
     >
       <h2 className="text-lg font-semibold">Nueva posición</h2>
 
-      <input
-        name="positionType"
-        value={createForm.positionType ?? ''}
-        onChange={handleCreateChange}
-        placeholder="Tipo de posición (ej. Arquero)"
-        className="rounded border border-gray-300 px-3 py-2"
-      />
+      <label className="flex flex-col gap-1 text-sm text-gray-600">
+        Tipo de posición
+        <input name="positionType" value={createForm.positionType ?? ''} onChange={handleCreateChange} className="rounded border border-gray-300 px-3 py-2" />
+      </label>
 
       <div>
         <label className="mb-1 block text-sm text-gray-600">
