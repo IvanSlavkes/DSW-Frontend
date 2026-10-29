@@ -11,9 +11,11 @@ const inputClass =
 interface Props {
   localityId: string;
   onChange: (localityId: string) => void;
+  labelClassName?: string;
+  showRegionFields?: boolean;
 }
 
-export default function LocalitySelect({ localityId, onChange }: Props) {
+export default function LocalitySelect({ localityId, onChange, labelClassName = "text-white/85", showRegionFields = true }: Props) {
   const [localities, setLocalities] = useState<Locality[]>([]);
 
   useEffect(() => {
@@ -33,23 +35,25 @@ export default function LocalitySelect({ localityId, onChange }: Props) {
   }, []);
 
   return (
-    <div className="flex flex-col gap-3">
-      <div>
-        <label htmlFor="province" className="mb-1 block text-sm text-white/85">
-          Provincia
-        </label>
-        <input id="province" value={PROVINCE_NAME} disabled className={inputClass} />
-      </div>
+    <div className="flex flex-col gap-3 text-left">
+      {showRegionFields && <>
+        <div>
+          <label htmlFor="province" className={`mb-1 block text-sm ${labelClassName}`}>
+            Provincia
+          </label>
+          <input id="province" value={PROVINCE_NAME} disabled className={inputClass} />
+        </div>
+
+        <div>
+          <label htmlFor="department" className={`mb-1 block text-sm ${labelClassName}`}>
+            Departamento
+          </label>
+          <input id="department" value={DEPARTMENT_NAME} disabled className={inputClass} />
+        </div>
+      </>}
 
       <div>
-        <label htmlFor="department" className="mb-1 block text-sm text-white/85">
-          Departamento
-        </label>
-        <input id="department" value={DEPARTMENT_NAME} disabled className={inputClass} />
-      </div>
-
-      <div>
-        <label htmlFor="locality" className="mb-1 block text-sm text-white/85">
+        <label htmlFor="locality" className={`mb-1 block text-sm ${labelClassName}`}>
           Localidad
         </label>
         <select

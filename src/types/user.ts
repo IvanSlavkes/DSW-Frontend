@@ -6,6 +6,7 @@ export interface User {
   password: string;
   description?: string;
   position: string;
+  secondaryPosition?: string | null;
   averageRating: number; // Promedio de las calificaciones recibidas.
   matchesPlayed: number; // Partidos únicos con una calificación dada o recibida.
   birthDate: string;
@@ -24,7 +25,8 @@ export type UserInput = {
   password: string;
   description?: string;
   position: string;
+  secondaryPosition?: string | null;
   birthDate: string;
   localityId: string;
-  role?: 'user' | 'moderator' | 'admin';
+  role?: 'user' | 'moderator' | 'admin' | 'disabled';
 };
