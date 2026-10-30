@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { createFieldCategory, deleteFieldCategory, getFieldCategories, updateFieldCategory } from "../api/field-category";
 import type { FieldCategoryInput } from "../api/field-category";
 import type { FieldCategory } from "../types/field";
+import axios from 'axios';
 
 const surfaces = ["Sintético", "Natural", "Sin especificar"];
 const empty: FieldCategoryInput = { name: "", surfaceType: surfaces[0], playersPerTeam: 5 };
@@ -66,8 +67,16 @@ export default function FieldCategoryManager() {
 
   async function remove(category: FieldCategory) {
     if (!confirm("¿Eliminar la categoría " + category.name + "?")) return;
-    try { await deleteFieldCategory(category.id); await load(); }
-    catch { setError("No se puede eliminar: la categoría puede tener canchas asociadas."); }
+    try {
+      await deleteFieldCategory(category.id);
+      await load();
+    } catch (err) {
+      setError(
+        axios.isAxiosError(err) && err.response?.data?.error
+          ? err.response.data.error
+          : 'No se pudo eliminar la categoría. Intentá de nuevo.',
+      );
+    }
   }
 
   return <section className="space-y-4">

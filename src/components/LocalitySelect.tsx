@@ -38,14 +38,27 @@ export default function LocalitySelect({ localityId, onChange }: Props) {
         <label htmlFor="province" className="mb-1 block text-sm text-white/85">
           Provincia
         </label>
-        <input id="province" value={PROVINCE_NAME} disabled className={inputClass} />
+        <input
+          id="province"
+          value={PROVINCE_NAME}
+          disabled
+          className={inputClass}
+        />
       </div>
 
       <div>
-        <label htmlFor="department" className="mb-1 block text-sm text-white/85">
+        <label
+          htmlFor="department"
+          className="mb-1 block text-sm text-white/85"
+        >
           Departamento
         </label>
-        <input id="department" value={DEPARTMENT_NAME} disabled className={inputClass} />
+        <input
+          id="department"
+          value={DEPARTMENT_NAME}
+          disabled
+          className={inputClass}
+        />
       </div>
 
       <div>
@@ -54,7 +67,7 @@ export default function LocalitySelect({ localityId, onChange }: Props) {
         </label>
         <select
           id="locality"
-          value={localityId}
+          value={localityId ?? ''}
           onChange={(e) => onChange(e.target.value)}
           className={inputClass}
           required
