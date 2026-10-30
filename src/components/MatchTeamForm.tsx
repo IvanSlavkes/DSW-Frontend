@@ -49,22 +49,8 @@ export default function MatchTeamForm({
         {matchTeamEditing ? 'Editar equipo' : 'Nuevo equipo'}
       </h2>
 
-      <input
-        name="name"
-        value={form.name}
-        onChange={handleChange}
-        placeholder="Nombre del equipo (ej. Equipo A)"
-        className="rounded border border-gray-300 px-3 py-2"
-        required
-      />
-      <input
-        name="color"
-        value={form.color}
-        onChange={handleChange}
-        placeholder="Color (ej. Rojo)"
-        className="rounded border border-gray-300 px-3 py-2"
-        required
-      />
+      <label className="flex flex-col gap-1 text-sm text-gray-600">Nombre del equipo<input name="name" value={form.name} onChange={handleChange} className="rounded border border-gray-300 px-3 py-2" required /></label>
+      <label className="flex flex-col gap-1 text-sm text-gray-600">Color<input name="color" value={form.color} onChange={handleChange} className="rounded border border-gray-300 px-3 py-2" required /></label>
 
       <div>
         <label className="mb-1 block text-sm text-gray-600">

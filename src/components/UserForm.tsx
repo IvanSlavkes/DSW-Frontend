@@ -34,7 +34,9 @@ export default function UserForm({ userEditing, onSubmit, onCancel }: Props) {
         position: userEditing.position,
         birthDate: userEditing.birthDate ? userEditing.birthDate.slice(0, 10) : '',
         localityId: userEditing.localityId,
-        role: userEditing.role === 'moderator' || userEditing.role === 'admin' ? userEditing.role : 'user',
+        role: ['user', 'moderator', 'admin', 'disabled'].includes(userEditing.role)
+          ? userEditing.role as UserInput['role']
+          : 'user',
       };
     }
     return empty;
@@ -63,31 +65,18 @@ export default function UserForm({ userEditing, onSubmit, onCancel }: Props) {
         {userEditing ? 'Editar usuario' : 'Nuevo usuario'}
       </h2>
 
-      <input
-        name="name"
-        value={form.name}
-        onChange={handleChange}
-        placeholder="Nombre"
-        className="rounded border border-gray-300 bg-white px-3 py-2 text-gray-900"
-        required
-      />
-      <input
-        name="lastName"
-        value={form.lastName}
-        onChange={handleChange}
-        placeholder="Apellido"
-        className="rounded border border-gray-300 bg-white px-3 py-2 text-gray-900"
-        required
-      />
-      <input
-        name="email"
-        type="email"
-        value={form.email}
-        onChange={handleChange}
-        placeholder="Email"
-        className="rounded border border-gray-300 bg-white px-3 py-2 text-gray-900"
-        required
-      />
+      <label className="flex flex-col gap-1 text-sm">
+        Nombre
+        <input name="name" value={form.name} onChange={handleChange} className="rounded border border-gray-300 bg-white px-3 py-2 text-gray-900" required />
+      </label>
+      <label className="flex flex-col gap-1 text-sm">
+        Apellido
+        <input name="lastName" value={form.lastName} onChange={handleChange} className="rounded border border-gray-300 bg-white px-3 py-2 text-gray-900" required />
+      </label>
+      <label className="flex flex-col gap-1 text-sm">
+        Correo electrónico
+        <input name="email" type="email" value={form.email} onChange={handleChange} className="rounded border border-gray-300 bg-white px-3 py-2 text-gray-900" required />
+      </label>
 
       <div>
         <label className="mb-1 block text-sm text-white/85">
@@ -115,44 +104,42 @@ export default function UserForm({ userEditing, onSubmit, onCancel }: Props) {
         </div>
       </div>
 
-      <PositionSelect
-       value={form.position} 
-       onChange={(position) => setForm((prev) => ({ ...prev, position }))} 
-       className="rounded border border-gray-300 bg-white px-3 py-2 text-gray-900" />
+      <label className="flex flex-col gap-1 text-sm">
+        Posición
+        <PositionSelect
+          value={form.position}
+          onChange={(position) => setForm((prev) => ({ ...prev, position }))}
+          className="rounded border border-gray-300 bg-white px-3 py-2 text-gray-900"
+        />
+      </label>
 
       <label className="flex flex-col gap-1 text-sm">
         Rol
         <select
           name="role"
           value={form.role ?? 'user'}
-          onChange={(e) => setForm((prev) => ({ ...prev, role: e.target.value as 'user' | 'moderator' | 'admin' }))}
+          onChange={(e) => setForm((prev) => ({ ...prev, role: e.target.value as UserInput['role'] }))}
           className="rounded border border-gray-300 bg-white px-3 py-2 text-gray-900"
         >
           <option value="user">Usuario</option>
           <option value="moderator">Moderador</option>
+          <option value="disabled">Desactivado</option>
           {userEditing?.role === 'admin' && <option value="admin" disabled>Administrador (sin cambios)</option>}
         </select>
       </label>
        
-      <input
-        name="birthDate"
-        type="date"
-        value={form.birthDate}
-        onChange={handleChange}
-        className="rounded border border-gray-300 bg-white px-3 py-2 text-gray-900"
-        required
-      />
+      <label className="flex flex-col gap-1 text-sm">
+        Fecha de nacimiento
+        <input name="birthDate" type="date" value={form.birthDate} onChange={handleChange} className="rounded border border-gray-300 bg-white px-3 py-2 text-gray-900" required />
+      </label>
       <LocalitySelect 
         localityId={form.localityId} 
         onChange={(localityId) => setForm((prev) => ({ ...prev, localityId }))} 
       />
-      <input
-        name="description"
-        value={form.description}
-        onChange={handleChange}
-        placeholder="Descripción (opcional)"
-        className="rounded border border-gray-300 bg-white px-3 py-2 text-gray-900"
-      />
+      <label className="flex flex-col gap-1 text-sm">
+        Descripción (opcional)
+        <input name="description" value={form.description} onChange={handleChange} className="rounded border border-gray-300 bg-white px-3 py-2 text-gray-900" />
+      </label>
 
       <div className="flex gap-2">
         <button

@@ -42,7 +42,7 @@ function errorMessage(err: unknown): string {
 
 export default function CreateMatch() {
   const navigate = useNavigate();
-  const { collapsed: sidebarCollapsed, toggleSidebar } = useSidebar();
+  const { open: mobileSidebarOpen, toggleSidebar, closeSidebar } = useSidebar();
   const [fields, setFields] = useState<Field[]>([]);
   const [loadingFields, setLoadingFields] = useState(true);
 
@@ -124,10 +124,10 @@ export default function CreateMatch() {
   return (
     <div className="flex h-dvh min-h-screen w-full flex-col bg-cover bg-center bg-fixed" style={{ backgroundImage: "url('/images/Fondo.jpg')" }}>
       <div className="flex h-full w-full flex-col bg-[#061910]/55">
-      <AppHeader sidebarCollapsed={sidebarCollapsed} onToggleSidebar={toggleSidebar} />
+      <AppHeader mobileSidebarOpen={mobileSidebarOpen} onToggleSidebar={toggleSidebar} />
 
       <div className="flex min-h-0 flex-1 overflow-hidden">
-        <Sidebar collapsed={sidebarCollapsed} />
+        <Sidebar open={mobileSidebarOpen} onNavigate={closeSidebar} />
         <main className="min-w-0 flex-1 overflow-y-auto px-3 py-5 sm:px-5 lg:px-8">
           <section className="mx-auto max-w-3xl rounded-2xl border border-white/10 bg-[#09241B] p-5 text-white shadow-xl sm:p-7">
             <h2 className="mb-2 text-2xl font-black">Organizar partido</h2>
@@ -142,7 +142,6 @@ export default function CreateMatch() {
                   id="name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="Ej: Fútbol de los jueves"
                   className={inputClass}
                   required
                 />

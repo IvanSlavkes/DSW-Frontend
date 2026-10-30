@@ -125,14 +125,10 @@ export default function RatingForm({
         </select>
       </div>
 
-      <textarea
-        name="comment"
-        value={form.comment}
-        onChange={handleChange}
-        placeholder="Comentario"
-        className="rounded border border-gray-300 px-3 py-2"
-        required
-      />
+      <label className="flex flex-col gap-1 text-sm text-gray-600">
+        Comentario
+        <textarea name="comment" value={form.comment} onChange={handleChange} className="rounded border border-gray-300 px-3 py-2" required />
+      </label>
 
       <div className="flex gap-2">
         <button

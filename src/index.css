@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+.register-page {
+  scrollbar-width: none;
+}
+
+.register-page::-webkit-scrollbar {
+  display: none;
+}
+
 .admin-panel form {
   margin-bottom: 1rem;
   border: 1px solid rgb(255 255 255 / 10%);

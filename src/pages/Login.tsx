@@ -1,33 +1,41 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import { API_URL } from '../api/client';
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setErrorMessage("");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      setErrorMessage("Ingresá un correo electrónico válido.");
+      return;
+    }
+    if (password.length < 6) {
+      setErrorMessage("La contraseña debe tener al menos 6 caracteres.");
+      return;
+    }
+    setSubmitting(true);
     try {
-      // 👇 asegurate que tu backend tenga esta ruta
-      const res = await axios.post(`${API_URL}/auth/login`, {
-        email,
-        password,
-      });
-      
-      // 👇 usar "mensaje" porque tu backend devuelve esa propiedad
-      alert(res.data.mensaje);
-
-      // guardar el token
+      const res = await axios.post(`${API_URL}/auth/login`, { email: email.trim(), password });
       localStorage.setItem("token", res.data.token);
-
-      // redirigir al dashboard
       navigate("/dashboard");
     } catch (error) {
-      const err = error as AxiosError<{ error: string }>;
-      alert(err.response?.data?.error || "Error al iniciar sesión");
+      if (axios.isAxiosError<{ error?: string }>(error)) {
+        setErrorMessage(error.response?.data?.error ?? (error.response
+          ? "No se pudo iniciar sesión. Intentá de nuevo."
+          : "No se pudo conectar con el servidor. Revisá tu conexión e intentá de nuevo."));
+      } else {
+        setErrorMessage("Ocurrió un error inesperado al iniciar sesión.");
+      }
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -63,32 +71,26 @@ export default function Login() {
             Ingresá a tu cuenta para continuar
           </p>
 
-          <form onSubmit={handleLogin} className="w-full flex flex-col gap-3.5">
-            <input
-              type="email"
-              placeholder="Correo electrónico"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full px-4 py-3 text-sm rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#1B4D3E] bg-gray-50/50 text-gray-900 font-medium placeholder-gray-500"
-            />
-            
-            <input
-              type="password"
-              placeholder="Contraseña"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="w-full px-4 py-3 text-sm rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#1B4D3E] bg-gray-50/50 text-gray-900 font-medium placeholder-gray-500"
-            />
+          <form onSubmit={handleLogin} noValidate className="w-full flex flex-col gap-3.5">
+            {errorMessage && <p role="alert" aria-live="polite" className="rounded-xl border border-[#F0B7C0] bg-[#FFF1F2] px-4 py-3 text-left text-sm font-semibold text-[#9F1D35]">{errorMessage}</p>}
+            <label className="flex flex-col gap-1 text-left text-sm font-semibold text-gray-700">
+              Correo electrónico
+              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="w-full px-4 py-3 text-sm rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#1B4D3E] bg-gray-50/50 text-gray-900 font-medium" />
+            </label>
+
+            <label className="flex flex-col gap-1 text-left text-sm font-semibold text-gray-700">
+              Contraseña
+              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required className="w-full px-4 py-3 text-sm rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#1B4D3E] bg-gray-50/50 text-gray-900 font-medium" />
+            </label>
 
             <button
               type="submit"
+              disabled={submitting}
               className="w-full bg-[#1B4D3E] text-white font-semibold
               px-6 py-3.5 rounded-xl hover:bg-[#14382d]
-              transition-colors shadow-sm mt-1"
+              transition-colors shadow-sm mt-1 disabled:cursor-wait disabled:opacity-70"
             >
-              Entrar
+              {submitting ? "Ingresando..." : "Entrar"}
             </button>
           </form>
 

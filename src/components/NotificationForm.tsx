@@ -64,22 +64,8 @@ export default function NotificationForm({ onSubmit }: Props) {
         />
       </div>
 
-      <input
-        name="type"
-        value={form.type}
-        onChange={handleChange}
-        placeholder="Tipo (ej. match_reminder)"
-        className="rounded border border-gray-300 px-3 py-2"
-        required
-      />
-      <input
-        name="message"
-        value={form.message}
-        onChange={handleChange}
-        placeholder="Mensaje"
-        className="rounded border border-gray-300 px-3 py-2"
-        required
-      />
+      <label className="flex flex-col gap-1 text-sm text-gray-600">Tipo de notificación<input name="type" value={form.type} onChange={handleChange} className="rounded border border-gray-300 px-3 py-2" required /></label>
+      <label className="flex flex-col gap-1 text-sm text-gray-600">Mensaje<input name="message" value={form.message} onChange={handleChange} className="rounded border border-gray-300 px-3 py-2" required /></label>
 
       <button
         type="submit"

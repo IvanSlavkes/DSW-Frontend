@@ -42,14 +42,10 @@ export default function LocalityForm({
         {localityEditing ? 'Editar localidad' : 'Nueva localidad'}
       </h2>
 
-      <input
-        name="name"
-        value={form.name}
-        onChange={handleChange}
-        placeholder="Nombre (ej. Rosario)"
-        className="rounded border border-gray-300 px-3 py-2"
-        required
-      />
+      <label className="flex flex-col gap-1 text-sm">
+        Nombre de la localidad
+        <input name="name" value={form.name} onChange={handleChange} className="rounded border border-gray-300 px-3 py-2" required />
+      </label>
 
       <div className="flex gap-2">
         <button

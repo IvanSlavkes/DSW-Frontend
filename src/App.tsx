@@ -5,6 +5,7 @@ import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import CreateMatch from "./pages/CreateMatch";
 import AvailableMatches from "./pages/AvailableMatches";
+import MatchDetails from "./pages/MatchDetails";
 import Profile from "./pages/Profile";
 import PrivateRoute from './router/PrivateRoute';
 import AdminDashboard from "./pages/AdminDashboard";
@@ -30,6 +31,14 @@ function App() {
           element={
             <PrivateRoute>
               <AvailableMatches />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/matches/:id"
+          element={
+            <PrivateRoute>
+              <MatchDetails />
             </PrivateRoute>
           }
         />

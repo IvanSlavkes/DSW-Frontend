@@ -27,7 +27,7 @@ export default function LocalityList({ localities, onSave, onDelete }: Props) {
   return (
     <div className="space-y-2">
       <div className="grid gap-2 rounded-2xl border border-white/10 bg-[#09241B] p-3 sm:grid-cols-2">
-        <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Buscar localidad por nombre" aria-label="Buscar localidades por nombre" className="min-w-0 rounded-lg border border-white/10 bg-[#10372A] px-3 py-2 text-sm text-white placeholder:text-white/50" />
+        <label className="flex flex-col gap-1 text-xs text-white/70">Buscar localidades<input value={search} onChange={(event) => setSearch(event.target.value)} aria-label="Buscar localidades por nombre" className="min-w-0 rounded-lg border border-white/10 bg-[#10372A] px-3 py-2 text-sm text-white" /></label>
         <select value={sort} onChange={(event) => setSort(event.target.value as 'name-asc' | 'name-desc')} aria-label="Ordenar localidades" className="rounded-lg border border-white/10 bg-[#10372A] px-3 py-2 text-sm text-white">
           <option value="name-asc">Nombre: A a Z</option>
           <option value="name-desc">Nombre: Z a A</option>

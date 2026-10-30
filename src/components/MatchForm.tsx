@@ -65,52 +65,15 @@ export default function MatchForm({ matchEditing, onSubmit, onCancel }: Props) {
         {matchEditing ? 'Editar partido' : 'Nuevo partido'}
       </h2>
 
-      <input
-        name="name"
-        value={form.name}
-        onChange={handleChange}
-        placeholder="Nombre del partido"
-        className="rounded border border-gray-300 px-3 py-2"
-        required
-      />
-      <textarea
-        name="description"
-        value={form.description ?? ''}
-        onChange={handleChange}
-        placeholder="Descripción (opcional)"
-        className="rounded border border-gray-300 px-3 py-2"
-      />
-      <input
-        name="teamAName"
-        value={form.teamAName}
-        onChange={handleChange}
-        placeholder="Nombre de tu equipo"
-        maxLength={50}
-        className="rounded border border-gray-300 px-3 py-2"
-        required
-      />
-<div className="grid gap-3 sm:grid-cols-2">
-        <input name="date" type="date" value={form.startsAt.split('T')[0] ?? ''} onChange={handleChange} className="rounded border border-gray-300 px-3 py-2" required />
-        <input name="time" type="time" value={form.startsAt.split('T')[1] ?? ''} onChange={handleChange} className="rounded border border-gray-300 px-3 py-2" required />
+      <label className="flex flex-col gap-1 text-sm text-gray-600">Nombre del partido<input name="name" value={form.name} onChange={handleChange} className="rounded border border-gray-300 px-3 py-2" required /></label>
+      <label className="flex flex-col gap-1 text-sm text-gray-600">Descripción (opcional)<textarea name="description" value={form.description ?? ''} onChange={handleChange} className="rounded border border-gray-300 px-3 py-2" /></label>
+      <label className="flex flex-col gap-1 text-sm text-gray-600">Nombre del equipo<input name="teamAName" value={form.teamAName} onChange={handleChange} maxLength={50} className="rounded border border-gray-300 px-3 py-2" required /></label>
+      <div className="grid gap-3 sm:grid-cols-2">
+        <label className="flex flex-col gap-1 text-sm text-gray-600">Fecha<input name="date" type="date" value={form.startsAt.split('T')[0] ?? ''} onChange={handleChange} className="rounded border border-gray-300 px-3 py-2" required /></label>
+        <label className="flex flex-col gap-1 text-sm text-gray-600">Hora<input name="time" type="time" value={form.startsAt.split('T')[1] ?? ''} onChange={handleChange} className="rounded border border-gray-300 px-3 py-2" required /></label>
       </div>
-      <input
-        name="duration"
-        type="number"
-        min="1"
-        value={form.duration ?? 60}
-        onChange={handleChange}
-        className="rounded border border-gray-300 px-3 py-2"
-        required
-      />
-      <select
-        name="privacy"
-        value={form.privacy}
-        onChange={handleChange}
-        className="rounded border border-gray-300 px-3 py-2"
-      >
-        <option value="public">Público</option>
-        <option value="private">Privado</option>
-      </select>
+      <label className="flex flex-col gap-1 text-sm text-gray-600">Duración (minutos)<input name="duration" type="number" min="1" value={form.duration ?? 60} onChange={handleChange} className="rounded border border-gray-300 px-3 py-2" required /></label>
+      <label className="flex flex-col gap-1 text-sm text-gray-600">Privacidad<select name="privacy" value={form.privacy} onChange={handleChange} className="rounded border border-gray-300 px-3 py-2"><option value="public">Público</option><option value="private">Privado</option></select></label>
       <div>
         <label className="mb-1 block text-sm text-gray-600">
           ID de la Cancha
