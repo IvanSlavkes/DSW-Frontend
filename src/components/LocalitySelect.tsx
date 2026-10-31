@@ -59,7 +59,7 @@ export default function LocalitySelect({ localityId, onChange, labelClassName = 
         </label>
         <select
           id="locality"
-          value={localityId}
+          value={localityId ?? ""}
           onChange={(e) => onChange(e.target.value)}
           className={inputClassName}
           required

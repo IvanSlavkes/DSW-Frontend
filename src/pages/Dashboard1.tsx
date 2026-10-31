@@ -124,7 +124,7 @@ function App() {
       setError(null);
     } catch (err) {
       console.error(err);
-      setError('Could not connect to the server. Is the backend running?');
+      setError('No se pudo conectar con el servidor. ¿Está prendido el backend?');
     } finally {
       setLoading(false);
     }
@@ -138,7 +138,7 @@ function App() {
       setError(null);
     } catch (err) {
       console.error(err);
-      setError('Could not connect to the server. Is the backend running?');
+      setError('No se pudo conectar con el servidor. ¿Está prendido el backend?');
     } finally {
       setLoading(false);
     }
@@ -152,7 +152,7 @@ function App() {
       setError(null);
     } catch (err) {
       console.error(err);
-      setError('Could not connect to the server. Is the backend running?');
+      setError('No se pudo conectar con el servidor. ¿Está prendido el backend?');
     } finally {
       setLoading(false);
     }
@@ -166,7 +166,7 @@ function App() {
       setError(null);
     } catch (err) {
       console.error(err);
-      setError('Could not connect to the server. Is the backend running?');
+      setError('No se pudo conectar con el servidor. ¿Está prendido el backend?');
     } finally {
       setLoading(false);
     }
@@ -180,7 +180,7 @@ function App() {
       setError(null);
     } catch (err) {
       console.error(err);
-      setError('Could not connect to the server. Is the backend running?');
+      setError('No se pudo conectar con el servidor. ¿Está prendido el backend?');
     } finally {
       setLoading(false);
     }
@@ -194,7 +194,7 @@ function App() {
       setError(null);
     } catch (err) {
       console.error(err);
-      setError('Could not connect to the server. Is the backend running?');
+      setError('No se pudo conectar con el servidor. ¿Está prendido el backend?');
     } finally {
       setLoading(false);
     }
@@ -208,7 +208,7 @@ function App() {
       setError(null);
     } catch (err) {
       console.error(err);
-      setError('Could not connect to the server. Is the backend running?');
+      setError('No se pudo conectar con el servidor. ¿Está prendido el backend?');
     } finally {
       setLoading(false);
     }
@@ -222,7 +222,7 @@ function App() {
       setError(null);
     } catch (err) {
       console.error(err);
-      setError('Could not connect to the server. Is the backend running?');
+      setError('No se pudo conectar con el servidor. ¿Está prendido el backend?');
     } finally {
       setLoading(false);
     }
@@ -236,7 +236,7 @@ function App() {
       setError(null);
     } catch (err) {
       console.error(err);
-      setError('Could not connect to the server. Is the backend running?');
+      setError('No se pudo conectar con el servidor. ¿Está prendido el backend?');
     } finally {
       setLoading(false);
     }
@@ -282,7 +282,7 @@ function App() {
           return false;
         }
       }
-      alert('An error occurred while saving the field.');
+      alert('No se pudo guardar la cancha.');
       return false;
     }
   }
@@ -293,18 +293,22 @@ function App() {
       await loadFields();
     } catch (err) {
       console.error(err);
-      alert('An error occurred while saving the field.');
+      alert('No se pudo guardar la cancha.');
     }
   }
 
   async function handleFieldDelete(id: number) {
-    if (!confirm('Are you sure you want to delete this field?')) return;
+    if (!confirm('¿Seguro que querés borrar esta cancha?')) return;
     try {
       await deleteField(id);
       await loadFields();
     } catch (err) {
       console.error(err);
-      alert('An error occurred while deleting the field.');
+      if (axios.isAxiosError(err) && err.response?.data?.mensaje) {
+        alert(err.response.data.mensaje);
+        return;
+      }
+      alert('No se pudo eliminar la cancha.');
     }
   }
 
@@ -326,18 +330,18 @@ function App() {
           return;
         }
       }
-      alert('An error occurred while saving the match.');
+      alert('No se pudo guardar el partido.');
     }
   }
 
   async function handleMatchDelete(id: number) {
-    if (!confirm('Are you sure you want to delete this match?')) return;
+    if (!confirm('¿Seguro que querés borrar este partido?')) return;
     try {
       await deleteMatch(id);
       await loadMatches();
     } catch (err) {
       console.error(err);
-      alert('An error occurred while deleting the match.');
+      alert('No se pudo eliminar el partido.');
     }
   }
 
@@ -354,7 +358,7 @@ function App() {
           return;
         }
       }
-      alert('An error occurred while creating the notification.');
+      alert('No se pudo crear la notificación.');
     }
   }
 
@@ -364,18 +368,18 @@ function App() {
       await loadNotifications();
     } catch (err) {
       console.error(err);
-      alert('An error occurred while marking as read.');
+      alert('No se pudo marcar como leída.');
     }
   }
 
   async function handleNotificationDelete(id: number) {
-    if (!confirm('Are you sure you want to delete this notification?')) return;
+    if (!confirm('¿Seguro que querés borrar esta notificación?')) return;
     try {
       await deleteNotification(id);
       await loadNotifications();
     } catch (err) {
       console.error(err);
-      alert('An error occurred while deleting the notification.');
+      alert('No se pudo eliminar la notificación.');
     }
   }
 
@@ -400,18 +404,18 @@ function App() {
           return;
         }
       }
-      alert('An error occurred while saving the rating.');
+      alert('No se pudo guardar la calificación.');
     }
   }
 
   async function handleRatingDelete(id: number) {
-    if (!confirm('Are you sure you want to delete this rating?')) return;
+    if (!confirm('¿Seguro que querés borrar esta calificación?')) return;
     try {
       await deleteRating(id);
       await loadRatings();
     } catch (err) {
       console.error(err);
-      alert('An error occurred while deleting the rating.');
+      alert('No se pudo eliminar la calificación.');
     }
   }
 
@@ -437,7 +441,7 @@ function App() {
           return false;
         }
       }
-      alert('An error occurred while saving the user.');
+      alert('No se pudo guardar el usuario.');
       return false;
     }
   }
@@ -456,18 +460,18 @@ function App() {
           return;
         }
       }
-      alert('An error occurred while saving the user.');
+      alert('No se pudo guardar el usuario.');
     }
   }
 
   async function handleUserDelete(id: number) {
-    if (!confirm('Are you sure you want to delete this user?')) return;
+    if (!confirm('¿Seguro que querés borrar este usuario?')) return;
     try {
       await deleteUser(id);
       await loadUsers();
     } catch (err) {
       console.error(err);
-      alert('An error occurred while deleting the user.');
+      alert('No se pudo eliminar el usuario.');
     }
   }
 
@@ -485,7 +489,7 @@ function App() {
           return false;
         }
       }
-      alert('An error occurred while saving the locality.');
+      alert('No se pudo guardar la localidad.');
       return false;
     }
   }
@@ -496,18 +500,22 @@ function App() {
       await loadLocalities();
     } catch (err) {
       console.error(err);
-      alert('An error occurred while saving the locality.');
+      alert('No se pudo guardar la localidad.');
     }
   }
 
   async function handleLocalityDelete(id: string) {
-    if (!confirm('Are you sure you want to delete this locality?')) return;
+    if (!confirm('¿Seguro que querés borrar esta localidad?')) return;
     try {
       await deleteLocality(id);
       await loadLocalities();
     } catch (err) {
       console.error(err);
-      alert('An error occurred while deleting the locality.');
+      if (axios.isAxiosError(err) && err.response?.data?.mensaje) {
+        alert(err.response.data.mensaje);
+        return;
+      }
+      alert('No se pudo eliminar la localidad.');
     }
   }
 
@@ -532,18 +540,18 @@ function App() {
           return;
         }
       }
-      alert('An error occurred while saving the match team.');
+      alert('No se pudo guardar el equipo.');
     }
   }
 
   async function handleMatchTeamDelete(id: number) {
-    if (!confirm('Are you sure you want to delete this team?')) return;
+    if (!confirm('¿Seguro que querés borrar este equipo?')) return;
     try {
       await deleteMatchTeam(id);
       await loadMatchTeams();
     } catch (err) {
       console.error(err);
-      alert('An error occurred while deleting the match team.');
+      alert('No se pudo eliminar el equipo.');
     }
   }
 
@@ -560,7 +568,7 @@ function App() {
           return;
         }
       }
-      alert('An error occurred while creating the position.');
+      alert('No se pudo crear la posición.');
     }
   }
 
@@ -574,18 +582,18 @@ function App() {
       await loadTeamPositions();
     } catch (err) {
       console.error(err);
-      alert('An error occurred while updating the position.');
+      alert('No se pudo actualizar la posición.');
     }
   }
 
   async function handleTeamPositionDelete(id: number) {
-    if (!confirm('Are you sure you want to delete this position?')) return;
+    if (!confirm('¿Seguro que querés borrar esta posición?')) return;
     try {
       await deleteTeamPosition(id);
       await loadTeamPositions();
     } catch (err) {
       console.error(err);
-      alert('An error occurred while deleting the position.');
+      alert('No se pudo eliminar la posición.');
     }
   }
 
@@ -602,7 +610,7 @@ function App() {
           return;
         }
       }
-      alert('An error occurred while creating the friend request.');
+      alert('No se pudo crear la solicitud de amistad.');
     }
   }
 
@@ -612,7 +620,7 @@ function App() {
       await loadFriendRequests();
     } catch (err) {
       console.error(err);
-      alert('An error occurred while accepting the request.');
+      alert('No se pudo aceptar la solicitud.');
     }
   }
 
@@ -622,18 +630,18 @@ function App() {
       await loadFriendRequests();
     } catch (err) {
       console.error(err);
-      alert('An error occurred while rejecting the request.');
+      alert('No se pudo rechazar la solicitud.');
     }
   }
 
   async function handleFriendRequestDelete(id: number) {
-    if (!confirm('Are you sure you want to delete this request?')) return;
+    if (!confirm('¿Seguro que querés borrar esta solicitud?')) return;
     try {
       await deleteFriendRequest(id);
       await loadFriendRequests();
     } catch (err) {
       console.error(err);
-      alert('An error occurred while deleting the request.');
+      alert('No se pudo eliminar la solicitud.');
     }
   }
 
