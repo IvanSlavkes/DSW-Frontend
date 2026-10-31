@@ -28,7 +28,9 @@ export default function Login() {
       navigate("/dashboard");
     } catch (error) {
       if (axios.isAxiosError<{ error?: string }>(error)) {
-        setErrorMessage(error.response?.data?.error ?? (error.response
+        setErrorMessage(error.response?.status === 403
+          ? "Usuario desactivado."
+          : error.response?.data?.error ?? (error.response
           ? "No se pudo iniciar sesión. Intentá de nuevo."
           : "No se pudo conectar con el servidor. Revisá tu conexión e intentá de nuevo."));
       } else {

@@ -64,12 +64,15 @@ export default function UserList({ users, onSave, onDelete }: Props) {
         </label>
         <label className="flex flex-col gap-1 text-xs text-white/70">Edad mínima<input type="number" min="0" value={minAge} onChange={(event) => setMinAge(event.target.value)} aria-label="Edad mínima" className="min-w-0 rounded-lg border border-white/10 bg-[#10372A] px-3 py-2 text-sm text-white" /></label>
         <label className="flex flex-col gap-1 text-xs text-white/70">Edad máxima<input type="number" min="0" value={maxAge} onChange={(event) => setMaxAge(event.target.value)} aria-label="Edad máxima" className="min-w-0 rounded-lg border border-white/10 bg-[#10372A] px-3 py-2 text-sm text-white" /></label>
-        <select value={sort} onChange={(event) => setSort(event.target.value as SortOption)} aria-label="Ordenar jugadores" className="rounded-lg border border-white/10 bg-[#10372A] px-3 py-2 text-sm text-white">
-          <option value="name-asc">Nombre: A a Z</option>
-          <option value="name-desc">Nombre: Z a A</option>
-          <option value="age-asc">Edad: menor a mayor</option>
-          <option value="age-desc">Edad: mayor a menor</option>
-        </select>
+        
+        <label className="flex flex-col gap-1 text-xs text-white/70">Filtrar por
+          <select value={sort} onChange={(event) => setSort(event.target.value as SortOption)} aria-label="Ordenar jugadores" className="rounded-lg border border-white/10 bg-[#10372A] px-3 py-2 text-sm text-white">
+            <option value="name-asc">Nombre: A a Z</option>
+            <option value="name-desc">Nombre: Z a A</option>
+            <option value="age-asc">Edad: menor a mayor</option>
+            <option value="age-desc">Edad: mayor a menor</option>
+          </select>
+        </label>
       </div>
 
       <p className="px-1 text-xs text-white/60">Mostrando {filteredUsers.length} de {users.length} jugadores</p>

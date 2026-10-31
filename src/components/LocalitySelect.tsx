@@ -13,9 +13,10 @@ interface Props {
   onChange: (localityId: string) => void;
   labelClassName?: string;
   showRegionFields?: boolean;
+  inputClassName?: string;
 }
 
-export default function LocalitySelect({ localityId, onChange, labelClassName = "text-white/85", showRegionFields = true }: Props) {
+export default function LocalitySelect({ localityId, onChange, labelClassName = "text-white/85", showRegionFields = true, inputClassName = inputClass }: Props) {
   const [localities, setLocalities] = useState<Locality[]>([]);
 
   useEffect(() => {
@@ -41,14 +42,14 @@ export default function LocalitySelect({ localityId, onChange, labelClassName = 
           <label htmlFor="province" className={`mb-1 block text-sm ${labelClassName}`}>
             Provincia
           </label>
-          <input id="province" value={PROVINCE_NAME} disabled className={inputClass} />
+          <input id="province" value={PROVINCE_NAME} disabled className={inputClassName} />
         </div>
 
         <div>
           <label htmlFor="department" className={`mb-1 block text-sm ${labelClassName}`}>
             Departamento
           </label>
-          <input id="department" value={DEPARTMENT_NAME} disabled className={inputClass} />
+          <input id="department" value={DEPARTMENT_NAME} disabled className={inputClassName} />
         </div>
       </>}
 
@@ -60,7 +61,7 @@ export default function LocalitySelect({ localityId, onChange, labelClassName = 
           id="locality"
           value={localityId}
           onChange={(e) => onChange(e.target.value)}
-          className={inputClass}
+          className={inputClassName}
           required
         >
           <option value="">Elegí una localidad</option>

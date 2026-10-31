@@ -151,6 +151,7 @@ export default function Profile() {
                       userEditing={profile}
                       onSubmit={handleSave}
                       onCancel={() => undefined}
+                      profileStyle
                     />
                   </section>
                 </>

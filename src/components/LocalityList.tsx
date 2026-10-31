@@ -28,10 +28,14 @@ export default function LocalityList({ localities, onSave, onDelete }: Props) {
     <div className="space-y-2">
       <div className="grid gap-2 rounded-2xl border border-white/10 bg-[#09241B] p-3 sm:grid-cols-2">
         <label className="flex flex-col gap-1 text-xs text-white/70">Buscar localidades<input value={search} onChange={(event) => setSearch(event.target.value)} aria-label="Buscar localidades por nombre" className="min-w-0 rounded-lg border border-white/10 bg-[#10372A] px-3 py-2 text-sm text-white" /></label>
-        <select value={sort} onChange={(event) => setSort(event.target.value as 'name-asc' | 'name-desc')} aria-label="Ordenar localidades" className="rounded-lg border border-white/10 bg-[#10372A] px-3 py-2 text-sm text-white">
-          <option value="name-asc">Nombre: A a Z</option>
-          <option value="name-desc">Nombre: Z a A</option>
-        </select>
+        
+        <label className="flex flex-col gap-1 text-xs text-white/70">Orderar por
+          <select value={sort} onChange={(event) => setSort(event.target.value as 'name-asc' | 'name-desc')} aria-label="Ordenar localidades" className="rounded-lg border border-white/10 bg-[#10372A] px-3 py-2 text-sm text-white">
+            <option value="name-asc">Nombre: A a Z</option>
+            <option value="name-desc">Nombre: Z a A</option>
+          </select>
+        </label>
+
       </div>
       <p className="px-1 text-xs text-white/60">Mostrando {filteredLocalities.length} de {localities.length} localidades</p>
       {filteredLocalities.length === 0 && <p className="rounded-xl border border-white/10 bg-[#09241B] px-4 py-5 text-sm text-white/65">No se encontraron localidades con ese nombre.</p>}
